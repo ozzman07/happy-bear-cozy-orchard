@@ -17,6 +17,7 @@ export class UI {
   constructor() {
     this._gridEl      = document.getElementById('grid');
     this._speechEl    = document.getElementById('bear-speech');
+    this._cabinSpeech = document.getElementById('cabin-bear-speech');
     this._statusEl    = document.getElementById('status-msg');
     this._dayEl       = document.getElementById('day-num');
     this._tileEls     = [];
@@ -31,9 +32,9 @@ export class UI {
       this._tileEls[y] = [];
       for (let x = 0; x < GRID_SIZE; x++) {
         const el = document.createElement('div');
-        el.className   = 'tile';
-        el.dataset.x   = x;
-        el.dataset.y   = y;
+        el.className = 'tile';
+        el.dataset.x = x;
+        el.dataset.y = y;
         el.addEventListener('click', () => onTileClick(tiles[y][x]));
         this._gridEl.appendChild(el);
         this._tileEls[y][x] = el;
@@ -57,10 +58,10 @@ export class UI {
 
   _renderTile(tile, el) {
     const v = TILE_VISUAL[tile.state];
-    el.className         = `tile tile-${tile.state}`;
-    el.style.background  = v.color;
-    el.textContent       = v.emoji;
-    el.title             = v.label;
+    el.className        = `tile tile-${tile.state}`;
+    el.style.background = v.color;
+    el.textContent      = v.emoji;
+    el.title            = v.label;
 
     if (tile.state === TILE_STATE.PLANTED) {
       const pct = Math.min(100, Math.round((tile.growTicks / tile.growTicksNeeded) * 100));
@@ -72,10 +73,23 @@ export class UI {
   }
 
   updateResources(amounts) {
-    document.getElementById('count-wood').textContent  = amounts[RESOURCE.WOOD]  ?? 0;
-    document.getElementById('count-stone').textContent = amounts[RESOURCE.STONE] ?? 0;
-    document.getElementById('count-fruit').textContent = amounts[RESOURCE.FRUIT] ?? 0;
-    document.getElementById('count-cups').textContent  = amounts[RESOURCE.CUPS]  ?? 0;
+    const set = (id, key) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = amounts[key] ?? 0;
+    };
+
+    set('count-wood',  RESOURCE.WOOD);
+    set('count-stone', RESOURCE.STONE);
+    set('count-fruit', RESOURCE.FRUIT);
+    set('count-cups',  RESOURCE.CUPS);
+    set('count-juice', RESOURCE.JUICE);
+    set('count-cider', RESOURCE.CIDER);
+
+    // Dim juice/cider items when at zero
+    const juiceEl = document.getElementById('res-juice-item');
+    const ciderEl = document.getElementById('res-cider-item');
+    juiceEl?.classList.toggle('res-zero', !(amounts[RESOURCE.JUICE] > 0));
+    ciderEl?.classList.toggle('res-zero', !(amounts[RESOURCE.CIDER] > 0));
   }
 
   updateDay(day) {
@@ -88,10 +102,17 @@ export class UI {
 
   bearSpeak(msg) {
     if (this._speechTimer) clearTimeout(this._speechTimer);
-    this._speechEl.textContent = msg;
-    this._speechEl.classList.remove('hidden');
+
+    // Update whichever bubble is visible (orchard or cabin)
+    [this._speechEl, this._cabinSpeech].forEach(el => {
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    });
+
     this._speechTimer = setTimeout(() => {
-      this._speechEl.classList.add('hidden');
+      this._speechEl?.classList.add('hidden');
+      this._cabinSpeech?.classList.add('hidden');
     }, 3500);
   }
 

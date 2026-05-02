@@ -9,8 +9,10 @@
 <body>
   <div id="app">
 
+    <!-- ── HUD (always visible) ────────────────────────────────────────── -->
     <header id="hud">
       <div id="game-title">🐻 Happy Bear Cozy Orchard</div>
+
       <div id="resources">
         <div class="resource-item">
           <span class="res-icon">🪵</span>
@@ -32,21 +34,82 @@
           <span class="res-label">Cups</span>
           <span class="res-count" id="count-cups">0</span>
         </div>
+        <div class="resource-item res-cider-group" id="res-juice-item">
+          <span class="res-icon">🧃</span>
+          <span class="res-label">Juice</span>
+          <span class="res-count" id="count-juice">0</span>
+        </div>
+        <div class="resource-item res-cider-group" id="res-cider-item">
+          <span class="res-icon">🍺</span>
+          <span class="res-label">Cider</span>
+          <span class="res-count" id="count-cider">0</span>
+        </div>
       </div>
+
       <div id="day-counter">Day <span id="day-num">1</span></div>
     </header>
 
+    <!-- ── Main game area ─────────────────────────────────────────────── -->
     <main id="game-area">
-      <div id="orchard-container">
-        <div id="grid"></div>
+
+      <!-- ── Scene: Orchard ──────────────────────────────────────────── -->
+      <div id="scene-orchard" class="scene scene-active">
+
+        <div id="orchard-container">
+          <div id="grid"></div>
+        </div>
+
+        <div id="bear-corner">
+          <div id="bear-sprite">🐻</div>
+          <div id="bear-speech" class="hidden"></div>
+          <button id="btn-enter-cabin" class="scene-nav-btn cabin-enter-btn">
+            🏠 Enter Cabin
+          </button>
+        </div>
+
       </div>
 
-      <div id="bear-corner">
-        <div id="bear-sprite">🐻</div>
-        <div id="bear-speech" class="hidden"></div>
-      </div>
+      <!-- ── Scene: Cider Cabin ──────────────────────────────────────── -->
+      <div id="scene-cabin" class="scene">
+
+        <div id="cabin-interior">
+
+          <!-- Cabin header bar -->
+          <div id="cabin-header">
+            <button id="btn-back-orchard" class="scene-nav-btn">← Back to Orchard</button>
+            <span id="cabin-title">🏠 Cider Cabin</span>
+            <span id="cabin-subtitle">Build tools to make cider</span>
+          </div>
+
+          <!-- Main cabin body -->
+          <div id="cabin-body">
+
+            <!-- Wall / workshop area -->
+            <div id="cabin-wall">
+              <div id="cabin-wall-label">Workshop</div>
+              <div id="tools-area">
+                <div class="tool-slot" id="tool-slot-press"></div>
+                <div class="tool-slot" id="tool-slot-fermenter"></div>
+                <div class="tool-slot" id="tool-slot-bottling"></div>
+              </div>
+            </div>
+
+            <!-- Bear corner inside cabin -->
+            <div id="cabin-bear-corner">
+              <div id="cabin-bear">🐻</div>
+              <div id="cabin-bear-speech" class="hidden"></div>
+              <div id="cabin-tip">Tap a blueprint<br>to build a tool!</div>
+            </div>
+
+          </div><!-- /cabin-body -->
+
+        </div><!-- /cabin-interior -->
+
+      </div><!-- /scene-cabin -->
+
     </main>
 
+    <!-- ── Action menu overlay (orchard) ──────────────────────────────── -->
     <div id="overlay" class="hidden"></div>
 
     <div id="action-menu" class="hidden">
@@ -55,6 +118,7 @@
       <button id="action-cancel">✕ Cancel</button>
     </div>
 
+    <!-- ── Status bar (always visible) ───────────────────────────────── -->
     <footer id="status-bar">
       <span id="status-msg">Click a tile to interact with it!</span>
     </footer>

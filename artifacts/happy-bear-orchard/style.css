@@ -44,14 +44,14 @@ body {
   padding: 10px 20px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
   box-shadow: 0 2px 8px var(--color-shadow);
   z-index: 10;
 }
 
 #game-title {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-accent);
   letter-spacing: 0.03em;
@@ -60,7 +60,7 @@ body {
 
 #resources {
   display: flex;
-  gap: 14px;
+  gap: 8px;
   flex-wrap: wrap;
   flex: 1;
 }
@@ -68,26 +68,36 @@ body {
 .resource-item {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 0.875rem;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  transition: opacity 0.3s;
 }
 
-.res-icon { font-size: 1rem; }
-.res-label { color: var(--color-text-dim); font-size: 0.75rem; }
+.resource-item.res-zero {
+  opacity: 0.35;
+}
+
+.res-cider-group {
+  border-color: rgba(160,100,40,0.4);
+  background: rgba(140,80,20,0.15);
+}
+
+.res-icon  { font-size: 1rem; }
+.res-label { color: var(--color-text-dim); font-size: 0.72rem; }
 .res-count {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--color-accent);
-  min-width: 22px;
+  min-width: 18px;
   text-align: right;
 }
 
 #day-counter {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--color-text-dim);
   white-space: nowrap;
   font-style: italic;
@@ -97,20 +107,70 @@ body {
 #game-area {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
   position: relative;
-  gap: 20px;
+  overflow: hidden;
 }
 
-/* ===== GRID ===== */
+/* ===== SCENES ===== */
+.scene {
+  display: none;
+  flex: 1;
+  width: 100%;
+  animation: scene-fade 0.25s ease;
+}
+
+.scene-active {
+  display: flex;
+}
+
+@keyframes scene-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SCENE NAV BUTTONS ===== */
+.scene-nav-btn {
+  background: var(--color-hud-bg);
+  color: var(--color-accent);
+  border: 2px solid var(--color-hud-border);
+  border-radius: 24px;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.scene-nav-btn:hover {
+  background: #5c3d1a;
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.cabin-enter-btn {
+  margin-top: 14px;
+  align-self: center;
+  font-size: 0.9rem;
+  padding: 10px 22px;
+}
+
+/* ===== ORCHARD SCENE ===== */
+#scene-orchard {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
 #orchard-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* ===== GRID ===== */
 #grid {
   display: grid;
   grid-template-columns: repeat(10, var(--tile-size));
@@ -144,15 +204,10 @@ body {
   z-index: 2;
 }
 
-.tile:active {
-  transform: scale(0.95);
-}
+.tile:active { transform: scale(0.95); }
 
-/* State-specific colours (background set by JS via style.background) */
-.tile-locked   { cursor: default; opacity: 0.55; }
+.tile-locked    { cursor: default; opacity: 0.55; }
 .tile-clearable { box-shadow: inset 0 0 0 2px rgba(255,220,100,0.3); }
-.tile-cleared  {}
-.tile-planted  {}
 .tile-harvestable {
   animation: pulse-harvest 1.4s ease-in-out infinite;
 }
@@ -162,12 +217,10 @@ body {
   50%       { filter: brightness(1.3) drop-shadow(0 0 6px #ffe000); }
 }
 
-/* Growth progress bar shown on planted tiles */
 .tile.growing::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: 0; left: 0;
   height: 4px;
   width: var(--grow-pct, 0%);
   background: #7fff00;
@@ -175,13 +228,12 @@ body {
   transition: width 0.4s ease;
 }
 
-/* ===== BEAR CORNER ===== */
+/* ===== BEAR CORNER (orchard) ===== */
 #bear-corner {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  position: relative;
 }
 
 #bear-sprite {
@@ -215,8 +267,7 @@ body {
 #bear-speech::before {
   content: '';
   position: absolute;
-  top: -10px;
-  left: 50%;
+  top: -10px; left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
   border-bottom-color: var(--color-accent);
@@ -227,7 +278,7 @@ body {
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ===== OVERLAY ===== */
+/* ===== OVERLAY & ACTION MENU ===== */
 #overlay {
   position: fixed;
   inset: 0;
@@ -236,11 +287,9 @@ body {
   cursor: pointer;
 }
 
-/* ===== ACTION MENU ===== */
 #action-menu {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   background: #fdf3e3;
   color: #2d1a0a;
@@ -296,27 +345,14 @@ body {
   transform: translateY(-1px);
 }
 
-.action-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.action-btn:disabled,
-.action-btn.cant-afford {
+.action-btn:disabled, .action-btn.cant-afford {
   opacity: 0.45;
   cursor: not-allowed;
   border-color: #ccc;
 }
 
-.action-label {
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #2d1a0a;
-}
-
-.action-desc {
-  font-size: 0.73rem;
-  color: #7a5030;
-}
+.action-label { font-weight: 700; font-size: 0.9rem; color: #2d1a0a; }
+.action-desc  { font-size: 0.73rem; color: #7a5030; }
 
 .no-actions {
   text-align: center;
@@ -339,9 +375,7 @@ body {
   transition: background 0.12s;
 }
 
-#action-cancel:hover {
-  background: #f5e0c0;
-}
+#action-cancel:hover { background: #f5e0c0; }
 
 /* ===== STATUS BAR ===== */
 #status-bar {
@@ -353,9 +387,333 @@ body {
   text-align: center;
 }
 
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║               CIDER CABIN SCENE                              ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+#scene-cabin {
+  flex-direction: column;
+  background: #5a3a1a;
+}
+
+#cabin-interior {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Cabin header bar ── */
+#cabin-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #3b2010;
+  border-bottom: 3px solid #2a1608;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+#cabin-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f5d9a0;
+  letter-spacing: 0.04em;
+}
+
+#cabin-subtitle {
+  font-size: 0.78rem;
+  color: #a08060;
+  font-style: italic;
+  margin-left: auto;
+}
+
+/* ── Cabin body ── */
+#cabin-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Workshop wall ── */
+#cabin-wall {
+  flex: 1;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #6b3e1a 0px, #6b3e1a 48px,
+      #5a3215 48px, #5a3215 50px
+    );
+  padding: 16px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  border-right: 4px solid #3b2010;
+}
+
+#cabin-wall-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #c8a060;
+  border-bottom: 1px solid #8b5e30;
+  padding-bottom: 6px;
+}
+
+#tools-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+/* ── Tool slots ── */
+.tool-slot {
+  flex: 1 1 180px;
+  min-width: 160px;
+  max-width: 240px;
+}
+
+/* ── Tool cards ── */
+.tool-card {
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  transition: transform 0.15s;
+}
+
+.tool-card:hover { transform: translateY(-2px); }
+
+.tool-card-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-radius: 20px;
+  padding: 2px 8px;
+  align-self: flex-start;
+}
+
+.tool-card-icon {
+  font-size: 2rem;
+  line-height: 1;
+  margin: 4px 0 2px;
+}
+
+.tool-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.tool-desc {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.tool-cost, .tool-recipe {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Blueprint state */
+.tool-blueprint {
+  background: rgba(200,180,120,0.12);
+  border: 2px dashed rgba(200,180,120,0.5);
+  color: #d4b880;
+}
+
+.tool-blueprint .tool-card-badge {
+  background: rgba(200,180,120,0.2);
+  color: #c8a050;
+}
+
+.tool-blueprint .tool-cost { color: #c8a050; }
+
+.tool-blueprint .btn-build {
+  margin-top: 4px;
+  background: #c8863a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.1s;
+}
+
+.tool-blueprint .btn-build:hover:not(:disabled) {
+  background: #e0983e;
+  transform: translateY(-1px);
+}
+
+.tool-blueprint .btn-build:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tool-broke {
+  border-color: rgba(180,80,80,0.5) !important;
+  color: #c08080 !important;
+}
+
+/* Constructing state */
+.tool-constructing {
+  background: rgba(80,60,20,0.5);
+  border: 2px solid #8b6020;
+  color: #d4b060;
+}
+
+.tool-constructing .tool-card-badge {
+  background: rgba(139,96,32,0.4);
+  color: #e0c060;
+}
+
+.hammer-anim {
+  animation: hammer 0.6s ease-in-out infinite alternate;
+  display: inline-block;
+}
+
+@keyframes hammer {
+  from { transform: rotate(-20deg) translateY(0); }
+  to   { transform: rotate(10deg)  translateY(4px); }
+}
+
+.tool-building-text {
+  font-size: 0.8rem;
+  color: #d4b060;
+  font-weight: 600;
+}
+
+.tool-progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.tool-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c8863a, #ffe060);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Operational state */
+.tool-operational {
+  background: linear-gradient(145deg, #2a4a1a, #1e3812);
+  border: 2px solid #4a8030;
+  color: #c8e8a0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.tool-operational .tool-card-badge {
+  background: rgba(74,128,48,0.4);
+  color: #90d060;
+}
+
+.tool-operational .tool-name { color: #d8f0a0; }
+.tool-recipe { color: #a0d080; }
+
+.tool-busy {
+  border-color: #c8a030 !important;
+  background: linear-gradient(145deg, #3a3a10, #2a2a08) !important;
+}
+
+.tool-operational .btn-use {
+  margin-top: 4px;
+  background: #4a8030;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.1s;
+}
+
+.tool-operational .btn-use:hover:not(:disabled) {
+  background: #5aa040;
+  transform: translateY(-1px);
+}
+
+.tool-operational .btn-use:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Cabin bear corner ── */
+#cabin-bear-corner {
+  width: 160px;
+  min-width: 140px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #8b5e2a 0px, #8b5e2a 48px,
+      #7a5222 48px, #7a5222 50px
+    );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px 12px;
+  gap: 10px;
+  border-left: 3px solid #3b2010;
+}
+
+#cabin-bear {
+  font-size: clamp(48px, 8vw, 72px);
+  animation: bear-idle 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  user-select: none;
+}
+
+#cabin-bear-speech {
+  background: #fff8e7;
+  color: #3b2a1a;
+  border: 2px solid var(--color-accent);
+  border-radius: 14px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  max-width: 140px;
+  text-align: center;
+  box-shadow: 0 3px 10px var(--color-shadow);
+  animation: speech-in 0.2s ease;
+  position: relative;
+}
+
+#cabin-bear-speech::before {
+  content: '';
+  position: absolute;
+  bottom: -10px; left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-accent);
+}
+
+#cabin-tip {
+  font-size: 0.7rem;
+  color: #c8a060;
+  text-align: center;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
 /* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  #game-title { font-size: 0.95rem; }
-  #bear-corner { display: none; }
-  #game-area { padding: 10px; }
+@media (max-width: 700px) {
+  #game-title   { font-size: 0.9rem; }
+  #bear-corner  { display: none; }
+  #scene-orchard { padding: 10px; }
+  #cabin-bear-corner { display: none; }
+  .tool-slot { min-width: 140px; }
+  #cabin-subtitle { display: none; }
 }
