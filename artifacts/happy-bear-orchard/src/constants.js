@@ -17,21 +17,19 @@ export const ACTION = {
 };
 
 export const RESOURCE = {
-  WOOD:  'wood',
-  STONE: 'stone',
-  FRUIT: 'fruit',
-  CUPS:  'cups',
-  JUICE: 'juice',
-  CIDER: 'cider',
-};
-
-export const RESOURCE_ICONS = {
-  [RESOURCE.WOOD]:  '🪵',
-  [RESOURCE.STONE]: '🪨',
-  [RESOURCE.FRUIT]: '🍎',
-  [RESOURCE.CUPS]:  '☕',
-  [RESOURCE.JUICE]: '🧃',
-  [RESOURCE.CIDER]: '🍺',
+  WOOD:           'wood',
+  STONE:          'stone',
+  FRUIT:          'fruit',
+  CUPS:           'cups',
+  JUICE:          'juice',
+  CIDER:          'cider',
+  HOPS:           'hops',
+  APPLEJACK:      'applejack',
+  WHISKEY:        'whiskey',
+  FRUIT_BEER:     'fruit_beer',
+  COFFEE_BEAN:    'coffee_bean',
+  ROASTED_COFFEE: 'roasted_coffee',
+  COFFEE_STOUT:   'coffee_stout',
 };
 
 export const ACTION_COSTS = {
@@ -69,62 +67,3 @@ export const TILE_VISUAL = {
 export const GROW_TICKS_NEEDED = 5;
 export const WATER_GROW_BONUS  = 2;
 export const GAME_TICK_MS      = 3000;
-
-// ── Cabin ─────────────────────────────────────────────────────────────────────
-
-export const TOOL = {
-  PRESS:     'press',
-  FERMENTER: 'fermenter',
-  BOTTLING:  'bottling',
-};
-
-export const TOOL_STATE = {
-  BLUEPRINT:    'blueprint',
-  CONSTRUCTING: 'constructing',
-  OPERATIONAL:  'operational',
-};
-
-export const TOOL_DEFS = {
-  [TOOL.PRESS]: {
-    name:            '🍎 Cider Press',
-    icon:            '🍎',
-    description:     'Crush fruit into fresh juice',
-    costs:           { [RESOURCE.WOOD]: 4, [RESOURCE.STONE]: 2 },
-    constructionSecs: 8,
-    action: {
-      label:  'Press Fruit',
-      costs:  { [RESOURCE.FRUIT]: 2 },
-      yields: { [RESOURCE.JUICE]: 1 },
-    },
-  },
-  [TOOL.FERMENTER]: {
-    name:            '🪣 Fermenter',
-    icon:            '🪣',
-    description:     'Ferment juice into cider',
-    costs:           { [RESOURCE.WOOD]: 3, [RESOURCE.STONE]: 4 },
-    constructionSecs: 12,
-    action: {
-      label:     'Ferment Juice',
-      costs:     { [RESOURCE.JUICE]: 1 },
-      yields:    { [RESOURCE.CIDER]: 1 },
-      timerSecs:  8,
-    },
-  },
-  [TOOL.BOTTLING]: {
-    name:            '🍶 Bottling Station',
-    icon:            '🍶',
-    description:     'Bottle cider into delicious cups',
-    costs:           { [RESOURCE.WOOD]: 5, [RESOURCE.STONE]: 3 },
-    constructionSecs: 10,
-    action: {
-      label:  'Bottle Cider',
-      costs:  { [RESOURCE.CIDER]: 1 },
-      yields: { [RESOURCE.CUPS]: 3 },
-    },
-  },
-};
-
-export const SCENE = {
-  ORCHARD: 'orchard',
-  CABIN:   'cabin',
-};
