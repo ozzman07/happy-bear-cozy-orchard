@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Bear Cozy Orchard 🐻🍎</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <header id="hud">
+      <div id="game-title">🐻 Happy Bear Cozy Orchard</div>
+      <div id="resources">
+        <div class="resource-item">
+          <span class="res-icon">🪵</span>
+          <span class="res-label">Wood</span>
+          <span class="res-count" id="count-wood">0</span>
+        </div>
+        <div class="resource-item">
+          <span class="res-icon">🪨</span>
+          <span class="res-label">Stone</span>
+          <span class="res-count" id="count-stone">0</span>
+        </div>
+        <div class="resource-item">
+          <span class="res-icon">🍎</span>
+          <span class="res-label">Fruit</span>
+          <span class="res-count" id="count-fruit">0</span>
+        </div>
+        <div class="resource-item">
+          <span class="res-icon">☕</span>
+          <span class="res-label">Cups</span>
+          <span class="res-count" id="count-cups">0</span>
+        </div>
+      </div>
+      <div id="day-counter">Day <span id="day-num">1</span></div>
+    </header>
+
+    <main id="game-area">
+      <div id="orchard-container">
+        <div id="grid"></div>
+      </div>
+
+      <div id="bear-corner">
+        <div id="bear-sprite">🐻</div>
+        <div id="bear-speech" class="hidden"></div>
+      </div>
+    </main>
+
+    <div id="overlay" class="hidden"></div>
+
+    <div id="action-menu" class="hidden">
+      <div id="action-menu-title">Choose Action</div>
+      <div id="action-menu-buttons"></div>
+      <button id="action-cancel">✕ Cancel</button>
+    </div>
+
+    <footer id="status-bar">
+      <span id="status-msg">Click a tile to interact with it!</span>
+    </footer>
+
+  </div>
+
+  <script type="module" src="./script.js"></script>
+</body>
+</html>
