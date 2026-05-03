@@ -1,0 +1,167 @@
+Create or overwrite the file at:
+/docs/DataModels.md
+
+Generate a complete, uninterrupted Markdown document titled:
+"Happy Bear Cozy Orchard — Data Models & Schemas (v1.0)"
+
+The document must include ALL of the following sections, fully written out in detail:
+
+1. Data Model Overview
+   - Purpose of data models in the game
+   - How systems read from and write to data
+   - Principles: consistency, clarity, AI-readiness, modularity
+   - How JSON/YAML structures map to gameplay systems
+
+2. Core Data Types
+   Define and describe the purpose of each:
+   - Ingredient
+   - Recipe
+   - Tool
+   - Zone
+   - Tile
+   - Season
+   - StoryEvent
+   - Character
+   - BeverageCategory
+   - QualityTier
+   - Resource (Cups, Wood, Stone, etc.)
+
+3. Ingredient Schema
+   Include fields such as:
+   - id
+   - name
+   - type (fruit, botanical, grain, spice, etc.)
+   - zoneSource
+   - growthTime
+   - seasonality
+   - qualityRange
+   - notes
+
+4. Recipe Schema
+   Include fields such as:
+   - id
+   - name
+   - category (cider, soda, hard soda, whiskey, beer, coffee)
+   - ingredients (list of ingredient IDs + quantities)
+   - requiredTools
+   - workflowSteps
+   - seasonality
+   - unlockConditions
+   - outputQualityRules
+   - notes
+
+5. Tool Schema
+   Include fields such as:
+   - id
+   - name
+   - category (press, fermenter, soda station, still, etc.)
+   - constructionCost (wood, stone, cups)
+   - upgradeLevels (list of objects)
+   - supportedWorkflows
+   - dependencies
+   - notes
+
+6. Zone Schema
+   Include fields such as:
+   - id
+   - name
+   - unlockCondition
+   - crops
+   - biomeType
+   - seasonalEffects
+   - visualStyle
+   - notes
+
+7. Tile Schema
+   Include fields such as:
+   - id
+   - tileType
+   - tileState
+   - zone
+   - growthData (if planted)
+   - obstacleData (if applicable)
+   - unlockCost
+   - fogOfWarState
+   - notes
+
+8. Season Schema
+   Include fields such as:
+   - id
+   - name
+   - cropModifiers
+   - visualEffects
+   - seasonalRecipes
+   - seasonalEvents
+   - notes
+
+9. StoryEvent Schema
+   Include fields such as:
+   - id
+   - name
+   - triggerConditions
+   - charactersInvolved
+   - narrativeText
+   - rewards
+   - notes
+
+10. Character Schema
+   Include fields such as:
+   - id
+   - name
+   - personalityTraits
+   - behaviors
+   - seasonalOutfits
+   - dialogueSets
+   - storyRoles
+   - notes
+
+11. BeverageCategory Schema
+   Include fields such as:
+   - id
+   - name
+   - workflow
+   - qualityRules
+   - seasonalVariants
+   - notes
+
+12. QualityTier Schema
+   Include fields such as:
+   - id
+   - name (Common, Fine, Premium, Masterwork)
+   - numericRange
+   - visualIndicators
+   - gameplayEffects
+   - notes
+
+13. Resource Schema
+   Include fields such as:
+   - id
+   - name
+   - type (currency, material, ingredient)
+   - usage
+   - acquisitionMethods
+   - notes
+
+14. Cross-Model Relationships
+   - How recipes reference ingredients and tools
+   - How zones reference crops and biome types
+   - How story events reference characters and seasons
+   - How tools reference workflows and dependencies
+   - How quality tiers apply across all beverage categories
+
+15. Example JSON Objects
+   Provide at least one example for:
+   - Ingredient
+   - Recipe
+   - Tool
+   - Zone
+   - Tile
+   - StoryEvent
+
+   Examples must be realistic, complete, and consistent with the schemas.
+
+16. Final Notes
+   - State that this file is the authoritative source for all data structures and schemas in the game.
+   - No placeholders, no TODOs, no missing sections.
+
+Write the entire document in clean, uninterrupted Markdown.
