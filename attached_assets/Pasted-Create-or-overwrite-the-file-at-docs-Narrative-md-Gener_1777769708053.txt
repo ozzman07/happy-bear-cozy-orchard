@@ -1,0 +1,91 @@
+Create or overwrite the file at:
+/docs/Narrative.md
+
+Generate a complete, uninterrupted Markdown document titled:
+"Happy Bear Cozy Orchard — Narrative, Characters, & Story (v1.0)"
+
+The document must include ALL of the following sections, fully written out in detail:
+
+1. Narrative Overview
+   - Tone: warm, cozy, storybook, gentle humor
+   - Themes: craftsmanship, nature, friendship, seasonal rhythms, small joys
+   - Narrative structure: multi-act progression tied to zones, seasons, and cabin upgrades
+
+2. Main Characters
+   A. Happy Bear
+      - Personality traits
+      - Role in gameplay
+      - Daily behaviors
+      - Seasonal outfits
+      - Emotional arc
+      - Signature reactions to new flavors
+
+   B. Story Bear
+      - Personality traits
+      - Role as storyteller and lore keeper
+      - How he appears during progression
+      - His connection to the orchard’s history
+
+   C. Supporting Characters (non-playable)
+      - Mama Bear (Pecan Pie story)
+      - The Old Cooper (barrel lore)
+      - The Traveling Botanist (botanical grove lore)
+      - The Hops Hermit (Hops Hill lore)
+      - The Greenhouse Keeper (coffee and citrus lore)
+
+3. Story Structure (Acts 1–6)
+   For each act, include:
+   - Title
+   - Trigger conditions
+   - Story events
+   - Character interactions
+   - Recipes or tools unlocked
+   - Emotional tone
+
+   Acts to include:
+   - Act 1: “The Orchard Begins”
+   - Act 2: “Flavors of the Grove”
+   - Act 3: “The Soda Station”
+   - Act 4: “The Distillery”
+   - Act 5: “The Brewery”
+   - Act 6: “The Roastery”
+
+4. Seasonal Story Events
+   - Spring: renewal, blossoms, new flavors
+   - Summer: brightness, berries, watermelon, outdoor scenes
+   - Fall: harvest, maple, cozy evenings
+   - Winter: snow, applejack, quiet reflection
+   - Include at least one short narrative moment per season
+
+5. Flavor Stories
+   For each category (cider, soda, hard soda, whiskey, beer, coffee), include:
+   - A short lore paragraph describing how flavors connect to the orchard’s history
+   - Happy Bear’s personal memories or reactions
+   - Story Bear’s commentary or folklore
+
+6. Special Story Moments
+   Include detailed descriptions of:
+   - Mama Bear’s Visit (Pecan Pie cider unlock)
+   - The First Barrel (whiskey introduction)
+   - The Night of Fireflies (summer event)
+   - The Maple Moon (fall event)
+   - The Winter Quiet (applejack event)
+   - The First Roast (coffee system introduction)
+
+7. Character Progression
+   - How Happy Bear evolves as the orchard grows
+   - How Story Bear reveals deeper lore over time
+   - How seasonal outfits and behaviors reflect progression
+   - How characters respond to player achievements
+
+8. Narrative Integration with Gameplay
+   - How story moments trigger
+   - How narrative ties into recipes, zones, and tools
+   - How the player’s orchard becomes part of the story
+   - How the narrative reinforces cozy pacing
+
+9. Final Notes
+   - State that this file is the authoritative source for all narrative, character, and story content in the game.
+   - No placeholders, no TODOs, no missing sections.
+
+Write the entire document in clean, uninterrupted Markdown.
