@@ -1,0 +1,109 @@
+Create or overwrite the file at:
+/docs/Systems.md
+
+Generate a complete, uninterrupted Markdown document titled:
+"Happy Bear Cozy Orchard — Core Game Systems (v1.0)"
+
+The document must include ALL of the following sections, fully written out in detail:
+
+1. Overview of All Systems
+   - High-level description of how all production, farming, crafting, and seasonal systems interact
+   - Emphasis on modularity and cross-category synergy
+
+2. Cider Production System
+   - Full workflow: Press → Ferment → Flavor → Age (optional) → Bottle
+   - Input rules (fruit quality, quantity)
+   - Fermentation timing
+   - Flavoring rules (botanicals, blends)
+   - Aging rules (barrels, time, wood types)
+   - Output quality tiers
+
+3. Craft Soda System
+   - Syrup creation at Soda Station
+   - Carbonation rules
+   - Flavor infusion rules
+   - Seasonal soda variations
+   - Output quality tiers
+
+4. Hard Soda System
+   - Combination of Soda Station + Still
+   - Alcohol base creation
+   - Blending rules
+   - Strength tiers
+   - Seasonal hard sodas
+
+5. Applejack System
+   - Freeze-distillation rules
+   - Winter yield bonus
+   - Aging rules
+   - Quality tiers
+
+6. Whiskey System
+   - Mash creation (Mash Tun)
+   - Distillation (Still + Cooling Coil)
+   - Barrel aging (wood types, time, flavor effects)
+   - Specialty barrels (cherrywood, fruitwood)
+   - Output quality tiers
+
+7. Beer System
+   - Mash → Boil → Hops → Ferment → Bottle
+   - Hops Hill integration
+   - Seasonal beer variants
+   - Hybrid cider-beer rules
+
+8. Coffee System
+   - Coffee cherry harvesting (Tropical Greenhouse)
+   - Roasting levels (light, medium, dark)
+   - Flavor blending (fruit, botanicals)
+   - Specialty brews
+   - Output quality tiers
+
+9. Seasonal System
+   - Season cycle rules
+   - Seasonal crop growth modifiers
+   - Seasonal recipe availability
+   - Seasonal visual effects
+   - Seasonal bonuses (e.g., winter applejack yield)
+
+10. Happy Bear Task System
+   - Daily tasks
+   - Cabin cleaning
+   - Fermenter checks
+   - Flavor reactions
+   - Seasonal outfits
+   - Story-triggered tasks
+
+11. Cabin Expansion System
+   - How new wings unlock (Soda Station, Distillery, Brewery, Roastery)
+   - Capacity increases
+   - Tool slot expansion
+   - Decorative upgrades
+
+12. Resource Economy System
+   - Cups (soft currency)
+   - Wood and Stone (construction resources)
+   - Fruit and Botanicals (production inputs)
+   - Bear Energy (task pacing)
+   - Scaling rules for costs and rewards
+
+13. Quality & Tier System
+   - How ingredient quality affects final product
+   - How tool upgrades affect quality
+   - Tier definitions (Common, Fine, Premium, Masterwork)
+
+14. Automation & Efficiency Systems
+   - Tool upgrades that reduce time
+   - Multi-batch systems
+   - Storage and inventory rules
+   - Late-game efficiency loops
+
+15. Cross-System Synergy
+   - How cider supports whiskey
+   - How botanicals support soda and coffee
+   - How seasonal crops unlock hybrid beverages
+   - How cabin upgrades unlock new systems
+
+16. Final Notes
+   - State that this file is the authoritative source for all production, crafting, seasonal, and progression systems in the game.
+
+Write the entire document in clean, uninterrupted Markdown with no placeholders, no TODOs, and no missing sections.
