@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Happy Bear Cozy Orchard</title>
+    <link rel="stylesheet" href="src/ui/styles.css" />
+    <link rel="stylesheet" href="src/ui/intro.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      import { BootRouter } from "./src/boot/BootRouter.js";
+      import { mountRoot } from "./src/ui/initUI.js";
+
+      mountRoot();
+      BootRouter.start();
+    </script>
+  </body>
+</html>

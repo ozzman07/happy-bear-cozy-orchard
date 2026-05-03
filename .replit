@@ -1,5 +1,7 @@
 modules = ["nodejs-24"]
 
+run = "npx http-server . -p 8080"
+
 [deployment]
 router = "application"
 deploymentTarget = "autoscale"
