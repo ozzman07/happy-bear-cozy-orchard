@@ -1,0 +1,135 @@
+Create or overwrite the file at:
+/docs/RepoStructure.md
+
+Generate a complete, uninterrupted Markdown document titled:
+"Happy Bear Cozy Orchard — Repository Structure & Architecture (v1.0)"
+
+The document must include ALL of the following sections, fully written out in detail:
+
+1. Repository Overview
+   - Purpose of the repo
+   - High-level architecture
+   - How the repo supports modular game development
+   - Philosophy: clarity, separation of concerns, AI-readiness
+
+2. Top-Level Directory Structure
+   Provide a full breakdown of all major folders, including:
+   - /src
+   - /public or /assets
+   - /docs
+   - /data
+   - /scripts
+   - /ui
+   - /systems
+   - /components
+   - /engine (if applicable)
+   - /tests
+   - /build or /dist
+
+   For each folder, describe:
+   - Purpose
+   - What files belong there
+   - How it interacts with other folders
+
+3. /docs Directory Structure
+   Include and describe:
+   - GameDesign.md
+   - Recipes.md
+   - Progression.md
+   - Tools.md
+   - WorldMap.md
+   - Systems.md
+   - Narrative.md
+   - RepoStructure.md
+   - DataModels.md
+
+   Explain how these documents form the authoritative design suite.
+
+4. /src Directory Structure
+   Break down subfolders such as:
+   - /src/core
+   - /src/systems
+   - /src/world
+   - /src/characters
+   - /src/beverages
+   - /src/ui
+   - /src/utils
+
+   For each:
+   - Purpose
+   - Example files
+   - How code should be organized
+
+5. Systems Architecture
+   Describe how game systems are organized in code:
+   - Cider system
+   - Soda system
+   - Hard soda system
+   - Applejack system
+   - Whiskey system
+   - Beer system
+   - Coffee system
+   - Seasonal system
+   - Happy Bear task system
+   - Resource economy system
+   - Cabin expansion system
+
+   Include:
+   - How systems communicate
+   - How data flows between systems
+   - How systems remain modular
+
+6. UI Architecture
+   - Folder structure for UI components
+   - Naming conventions
+   - State management
+   - How UI reads from data models
+   - How UI updates based on system events
+
+7. Asset Organization
+   - Folder structure for images, sprites, animations, audio
+   - Naming conventions
+   - Seasonal variants
+   - Zone-specific assets
+   - Character assets (Happy Bear, Story Bear, etc.)
+
+8. Data Folder Structure
+   - JSON or YAML files for:
+     - Recipes
+     - Zones
+     - Tools
+     - Seasonal data
+     - Story events
+     - Character data
+   - Rules for schema consistency
+   - How systems load data
+
+9. Scripts & Automation
+   - Build scripts
+   - Data validation scripts
+   - Asset pipeline scripts
+   - Linting and formatting rules
+
+10. Testing Structure
+   - Unit tests
+   - System tests
+   - Data validation tests
+   - UI snapshot tests
+   - Folder layout and naming conventions
+
+11. Versioning & Branching Strategy
+   - Main branch rules
+   - Feature branches
+   - Release tags
+   - Commit message conventions
+
+12. AI-Readiness & Documentation Standards
+   - How to maintain clean, structured, AI-friendly documentation
+   - Rules for updating docs when systems change
+   - Requirements for keeping the repo consistent with the design suite
+
+13. Final Notes
+   - State that this file is the authoritative source for repository structure and architectural organization.
+   - No placeholders, no TODOs, no missing sections.
+
+Write the entire document in clean, uninterrupted Markdown.
