@@ -1,0 +1,354 @@
+Create or overwrite the file at:
+/docs/Recipes.md
+
+Insert the following content into that file.  
+This document defines ALL beverage recipes in the game.  
+Replit must treat this file as the authoritative source for recipe data, flavor definitions, seasonal availability, and ingredient requirements.  
+All future recipe-related JSON, UI, gameplay logic, and unlock systems must follow this document exactly.
+
+# Happy Bear Cozy Orchard — Recipe Compendium (v1.0)
+
+This file contains every beverage recipe in the game across all categories:
+- Cider
+- Craft Soda
+- Hard Soda
+- Applejack
+- Whiskey
+- Beer
+- Coffee
+- Seasonal & Limited-Time Recipes
+
+Each recipe includes:
+- Category
+- Ingredients
+- Required Tools
+- Unlock Conditions
+- Seasonal Availability (if applicable)
+- Notes & Flavor Story
+
+---
+
+# 1. Cider Recipes
+
+## The Happy Pour
+**Category:** Cider  
+**Ingredients:** Apples  
+**Tools:** Press → Fermenter → Bottling Station  
+**Unlock:** Starter recipe  
+**Season:** All  
+**Notes:** The foundational cider of the orchard.
+
+## Autumn Hug
+**Ingredients:** Apples, Cinnamon  
+**Tools:** Press, Fermenter, Flavor Table  
+**Unlock:** Clear 10 orchard tiles  
+**Season:** Fall  
+**Notes:** Warm, cozy, nostalgic.
+
+## Cider Creek Blue
+**Ingredients:** Apples, Blueberries  
+**Tools:** Press, Fermenter, Flavor Table  
+**Unlock:** Unlock Blueberry Bend  
+**Season:** All  
+**Notes:** A crisp, fruity blend.
+
+## Creekside Watermelon
+**Ingredients:** Watermelon  
+**Tools:** Press, Fermenter  
+**Unlock:** Unlock Watermelon Patch  
+**Season:** Summer  
+**Notes:** Light, refreshing, seasonal.
+
+## Golden Vow Strawberry
+**Ingredients:** Apples, Strawberries  
+**Tools:** Press, Fermenter, Flavor Table  
+**Unlock:** Unlock Strawberry Patch  
+**Season:** Spring  
+**Notes:** Sweet and celebratory.
+
+## Washington’s Orchard
+**Ingredients:** Apples (High Quality)  
+**Tools:** Press, Fermenter, Barrel Rack  
+**Unlock:** Build Barrel Rack  
+**Season:** All  
+**Notes:** A tribute to classic American cider.
+
+## Sticky Paws Apple Caramel
+**Ingredients:** Apples, Caramel  
+**Tools:** Press, Fermenter, Flavor Table  
+**Unlock:** Reach Cabin Level 2  
+**Season:** Fall  
+**Notes:** Sweet, sticky, indulgent.
+
+## Mama Bear’s Famous Pecan Pie
+**Ingredients:** Apples, Pecans, Brown Sugar  
+**Tools:** Press, Fermenter, Flavor Table  
+**Unlock:** Story Event: “Mama Bear’s Visit”  
+**Season:** Fall/Winter  
+**Notes:** A dessert cider.
+
+## Snowfall and Spice
+**Ingredients:** Apples, Winter Spices  
+**Tools:** Press, Fermenter, Flavor Table  
+**Unlock:** Winter Season  
+**Season:** Winter  
+**Notes:** A cozy winter tradition.
+
+## The Long Pour
+**Ingredients:** Apples, Molasses, Oak Aging  
+**Tools:** Press, Fermenter, Barrel Rack  
+**Unlock:** Barrel Rack Level 2  
+**Season:** Fall/Winter  
+**Notes:** Deep, rich, slow-aged.
+
+## Golden Vow (Original)
+**Ingredients:** Apples, Honey  
+**Tools:** Press, Fermenter, Flavor Table  
+**Unlock:** Unlock Honey Pear  
+**Season:** Spring  
+**Notes:** Floral and celebratory.
+
+---
+
+# 2. Craft Soda Recipes
+
+## Happy Bear Root Beer
+**Ingredients:** Sassafras, Birch Bark, Vanilla  
+**Tools:** Soda Station  
+**Unlock:** Unlock Botanical Grove  
+**Season:** All  
+**Notes:** The flagship soda.
+
+## Forest Vanilla Cream Soda
+**Ingredients:** Vanilla Bean, Sugar  
+**Tools:** Soda Station  
+**Unlock:** Vanilla Bean Crop  
+**Season:** All  
+**Notes:** Smooth and creamy.
+
+## Blueberry Breeze Soda
+**Ingredients:** Blueberries, Sugar  
+**Tools:** Soda Station  
+**Unlock:** Blueberry Bend  
+**Season:** Summer  
+**Notes:** Light and fruity.
+
+## Strawberry Spark Soda
+**Ingredients:** Strawberries, Sugar  
+**Tools:** Soda Station  
+**Unlock:** Strawberry Patch  
+**Season:** Spring/Summer  
+**Notes:** Bright and refreshing.
+
+## Ginger Grove Soda
+**Ingredients:** Ginger Root, Sugar  
+**Tools:** Soda Station  
+**Unlock:** Ginger Patch  
+**Season:** All  
+**Notes:** Spicy and crisp.
+
+## Honey Pear Fizz
+**Ingredients:** Pears, Honey  
+**Tools:** Soda Station  
+**Unlock:** Pear Meadow  
+**Season:** Spring  
+**Notes:** Light, floral, sparkling.
+
+## Cherry Orchard Soda
+**Ingredients:** Cherries, Sugar  
+**Tools:** Soda Station  
+**Unlock:** Cherry Grove  
+**Season:** Summer  
+**Notes:** Classic cherry soda.
+
+## Maple Brown Soda
+**Ingredients:** Maple Sap, Brown Sugar  
+**Tools:** Soda Station  
+**Unlock:** Maple Stand  
+**Season:** Fall/Winter  
+**Notes:** Rich and earthy.
+
+---
+
+# 3. Hard Soda Recipes
+
+## Campfire Reserve Root Beer
+**Ingredients:** Sassafras, Birch, Vanilla, Distilled Base  
+**Tools:** Soda Station + Copper Still  
+**Unlock:** Build Distillery  
+**Season:** All  
+**Notes:** Smoky, bold, adult root beer.
+
+## Hard Vanilla Cream
+**Ingredients:** Vanilla Bean, Distilled Base  
+**Tools:** Soda Station + Still  
+**Unlock:** Distillery Level 2  
+**Season:** All  
+**Notes:** Smooth and sweet.
+
+## Hard Cherry Cola
+**Ingredients:** Cherries, Cola Syrup, Distilled Base  
+**Tools:** Soda Station + Still  
+**Unlock:** Cherry Grove  
+**Season:** Summer  
+**Notes:** A nostalgic twist.
+
+## Hard Ginger Spice
+**Ingredients:** Ginger Root, Distilled Base  
+**Tools:** Soda Station + Still  
+**Unlock:** Ginger Patch  
+**Season:** All  
+**Notes:** Sharp and warming.
+
+## Hard Maple Root Beer
+**Ingredients:** Maple Sap, Sassafras, Distilled Base  
+**Tools:** Soda Station + Still  
+**Unlock:** Maple Stand  
+**Season:** Fall/Winter  
+**Notes:** Deep and earthy.
+
+## Hard Blueberry Soda
+**Ingredients:** Blueberries, Distilled Base  
+**Tools:** Soda Station + Still  
+**Unlock:** Blueberry Bend  
+**Season:** Summer  
+**Notes:** Fruity and bright.
+
+## Hard Orange Orchard Soda
+**Ingredients:** Citrus Blend, Distilled Base  
+**Tools:** Soda Station + Still  
+**Unlock:** Tropical Greenhouse  
+**Season:** Summer  
+**Notes:** Zesty and refreshing.
+
+---
+
+# 4. Applejack Recipes
+
+## Applejack (Base)
+**Ingredients:** Cider  
+**Tools:** Freeze-Distillation  
+**Unlock:** Applejack Mastery  
+**Season:** Winter (bonus yield)  
+**Notes:** Strong, traditional.
+
+## Aged Applejack
+**Ingredients:** Applejack, Oak Barrel  
+**Tools:** Barrel Rack  
+**Unlock:** Barrel Rack Level 2  
+**Season:** All  
+**Notes:** Smooth and complex.
+
+---
+
+# 5. Whiskey Recipes
+
+## Apple Whiskey
+**Ingredients:** Apple Mash  
+**Tools:** Mash Tun → Still → Barrel  
+**Unlock:** Distillery  
+**Season:** All  
+**Notes:** Signature orchard whiskey.
+
+## Fruitwood Whiskey
+**Ingredients:** Apple Whiskey, Fruitwood Barrel  
+**Tools:** Barrel Rack  
+**Unlock:** Fruitwood Barrels  
+**Season:** All  
+**Notes:** Subtle fruit notes.
+
+## Cherry Barrel Whiskey
+**Ingredients:** Apple Whiskey, Cherrywood Barrel  
+**Tools:** Barrel Rack  
+**Unlock:** Cherry Grove  
+**Season:** All  
+**Notes:** Sweet and aromatic.
+
+---
+
+# 6. Beer Recipes
+
+## Orchard Ale
+**Ingredients:** Malt, Hops, Apple Juice  
+**Tools:** Mash Tun → Boil → Ferment  
+**Unlock:** Hops Hill  
+**Season:** All  
+**Notes:** Light orchard ale.
+
+## Peach Summer Ale
+**Ingredients:** Malt, Hops, Peaches  
+**Tools:** Mash Tun → Boil → Ferment  
+**Unlock:** Peach Orchard  
+**Season:** Summer  
+**Notes:** Fruity and seasonal.
+
+## Cherry Red Ale
+**Ingredients:** Malt, Hops, Cherries  
+**Tools:** Mash Tun → Boil → Ferment  
+**Unlock:** Cherry Grove  
+**Season:** Summer  
+**Notes:** Bright and tart.
+
+## Watermelon Wheat
+**Ingredients:** Wheat Malt, Watermelon  
+**Tools:** Mash Tun → Boil → Ferment  
+**Unlock:** Watermelon Patch  
+**Season:** Summer  
+**Notes:** Refreshing and light.
+
+## Experimental Cider-Beer Hybrid
+**Ingredients:** Malt, Hops, Cider  
+**Tools:** Mash Tun → Boil → Ferment  
+**Unlock:** Brewery Level 2  
+**Season:** All  
+**Notes:** A unique hybrid beverage.
+
+---
+
+# 7. Coffee Recipes
+
+## Orchard Roast
+**Ingredients:** Coffee Cherries  
+**Tools:** Roaster  
+**Unlock:** Tropical Greenhouse  
+**Season:** All  
+**Notes:** Base roast.
+
+## Morning Blend
+**Ingredients:** Coffee, Apples  
+**Tools:** Roaster + Flavor Table  
+**Unlock:** Coffee System  
+**Season:** All  
+**Notes:** Bright and fruity.
+
+## Dawn Brew
+**Ingredients:** Coffee, Honey  
+**Tools:** Roaster + Flavor Table  
+**Unlock:** Honey Pear  
+**Season:** Spring  
+**Notes:** Smooth and floral.
+
+## Coffee-Fruit Fusion
+**Ingredients:** Coffee, Seasonal Fruit  
+**Tools:** Roaster + Flavor Table  
+**Unlock:** Seasonal Event  
+**Season:** Varies  
+**Notes:** Rotating seasonal blends.
+
+---
+
+# 8. Seasonal & Limited-Time Recipes
+
+## Winter: Snowfall and Spice (Cider)
+## Fall: Sticky Paws Apple Caramel (Cider)
+## Spring: Golden Vow (Cider)
+## Summer: Creekside Watermelon (Cider)
+## Summer: Blueberry Breeze Soda
+## Fall/Winter: Maple Brown Soda
+## Summer: Hard Blueberry Soda
+## Summer: Hard Orange Orchard Soda
+
+---
+
+# End of Recipe Compendium
+Replit must use this file as the single source of truth for all recipe-related data models, JSON exports, UI lists, and gameplay logic.
