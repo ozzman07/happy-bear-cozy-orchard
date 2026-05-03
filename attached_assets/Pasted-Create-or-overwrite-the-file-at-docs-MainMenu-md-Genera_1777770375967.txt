@@ -1,0 +1,123 @@
+Create or overwrite the file at:
+/docs/MainMenu.md
+
+Generate a complete, uninterrupted Markdown document titled:
+"Happy Bear Cozy Orchard — Main Menu, Profiles, Saves, and Settings (v1.0)"
+
+Write the document in a clear, professional tone with gentle cozy flavor consistent with the rest of the Happy Bear Cozy Orchard design suite.  
+This document must serve as the authoritative source for all game entry flow, user profiles, save systems, and settings.
+
+Include ALL of the following sections, fully written out in detail:
+
+1. Purpose of the Main Menu System
+   - Explain why the game needs a main menu.
+   - Describe how it becomes the “front door” of the orchard.
+   - Clarify that this system exists outside gameplay and loads before the orchard.
+
+2. Main Menu Overview
+   - Describe the visual style (cozy cabin, seasonal variants, soft music).
+   - Describe the layout and UI philosophy.
+   - List all menu options:
+     - Start New Game
+     - Continue Game
+     - Load Game
+     - User Profile
+     - Settings
+     - Credits
+     - Exit (desktop only)
+
+3. User Profile System
+   - Explain that profiles are local (no cloud requirement).
+   - Describe profile creation flow.
+   - Describe profile selection flow.
+   - Define profile data fields:
+     - playerName
+     - createdAt
+     - lastPlayed
+     - saveSlots
+     - settings
+     - achievements
+     - progressionFlags
+   - Describe how profiles integrate with saves and settings.
+
+4. Save System
+   - Explain save slots (Slot 1, Slot 2, Slot 3 or more).
+   - Describe autosave rules.
+   - Describe manual save rules.
+   - Define save data fields:
+     - orchardState
+     - cabinLevel
+     - toolsUnlocked
+     - zonesUnlocked
+     - inventory
+     - storyProgress
+     - season
+     - happyBearState
+     - timestamp
+   - Describe how saves are stored in /data/saves.
+
+5. Load Game Flow
+   - Describe how the game checks for existing saves.
+   - Describe how the “Continue” button works.
+   - Describe how the “Load Game” screen lists save slots.
+   - Describe error handling (corrupted save, missing save).
+
+6. Start New Game Flow
+   - Describe how a new game initializes:
+     - New orchard
+     - Starter tools
+     - Apple Grove unlocked
+     - Season = Spring
+     - Story Act 1 triggers
+   - Describe confirmation prompts if a save slot already exists.
+
+7. Settings Menu
+   - Describe categories:
+     - Gameplay (text speed, animation speed, autosave toggle)
+     - Audio (music volume, SFX volume, ambient volume)
+     - Video (pixel scaling, fullscreen)
+     - Accessibility (high contrast, reduced motion, larger text)
+   - Describe how settings are stored per profile.
+   - Describe how settings apply immediately.
+
+8. Credits Screen
+   - Describe the tone and layout.
+   - Mention that credits include:
+     - Jim (creator)
+     - Happy Bear & Story Bear (characters)
+     - AI-assisted development
+     - Additional contributors as added later
+
+9. Integration With Game Flow
+   - Describe how the main menu loads before any game systems.
+   - Describe how selecting a profile loads its settings and save data.
+   - Describe how the orchard scene loads only after menu flow completes.
+
+10. File & System Architecture
+   - Define recommended file structure:
+     - /src/systems/MainMenuSystem.js
+     - /src/systems/ProfileSystem.js
+     - /src/systems/SaveSystem.js
+     - /src/ui/screens/MainMenuScreen.js
+     - /src/ui/screens/ProfileScreen.js
+     - /src/ui/screens/SettingsScreen.js
+     - /data/profiles.json
+     - /data/settings.json
+     - /data/saves/
+   - Describe how these systems remain modular and independent.
+
+11. UX & Cozy Design Notes
+   - Describe how the menu should feel warm, calm, and inviting.
+   - Describe seasonal variants (snow in winter, fireflies in summer).
+   - Describe optional Happy Bear animations (waving, sipping cider, reading).
+
+12. Final Notes
+   - State that this file is the authoritative source for:
+     - Main Menu
+     - User Profiles
+     - Save System
+     - Settings System
+     - Entry flow for the entire game
+   - No placeholders, no TODOs, no missing sections.
+
+Write the entire document in clean, uninterrupted Markdown.
