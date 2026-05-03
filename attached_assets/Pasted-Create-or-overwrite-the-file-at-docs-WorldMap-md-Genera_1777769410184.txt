@@ -1,0 +1,69 @@
+Create or overwrite the file at:
+/docs/WorldMap.md
+
+Generate a complete, uninterrupted Markdown document titled:
+"Happy Bear Cozy Orchard — World Map & Zones (v1.0)"
+
+The document must include ALL of the following sections, fully written out in detail:
+
+1. World Structure Overview
+   - Grid-based orchard layout
+   - Cabin at center
+   - Expansion rings
+   - Zone categories (Fruit, Botanical, Specialty, Seasonal, Production)
+
+2. Tile Types
+   - Grass, Tree, Patch, Botanical, Obstacle, Decorative, Locked, Fogged
+   - Tile states: Locked, Fogged, Clearable, Cleared, Planted, Growing, Harvestable, Dead
+   - Behavior rules for each type
+
+3. Zone List & Details
+   For each zone below, include:
+   - Unlock condition
+   - Crops
+   - Features
+   - Recipes unlocked
+   - Visual identity
+
+   Zones to include:
+   - Apple Grove (Starter)
+   - Peach Orchard
+   - Cherry Grove
+   - Strawberry Patch
+   - Blueberry Bend
+   - Watermelon Patch
+   - Pear Meadow
+   - Botanical Grove
+   - Ginger Patch
+   - Maple Stand
+   - Hops Hill
+   - Tropical Greenhouse
+
+4. Biome Transitions
+   - Biome types: Temperate Orchard, Berry Fields, Summer Patch, Botanical Forest, Maple Woods, Hops Highlands, Tropical Biome
+   - Visual blending rules
+   - Seasonal overlays (spring bloom, summer light, fall leaves, winter snow)
+   - Special effects (fireflies, drifting petals, frost)
+
+5. Expansion Logic
+   - Tile unlock costs (Cups, Wood, Stone)
+   - Scaling rules based on distance from Cabin
+   - Fog-of-war reveal rules
+   - Resource rewards from clearing tiles
+
+6. Seasonal Effects on Zones
+   - Spring: berry growth, floral overlays
+   - Summer: watermelon growth, bright lighting
+   - Fall: maple glow, leaf overlays
+   - Winter: snow, applejack bonus
+
+7. World Map Layout (Abstract)
+   Include an ASCII diagram showing:
+   Tropical Greenhouse → Hops Hill → Cabin → Botanical Grove  
+   Blueberry Bend → Strawberry Patch  
+   Cherry Grove → Peach Orchard → Apple Grove
+
+8. Final Notes
+   - State that this file is the authoritative source for world layout, zone progression, tile behavior, and biome transitions.
+
+Write the entire document in clean, uninterrupted Markdown with no placeholders, no TODOs, and no missing sections.
