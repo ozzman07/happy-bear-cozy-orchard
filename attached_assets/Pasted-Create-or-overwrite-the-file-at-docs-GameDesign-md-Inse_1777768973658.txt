@@ -1,3 +1,8 @@
+Create or overwrite the file at:
+/docs/GameDesign.md
+
+Insert the following content into that file. Treat this document as the authoritative architecture guide for the entire project. All future code, systems, and structures must follow this document exactly.
+
 # Happy Bear Cozy Orchard — Game Design Overview (Expanded v1.4)
 
 ## 1. Game Concept
@@ -70,7 +75,7 @@ Players unlock new land tiles using Cups, wood, and stone. Includes:
 - Biome transitions
 
 ## 4. Cabin & Beverage Production System
-The Cider Cabin is the player's production hub. As the game progresses, it expands into a multi‑wing workshop supporting cider, soda, spirits, beer, and coffee.
+The Cider Cabin is the player’s production hub. As the game progresses, it expands into a multi‑wing workshop supporting cider, soda, spirits, beer, and coffee.
 
 ### 4.1 Buildable Tools
 - Press
@@ -184,9 +189,9 @@ Each new crop or botanical unlocks:
 - Cider Creek Blue
 - Creekside Watermelon
 - Golden Vow Strawberry
-- Washington's Orchard
+- Washington’s Orchard
 - Sticky Paws Apple Caramel
-- Mama Bear's Famous Pecan Pie
+- Mama Bear’s Famous Pecan Pie
 - Snowfall and Spice
 - The Long Pour
 - Golden Vow (Original)
@@ -262,4 +267,4 @@ Seasonal recipes appear only during their season:
 - Sticker exports
 
 ## 12. Summary
-Happy Bear Cozy Orchard is a cozy, expandable simulation game centered on orchard growth, handcrafted beverages, and warm character interactions. Its modular systems support cider, soda, spirits, beer, and coffee — all tied together through progression, seasonal content, and the charm of Happy Bear's world.
+Happy Bear Cozy Orchard is a cozy, expandable simulation game centered on orchard growth, handcrafted beverages, and warm character interactions. Its modular systems support cider, soda, spirits, beer, and coffee — all tied together through progression, seasonal content, and the charm of Happy Bear’s world.
