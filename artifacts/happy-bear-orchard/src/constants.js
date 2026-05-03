@@ -14,6 +14,7 @@ export const ACTION = {
   PLANT:   'plant',
   WATER:   'water',
   HARVEST: 'harvest',
+  MINE:    'mine',
 };
 
 export const RESOURCE = {
@@ -38,6 +39,7 @@ export const ACTION_COSTS = {
   [ACTION.PLANT]:   { [RESOURCE.FRUIT]: 1 },
   [ACTION.WATER]:   {},
   [ACTION.HARVEST]: {},
+  [ACTION.MINE]:    {},
 };
 
 export const ACTION_YIELDS = {
@@ -46,6 +48,7 @@ export const ACTION_YIELDS = {
   [ACTION.PLANT]:   {},
   [ACTION.WATER]:   {},
   [ACTION.HARVEST]: { [RESOURCE.FRUIT]: 3, [RESOURCE.CUPS]: 1 },
+  [ACTION.MINE]:    { [RESOURCE.STONE]: 2 },
 };
 
 export const ACTION_VALID_STATES = {
@@ -54,6 +57,7 @@ export const ACTION_VALID_STATES = {
   [ACTION.PLANT]:   [TILE_STATE.CLEARED],
   [ACTION.WATER]:   [TILE_STATE.PLANTED],
   [ACTION.HARVEST]: [TILE_STATE.HARVESTABLE],
+  [ACTION.MINE]:    [TILE_STATE.CLEARED],
 };
 
 export const TILE_VISUAL = {

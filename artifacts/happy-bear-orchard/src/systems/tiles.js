@@ -31,9 +31,9 @@ export class TileGrid {
       this.tiles[y] = [];
       for (let x = 0; x < GRID_SIZE; x++) {
         let state = TILE_STATE.LOCKED;
-        if (x >= 4 && x <= 5 && y >= 4 && y <= 5) {
+        if (x === 5 && y === 5) {
           state = TILE_STATE.CLEARED;
-        } else if (x >= 3 && x <= 6 && y >= 3 && y <= 6) {
+        } else if (x >= 4 && x <= 6 && y >= 4 && y <= 6) {
           state = TILE_STATE.CLEARABLE;
         }
         this.tiles[y][x] = new Tile(x, y, state);
@@ -83,6 +83,9 @@ export class TileGrid {
         tile.state     = TILE_STATE.CLEARED;
         tile.growTicks = 0;
         tile.watered   = false;
+        break;
+      case ACTION.MINE:
+        tile.state = TILE_STATE.CLEARED;
         break;
     }
 
