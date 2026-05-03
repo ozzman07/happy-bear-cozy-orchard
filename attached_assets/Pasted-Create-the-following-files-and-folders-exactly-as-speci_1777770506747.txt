@@ -1,0 +1,202 @@
+Create the following files and folders exactly as specified.  
+All files must be created with complete, working placeholder code that can be expanded later.  
+All files must be clean, uninterrupted, and self-contained.
+
+====================================================================
+DIRECTORY STRUCTURE TO CREATE
+====================================================================
+
+/src/systems/MainMenuSystem.js
+/src/systems/ProfileSystem.js
+/src/systems/SaveSystem.js
+
+/src/ui/screens/MainMenuScreen.js
+/src/ui/screens/ProfileScreen.js
+/src/ui/screens/SettingsScreen.js
+
+/data/profiles.json
+/data/settings.json
+/data/saves/slot1.json
+/data/saves/slot2.json
+/data/saves/slot3.json
+
+/src/boot/BootRouter.js
+
+====================================================================
+FILE CONTENTS
+====================================================================
+
+------------------------------------------------------------
+/src/boot/BootRouter.js
+------------------------------------------------------------
+Create a module that:
+- Loads on game startup
+- Checks for existing profiles
+- Routes the player to:
+  - MainMenuScreen if profiles exist
+  - ProfileScreen if no profiles exist
+- Exposes a function `startGameWithProfile(profileId)` that loads the orchard scene
+
+Include placeholder logic for now, but structure it cleanly.
+
+------------------------------------------------------------
+/src/systems/MainMenuSystem.js
+------------------------------------------------------------
+Create a module that:
+- Manages main menu state
+- Handles menu navigation
+- Exposes functions:
+  - showMainMenu()
+  - onStartNewGame()
+  - onContinueGame()
+  - onLoadGame()
+  - onOpenSettings()
+  - onOpenProfiles()
+  - onExitGame()
+- Emits events to UI screens
+- Calls BootRouter.startGameWithProfile() when appropriate
+
+Use placeholder logic but clean structure.
+
+------------------------------------------------------------
+/src/systems/ProfileSystem.js
+------------------------------------------------------------
+Create a module that:
+- Loads profiles from /data/profiles.json
+- Saves profiles back to disk
+- Creates new profiles
+- Deletes profiles
+- Exposes functions:
+  - loadProfiles()
+  - saveProfiles()
+  - createProfile(name)
+  - selectProfile(id)
+  - getSelectedProfile()
+- Ensures each profile contains:
+  - id
+  - playerName
+  - createdAt
+  - lastPlayed
+  - saveSlots
+  - settings
+  - achievements
+  - progressionFlags
+
+Include placeholder logic.
+
+------------------------------------------------------------
+/src/systems/SaveSystem.js
+------------------------------------------------------------
+Create a module that:
+- Loads save slots from /data/saves
+- Writes save data
+- Validates save files
+- Exposes functions:
+  - loadSave(slot)
+  - saveGame(slot, data)
+  - getAvailableSlots()
+  - getMostRecentSave()
+- Defines save data structure:
+  - orchardState
+  - cabinLevel
+  - toolsUnlocked
+  - zonesUnlocked
+  - inventory
+  - storyProgress
+  - season
+  - happyBearState
+  - timestamp
+
+Include placeholder logic.
+
+------------------------------------------------------------
+/src/ui/screens/MainMenuScreen.js
+------------------------------------------------------------
+Create a UI module that:
+- Displays:
+  - Start New Game
+  - Continue
+  - Load Game
+  - Settings
+  - Profiles
+  - Credits
+  - Exit
+- Calls MainMenuSystem functions
+- Uses placeholder UI rendering functions
+
+------------------------------------------------------------
+/src/ui/screens/ProfileScreen.js
+------------------------------------------------------------
+Create a UI module that:
+- Lists existing profiles
+- Allows creation of new profiles
+- Allows selection of a profile
+- Calls ProfileSystem functions
+- Routes back to MainMenuScreen
+
+------------------------------------------------------------
+/src/ui/screens/SettingsScreen.js
+------------------------------------------------------------
+Create a UI module that:
+- Displays settings categories:
+  - Gameplay
+  - Audio
+  - Video
+  - Accessibility
+- Loads settings from ProfileSystem
+- Saves settings back to profile
+- Uses placeholder UI rendering
+
+------------------------------------------------------------
+/data/profiles.json
+------------------------------------------------------------
+Create a JSON file with:
+{
+  "profiles": []
+}
+
+------------------------------------------------------------
+/data/settings.json
+------------------------------------------------------------
+Create a JSON file with default settings:
+{
+  "gameplay": {
+    "textSpeed": "normal",
+    "animationSpeed": "normal",
+    "autosave": true
+  },
+  "audio": {
+    "musicVolume": 0.8,
+    "sfxVolume": 0.8,
+    "ambientVolume": 0.8
+  },
+  "video": {
+    "pixelScale": 2,
+    "fullscreen": false
+  },
+  "accessibility": {
+    "highContrast": false,
+    "reducedMotion": false,
+    "largeText": false
+  }
+}
+
+------------------------------------------------------------
+/data/saves/slot1.json
+/data/saves/slot2.json
+/data/saves/slot3.json
+------------------------------------------------------------
+Each file should contain:
+{
+  "empty": true
+}
+
+====================================================================
+FINAL REQUIREMENTS
+====================================================================
+- All files must be created exactly as listed.
+- All code must be clean, uninterrupted, and ready for expansion.
+- No placeholders like TODO or FIXME.
+- All modules must export functions cleanly.
+- BootRouter must become the new entry point for the game.
+- The orchard scene must NOT load until a profile is selected and a save slot is chosen or created.
