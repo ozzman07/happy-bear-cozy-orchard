@@ -32,7 +32,9 @@ export class TileGrid {
       for (let x = 0; x < GRID_SIZE; x++) {
         let state = TILE_STATE.LOCKED;
         if (x === 5 && y === 5) {
-          state = TILE_STATE.CLEARED;
+          state = TILE_STATE.HARVESTABLE;
+        } else if (x === 4 && y === 5) {
+          state = TILE_STATE.PLANTED;
         } else if (x >= 4 && x <= 6 && y >= 4 && y <= 6) {
           state = TILE_STATE.CLEARABLE;
         }

@@ -23,7 +23,7 @@ function defaultSave(slot) {
       cups: 0,
       wood: 10,
       stone: 5,
-      fruit: 0
+      fruit: 5
     },
     storyProgress: {
       currentAct: 1,
