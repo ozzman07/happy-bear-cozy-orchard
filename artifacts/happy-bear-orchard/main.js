@@ -191,9 +191,12 @@ async function showSaveSelect(profile) {
   const grid = document.createElement('div');
   grid.className = 'save-slot-grid';
 
+  const firstEmptySlot = slots.find(s => !s.occupied)?.slot ?? null;
+
   slots.forEach(({ slot, occupied, data }) => {
+    const isRecommended = !occupied && slot === firstEmptySlot && slot === 'slot1';
     const card = document.createElement('div');
-    card.className = `save-slot-card${occupied ? '' : ' save-slot-empty'}`;
+    card.className = `save-slot-card${occupied ? '' : ' save-slot-empty'}${isRecommended ? ' save-slot-recommended' : ''}`;
 
     if (occupied && data) {
       card.innerHTML = `
