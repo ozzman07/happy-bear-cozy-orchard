@@ -6,10 +6,16 @@ import { BUILD_STATE } from '../systems/construction.js';
 
 const TOOL_DEFS = {
   roaster: {
-    id: 'roaster', name: '☕ Coffee Roaster', icon: '☕',
-    description: 'Roast raw coffee beans',
+    id: 'roaster', name: '🫘 Coffee Roaster', icon: '🫘',
+    description: 'Roast raw coffee beans into roasted coffee',
     costs: { wood: 8, stone: 10 }, constructionSecs: 15,
     recipeId: 'roast_coffee',
+  },
+  coffee_brewer: {
+    id: 'coffee_brewer', name: '☕ Coffee Brewer', icon: '☕',
+    description: 'Brew roasted coffee into cups',
+    costs: { wood: 5, stone: 6 }, constructionSecs: 12,
+    recipeId: 'brew_coffee',
   },
 };
 
@@ -33,8 +39,8 @@ export class RoasteryScene {
   }
 
   onEnter() {
-    this._setStatus('Welcome to the Roastery! Roast coffee & brew stouts. ☕');
-    this._bearSpeak?.('Time for a coffee stout! ☕');
+    this._setStatus('Welcome to the Roastery! Roast beans and brew coffee cups. ☕');
+    this._bearSpeak?.('Time to brew some coffee! ☕');
     this._renderAll();
   }
 
@@ -82,9 +88,9 @@ export class RoasteryScene {
         <div class="tool-card-badge">Operational</div>
         <div class="tool-card-icon">${def.icon}</div>
         <div class="tool-name">${def.name}</div>
-        <div class="tool-recipe">2🫘 → 1🤎</div>
+        <div class="tool-recipe">${def.recipeId === 'roast_coffee' ? '2🫘 → 1🤎' : '1🤎 → 1☕'}</div>
         <div class="tool-desc">${busy ? `⏳ ${csecs}s` : def.description}</div>
-        <button class="btn-use"${(canAfford&&!busy)?'':' disabled'}>${busy?`⏳ ${csecs}s`:'Roast'}</button>
+        <button class="btn-use"${(canAfford&&!busy)?'':' disabled'}>${busy?`⏳ ${csecs}s`:def.recipeId === 'roast_coffee' ? 'Roast' : 'Brew'}</button>
       </div>`;
     }
 

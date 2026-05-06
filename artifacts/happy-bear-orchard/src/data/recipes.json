@@ -65,10 +65,10 @@
   "brew_coffee": {
     "id": "brew_coffee",
     "name": "Brew Coffee",
-    "station": "brew_kettle",
-    "inputs": { "roasted_coffee": 1, "hops": 1 },
+    "station": "coffee_brewer",
+    "inputs": { "roasted_coffee": 1 },
     "outputs": { "cups": 1 },
-    "timerSecs": 14,
+    "timerSecs": 8,
     "unlockTier": 5
   }
 }

@@ -20,7 +20,7 @@ const TOOL_DEFS = {
 };
 
 const RECIPE_LABELS = {
-  distill_applejack: { label: 'Distil',       cost: '2🍺', yield: '1🥃' },
+  distill_applejack: { label: 'Distil',       cost: '2🫗', yield: '1🥃' },
   distill_whiskey:   { label: 'Age Whiskey',  cost: '2🥃', yield: '1🪣' },
 };
 
