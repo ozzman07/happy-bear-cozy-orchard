@@ -47,7 +47,7 @@ export const ACTION_YIELDS = {
   [ACTION.DIG]:     {},
   [ACTION.PLANT]:   {},
   [ACTION.WATER]:   {},
-  [ACTION.HARVEST]: { [RESOURCE.FRUIT]: 3, [RESOURCE.CUPS]: 1 },
+  [ACTION.HARVEST]: { [RESOURCE.FRUIT]: 3 },
   [ACTION.MINE]:    { [RESOURCE.STONE]: 2 },
 };
 

@@ -5,7 +5,7 @@ const RESOURCE_DISPLAY = [
   { key: 'wood',           id: 'count-wood',    icon: '🪵', label: 'Wood' },
   { key: 'stone',          id: 'count-stone',   icon: '🪨', label: 'Stone' },
   { key: 'fruit',          id: 'count-fruit',   icon: '🍎', label: 'Fruit' },
-  { key: 'cups',           id: 'count-cups',    icon: '☕', label: 'Cups' },
+  { key: 'cups',           id: 'count-cups',    icon: '☕', label: 'Cups',           tier: 1 },
   { key: 'juice',          id: 'count-juice',   icon: '🧃', label: 'Juice' },
   { key: 'cider',          id: 'count-cider',   icon: '🍺', label: 'Cider' },
   { key: 'hops',           id: 'count-hops',    icon: '🌾', label: 'Hops',           tier: 4 },

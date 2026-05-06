@@ -404,6 +404,8 @@ function initGame(saveData) {
       const btn = document.getElementById(SCENE_UNLOCK_MAP[u]);
       if (btn) btn.disabled = false;
     }
+    hud.syncTier(tier);
+    hud.updateResources(resources.amounts);
     hud.updateTier(`${tierDef.icon} ${tierDef.name}`);
     const badge = document.getElementById('tier-badge');
     if (badge) badge.textContent = `${tierDef.icon} ${tierDef.name}`;
