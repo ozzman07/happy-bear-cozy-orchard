@@ -2,18 +2,19 @@
  * HUD — updates the top resource bar and day counter.
  */
 const RESOURCE_DISPLAY = [
-  { key: 'wood',           id: 'count-wood',    icon: '🪵', label: 'Wood' },
-  { key: 'stone',          id: 'count-stone',   icon: '🪨', label: 'Stone' },
-  { key: 'fruit',          id: 'count-fruit',   icon: '🍎', label: 'Fruit' },
-  { key: 'cups',           id: 'count-cups',    icon: '☕', label: 'Cups',           tier: 1 },
-  { key: 'juice',          id: 'count-juice',   icon: '🧃', label: 'Juice' },
-  { key: 'cider',          id: 'count-cider',   icon: '🍺', label: 'Cider' },
-  { key: 'hops',           id: 'count-hops',    icon: '🌾', label: 'Hops',           tier: 4 },
-  { key: 'applejack',      id: 'count-applejack',icon: '🥃', label: 'Applejack',     tier: 2 },
-  { key: 'whiskey',        id: 'count-whiskey', icon: '🪣', label: 'Whiskey',        tier: 3 },
-  { key: 'fruit_beer',     id: 'count-fruitbeer',icon: '🍻', label: 'Fruit Beer',   tier: 4 },
-  { key: 'coffee_bean',    id: 'count-coffee',  icon: '🫘', label: 'Coffee',         tier: 5 },
-  { key: 'coffee_stout',   id: 'count-stout',   icon: '🖤', label: 'Stout',          tier: 5 },
+  { key: 'wood',           id: 'count-wood',       icon: '🪵', label: 'Wood' },
+  { key: 'stone',          id: 'count-stone',      icon: '🪨', label: 'Stone' },
+  { key: 'fruit',          id: 'count-fruit',      icon: '🍎', label: 'Fruit' },
+  { key: 'juice',          id: 'count-juice',      icon: '🧃', label: 'Juice' },
+  { key: 'cider',          id: 'count-cider',      icon: '🍺', label: 'Cider' },
+  { key: 'bottles',        id: 'count-bottles',    icon: '🍶', label: 'Bottles',       tier: 1 },
+  { key: 'hops',           id: 'count-hops',       icon: '🌾', label: 'Hops',          tier: 4 },
+  { key: 'applejack',      id: 'count-applejack',  icon: '🥃', label: 'Applejack',     tier: 2 },
+  { key: 'whiskey',        id: 'count-whiskey',    icon: '🪣', label: 'Whiskey',       tier: 3 },
+  { key: 'fruit_beer',     id: 'count-fruitbeer',  icon: '🍻', label: 'Fruit Beer',    tier: 4 },
+  { key: 'coffee_bean',    id: 'count-coffee',     icon: '🫘', label: 'Coffee Beans',  tier: 5 },
+  { key: 'roasted_coffee', id: 'count-roasted',    icon: '🤎', label: 'Roasted',       tier: 5 },
+  { key: 'cups',           id: 'count-cups',       icon: '☕', label: 'Cups',          tier: 5 },
 ];
 
 export class HUD {

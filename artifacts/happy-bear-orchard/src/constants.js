@@ -21,7 +21,7 @@ export const RESOURCE = {
   WOOD:           'wood',
   STONE:          'stone',
   FRUIT:          'fruit',
-  CUPS:           'cups',
+  BOTTLES:        'bottles',
   JUICE:          'juice',
   CIDER:          'cider',
   HOPS:           'hops',
@@ -30,7 +30,7 @@ export const RESOURCE = {
   FRUIT_BEER:     'fruit_beer',
   COFFEE_BEAN:    'coffee_bean',
   ROASTED_COFFEE: 'roasted_coffee',
-  COFFEE_STOUT:   'coffee_stout',
+  CUPS:           'cups',
 };
 
 export const ACTION_COSTS = {

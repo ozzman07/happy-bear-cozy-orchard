@@ -8,7 +8,7 @@ export class ResourceManager {
       wood:           5,
       stone:          3,
       fruit:          2,
-      cups:           0,
+      bottles:        0,
       juice:          0,
       cider:          0,
       hops:           0,
@@ -17,7 +17,7 @@ export class ResourceManager {
       fruit_beer:     0,
       coffee_bean:    0,
       roasted_coffee: 0,
-      coffee_stout:   0,
+      cups:           0,
       ...initial,
     };
     this._listeners = [];

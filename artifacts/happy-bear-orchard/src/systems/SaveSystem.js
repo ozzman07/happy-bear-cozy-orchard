@@ -20,10 +20,11 @@ function defaultSave(slot) {
     toolsUnlocked: {},
     zonesUnlocked: ['apple_grove'],
     inventory: {
-      cups: 0,
-      wood: 10,
-      stone: 5,
-      fruit: 5
+      bottles: 0,
+      cups:    0,
+      wood:    10,
+      stone:   5,
+      fruit:   5
     },
     storyProgress: {
       currentAct: 1,

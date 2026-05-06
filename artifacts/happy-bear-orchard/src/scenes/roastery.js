@@ -82,7 +82,7 @@ export class RoasteryScene {
         <div class="tool-card-badge">Operational</div>
         <div class="tool-card-icon">${def.icon}</div>
         <div class="tool-name">${def.name}</div>
-        <div class="tool-recipe">2🫘 → 1☕</div>
+        <div class="tool-recipe">2🫘 → 1🤎</div>
         <div class="tool-desc">${busy ? `⏳ ${csecs}s` : def.description}</div>
         <button class="btn-use"${(canAfford&&!busy)?'':' disabled'}>${busy?`⏳ ${csecs}s`:'Roast'}</button>
       </div>`;

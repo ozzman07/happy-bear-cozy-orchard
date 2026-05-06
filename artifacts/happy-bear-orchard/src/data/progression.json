@@ -21,7 +21,7 @@
       "name": "Applejack",
       "icon": "🥃",
       "description": "Build a copper still and distil your cider into Applejack.",
-      "unlockCondition": { "cups": 15 },
+      "unlockCondition": { "bottles": 15 },
       "unlocks": ["distillery", "still"]
     },
     {

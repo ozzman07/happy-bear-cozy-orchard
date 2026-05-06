@@ -22,7 +22,7 @@
     "name": "Bottle Cider",
     "station": "bottling",
     "inputs": { "cider": 1 },
-    "outputs": { "cups": 3 },
+    "outputs": { "bottles": 3 },
     "timerSecs": 0,
     "unlockTier": 1
   },
@@ -64,10 +64,10 @@
   },
   "brew_coffee": {
     "id": "brew_coffee",
-    "name": "Brew Coffee Stout",
+    "name": "Brew Coffee",
     "station": "brew_kettle",
     "inputs": { "roasted_coffee": 1, "hops": 1 },
-    "outputs": { "coffee_stout": 1 },
+    "outputs": { "cups": 1 },
     "timerSecs": 14,
     "unlockTier": 5
   }
