@@ -2,14 +2,8 @@
  * OrchardScene — renders and manages the 10×10 tile grid.
  */
 import { GRID_SIZE, TILE_STATE, TILE_VISUAL } from '../constants.js';
+import { BearDialogue } from '../systems/BearDialogue.js';
 
-const BEAR_SPEECHES = [
-  'Keep growing! 🌱', 'Water your plants! 💧', 'The orchard blooms! 🌸',
-  'Harvest time is coming! 🍎', 'Build your dream orchard! 🌳',
-  'Cozy day in the orchard! ☕', 'More fruit, more cups! ☕',
-  'Looking great out there! 🌿', 'A new day in the orchard! 🌅',
-  "Don't forget to water! 💧",
-];
 
 export class OrchardScene {
   constructor({ tileGrid, resources, actionMenu, statusEl, bearEl, speechEl }) {
@@ -51,7 +45,9 @@ export class OrchardScene {
   }
 
   onEnter() {
+    const tip = BearDialogue.sceneGreeting('orchard');
     this.setStatus('Back in the orchard! 🌿');
+    if (tip) this.bearSpeak(tip);
   }
 
   onTick(ripened) {
@@ -61,7 +57,7 @@ export class OrchardScene {
     }
   }
 
-  onNewDay() { this.bearSpeak(BEAR_SPEECHES[Math.floor(Math.random() * BEAR_SPEECHES.length)]); }
+  onNewDay() { this.bearSpeak(BearDialogue.sceneGreeting('orchard')); }
 
   // ── Rendering ──────────────────────────────────────────────────────────────
 

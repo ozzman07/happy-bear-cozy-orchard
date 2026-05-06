@@ -3,6 +3,7 @@
  * Unlocked at Tier 2.
  */
 import { BUILD_STATE } from '../systems/construction.js';
+import { BearDialogue } from '../systems/BearDialogue.js';
 
 const TOOL_DEFS = {
   still: {
@@ -50,8 +51,8 @@ export class DistilleryScene {
   }
 
   onEnter() {
-    this._setStatus('Welcome to the Distillery! Make Applejack & Whiskey. 🥃');
-    this._bearSpeak?.('Time to distil! 🫧');
+    this._setStatus('Distillery — distil cider into Applejack, then Whiskey! 🥃');
+    this._bearSpeak?.(BearDialogue.sceneGreeting('distillery'));
     this._renderAll();
   }
 

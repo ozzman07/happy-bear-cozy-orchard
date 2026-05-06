@@ -3,6 +3,7 @@
  * Unlocked at Tier 4.
  */
 import { BUILD_STATE } from '../systems/construction.js';
+import { BearDialogue } from '../systems/BearDialogue.js';
 
 const TOOL_DEFS = {
   brew_kettle: {
@@ -33,8 +34,8 @@ export class BreweryScene {
   }
 
   onEnter() {
-    this._setStatus('Welcome to the Brewery! Grow hops and brew ales. 🍻');
-    this._bearSpeak?.('Cheers to fruit beer! 🍻');
+    this._setStatus('Brewery — grow hops and brew fruit ales! 🍺');
+    this._bearSpeak?.(BearDialogue.sceneGreeting('brewery'));
     this._renderAll();
   }
 

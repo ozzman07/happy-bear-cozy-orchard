@@ -12,6 +12,7 @@ import { ProgressionSystem } from './src/systems/progression.js';
 
 import { ProfileSystem }     from './src/systems/ProfileSystem.js';
 import { SaveSystem }        from './src/systems/SaveSystem.js';
+import { BearDialogue }      from './src/systems/BearDialogue.js';
 
 import { SceneManager, SCENES } from './src/scenes/sceneManager.js';
 import { OrchardScene }         from './src/scenes/orchard.js';
@@ -363,7 +364,12 @@ function initGame(saveData) {
   const actionMenu = new ActionMenu((tile, action) => {
     const result = tileGrid.performAction(tile, action, resources);
     if (result.success) {
-      setStatus('Action complete! Keep going 🌿');
+      if (action === 'harvest') {
+        bearSpeak(BearDialogue.harvestReaction());
+        setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
+      } else {
+        setStatus('Action complete! Keep going 🌿');
+      }
     } else {
       setStatus('⚠ ' + result.message);
       bearSpeak(result.message);
@@ -411,10 +417,12 @@ function initGame(saveData) {
     if (badge) badge.textContent = `${tierDef.icon} ${tierDef.name}`;
   }
 
-  progression.onChange(({ tier, def }) => {
+  progression.onChange(({ tier }) => {
     applyUnlocks(tier);
-    bearSpeak(`New tier unlocked: ${def.icon} ${def.name}!`);
-    setStatus(`🎉 Tier unlocked: ${def.name} — explore the new scene!`);
+    const lines = BearDialogue.tierUnlock(tier);
+    bearSpeak(lines.bear);
+    setStatus(lines.status);
+    setTimeout(() => bearSpeak(lines.bear), 6000);
   });
 
   resources.onChange(amounts => hud.updateResources(amounts));
@@ -433,9 +441,8 @@ function initGame(saveData) {
     if (tickCount % TICKS_PER_DAY === 0) {
       gameState.day++;
       hud.updateDay(gameState.day);
-      const speeches = ['Keep growing! 🌱','Water your plants! 💧','The orchard blooms! 🌸',"Don't forget to water! 💧",'More fruit, more cups! ☕'];
-      bearSpeak(speeches[Math.floor(Math.random() * speeches.length)]);
-      setStatus(`Day ${gameState.day} begins — keep building your orchard! 🌳`);
+      bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
+      setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
     }
   }, TICK_MS);
 
@@ -454,10 +461,17 @@ function initGame(saveData) {
   roastery.init();
   applyUnlocks(0);
 
-  const profile = ProfileSystem.getSelectedProfile();
-  const greeting = profile ? `Welcome back, ${profile.playerName}! 🐻` : 'Welcome to Happy Bear Cozy Orchard! 🐻';
-  setStatus(greeting + '  Click a tile to get started.');
-  setTimeout(() => bearSpeak('Welcome to the orchard! 🌿'), 800);
+  const profile    = ProfileSystem.getSelectedProfile();
+  const playerName = profile?.playerName ?? 'friend';
+  const isNewGame  = !saveData?.timestamp;
+  const welcome    = BearDialogue.welcome(playerName, isNewGame);
+  setStatus(welcome.status);
+  setTimeout(() => {
+    bearSpeak(welcome.bear);
+    if (welcome.followUp) {
+      setTimeout(() => bearSpeak(welcome.followUp.bear), welcome.followUp.delay);
+    }
+  }, 800);
 }
 
 // ── Boot ─────────────────────────────────────────────────────────────────────

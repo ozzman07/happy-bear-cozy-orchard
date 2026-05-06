@@ -3,6 +3,7 @@
  * Unlocked at Tier 5.
  */
 import { BUILD_STATE } from '../systems/construction.js';
+import { BearDialogue } from '../systems/BearDialogue.js';
 
 const TOOL_DEFS = {
   roaster: {
@@ -39,8 +40,8 @@ export class RoasteryScene {
   }
 
   onEnter() {
-    this._setStatus('Welcome to the Roastery! Roast beans and brew coffee cups. ☕');
-    this._bearSpeak?.('Time to brew some coffee! ☕');
+    this._setStatus('Roastery — roast beans and brew ☕ cups!');
+    this._bearSpeak?.(BearDialogue.sceneGreeting('roastery'));
     this._renderAll();
   }
 

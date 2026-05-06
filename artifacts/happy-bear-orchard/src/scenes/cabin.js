@@ -2,6 +2,7 @@
  * CabinScene — Cider Cabin with Press, Fermenter, Bottling Station.
  */
 import { BUILD_STATE } from '../systems/construction.js';
+import { BearDialogue } from '../systems/BearDialogue.js';
 
 const TOOL_DEFS = {
   press: {
@@ -74,8 +75,8 @@ export class CabinScene {
   }
 
   onEnter() {
-    this._setStatus('Welcome to the Cider Cabin! Build tools to make cider. 🏠');
-    this._bearSpeak?.("Let's make some cider! 🍺");
+    this._setStatus('Cider Cabin — press, ferment, and bottle your cider! 🏠');
+    this._bearSpeak?.(BearDialogue.sceneGreeting('cabin'));
     this._renderAll();
   }
 
