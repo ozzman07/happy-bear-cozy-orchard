@@ -20,6 +20,8 @@ import { CabinScene }           from './src/scenes/cabin.js';
 import { DistilleryScene }      from './src/scenes/distillery.js';
 import { BreweryScene }         from './src/scenes/brewery.js';
 import { RoasteryScene }        from './src/scenes/roastery.js';
+import { StoreScene }           from './src/scenes/store.js';
+import { StoreSystem }          from './src/systems/StoreSystem.js';
 
 import { HUD }        from './src/ui/hud.js';
 import { ActionMenu } from './src/ui/menus.js';
@@ -350,7 +352,7 @@ function initGame(saveData) {
   const statusEl = document.getElementById('status-msg');
 
   const bearSpeak = (msg) => {
-    ['bear-speech', 'cabin-bear-speech'].forEach(id => {
+    ['bear-speech', 'cabin-bear-speech', 'store-bear-speech'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       el.textContent = msg;
@@ -389,11 +391,19 @@ function initGame(saveData) {
   const brewery    = new BreweryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
   const roastery   = new RoasteryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
 
+  const storeSystem = new StoreSystem(resources);
+  const store       = new StoreScene({
+    store: storeSystem, resources, statusEl,
+    bearSpeakFn: bearSpeak,
+    getTier: () => gameState.tier,
+  });
+
   scenes.register(SCENES.ORCHARD,    orchard);
   scenes.register(SCENES.CABIN,      cabin);
   scenes.register(SCENES.DISTILLERY, distillery);
   scenes.register(SCENES.BREWERY,    brewery);
   scenes.register(SCENES.ROASTERY,   roastery);
+  scenes.register(SCENES.STORE,      store);
 
   document.querySelectorAll('[data-scene-target]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -459,6 +469,7 @@ function initGame(saveData) {
   distillery.init();
   brewery.init();
   roastery.init();
+  store.init();
   applyUnlocks(0);
 
   const profile    = ProfileSystem.getSelectedProfile();

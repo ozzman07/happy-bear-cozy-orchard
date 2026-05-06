@@ -20,6 +20,7 @@
       <!-- Resource items injected by HUD.syncTier() -->
     </div>
     <div id="hud-right">
+      <div id="hud-coin-display">🪙 <span id="hud-coins">0</span></div>
       <div id="tier-badge"></div>
       <div id="day-counter">Day <span id="day-num">1</span></div>
     </div>
@@ -32,6 +33,7 @@
     <button class="nav-btn" data-scene-target="distillery" id="nav-distillery" disabled>🫧 Distillery</button>
     <button class="nav-btn" data-scene-target="brewery"    id="nav-brewery"    disabled>🍻 Brewery</button>
     <button class="nav-btn" data-scene-target="roastery"   id="nav-roastery"   disabled>☕ Roastery</button>
+    <button class="nav-btn nav-btn-store"  data-scene-target="store">🛒 Market</button>
   </nav>
 
   <!-- ══ Scenes ════════════════════════════════════════════════════════════ -->
@@ -139,6 +141,27 @@
             <div id="cabin-bear">🐻</div>
             <div id="cabin-bear-speech" class="hidden"></div>
             <div id="cabin-tip">Roast beans, then<br>brew into ☕ cups!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Market / Store ────────────────────────────────────────────────── -->
+    <div id="scene-store" class="scene">
+      <div id="store-interior">
+        <div id="store-header">
+          <span id="store-title">🛒 Happy Bear Market</span>
+          <span id="store-subtitle">Sell your goods · Earn coins</span>
+        </div>
+        <div id="store-body">
+          <div id="store-main">
+            <div id="store-coins-total">Total earned: 0 🪙</div>
+            <div id="store-grid"></div>
+          </div>
+          <div id="store-bear-corner">
+            <div id="store-bear">🐻</div>
+            <div id="store-bear-speech" class="hidden"></div>
+            <div id="store-tip">Sell your goods<br>for 🪙 coins!</div>
           </div>
         </div>
       </div>

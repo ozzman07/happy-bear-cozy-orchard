@@ -5,6 +5,7 @@
 export class ResourceManager {
   constructor(initial = {}) {
     this.amounts = {
+      coins:          0,
       wood:           5,
       stone:          3,
       fruit:          2,

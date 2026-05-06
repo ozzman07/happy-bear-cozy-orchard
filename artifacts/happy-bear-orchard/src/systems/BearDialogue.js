@@ -31,6 +31,12 @@ const TIER_LINES = {
 // ── Scene-enter lines ─────────────────────────────────────────────────────────
 
 const SCENE_GREETINGS = {
+  store: [
+    "Sell your finest goods here! 🪙 Higher-tier items fetch the best price!",
+    "The market's open! 🛒 Bottles and Whiskey sell for a premium!",
+    "Got a big harvest? Sell it here for coins! 🪙",
+    "Premium goods fetch premium prices — those cups are worth 28 🪙 each! ☕",
+  ],
   orchard: [
     "The orchard is looking great! 🌿 Tap a tile to get started.",
     "Harvest the glowing apples 🍎, then plant more seedlings!",
@@ -119,6 +125,15 @@ function welcome(playerName, isNewGame) {
   };
 }
 
+// ── Sell reaction lines ───────────────────────────────────────────────────────
+
+function sellReaction(coins) {
+  if (coins >= 100) return `Wow, ${coins} 🪙! Big sale! You're rolling in it! 💰`;
+  if (coins >= 40)  return `Nice! ${coins} 🪙 in the bag! 💰`;
+  if (coins >= 15)  return `${coins} 🪙 earned! Every bit adds up! 🪙`;
+  return `${coins} 🪙! The market likes what you've got! 🛒`;
+}
+
 // ── Harvest reaction lines ────────────────────────────────────────────────────
 
 const HARVEST_REACTIONS = [
@@ -155,4 +170,5 @@ export const BearDialogue = {
   tierUnlock,
   contextualHint,
   harvestReaction,
+  sellReaction,
 };

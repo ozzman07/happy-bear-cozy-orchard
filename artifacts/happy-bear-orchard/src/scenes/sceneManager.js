@@ -7,6 +7,7 @@ export const SCENES = {
   DISTILLERY: 'distillery',
   BREWERY:    'brewery',
   ROASTERY:   'roastery',
+  STORE:      'store',
 };
 
 export class SceneManager {

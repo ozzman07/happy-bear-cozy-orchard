@@ -4,7 +4,7 @@
 const RESOURCE_DISPLAY = [
   { key: 'wood',           id: 'count-wood',       icon: '🪵', label: 'Wood' },
   { key: 'stone',          id: 'count-stone',      icon: '🪨', label: 'Stone' },
-  { key: 'fruit',          id: 'count-fruit',      icon: '🍎', label: 'Fruit' },
+  { key: 'fruit',          id: 'count-fruit',      icon: '🍎', label: 'Apples' },
   { key: 'juice',          id: 'count-juice',      icon: '🧃', label: 'Juice' },
   { key: 'cider',          id: 'count-cider',      icon: '🫗', label: 'Cider' },
   { key: 'bottles',        id: 'count-bottles',    icon: '🍾', label: 'Bottles',       tier: 1 },
@@ -22,6 +22,7 @@ export class HUD {
     this._resContainer = document.getElementById('resources');
     this._dayEl        = document.getElementById('day-num');
     this._tierEl       = document.getElementById('tier-name');
+    this._coinsEl      = document.getElementById('hud-coins');
     this._builtItems   = new Set();
   }
 
@@ -51,6 +52,7 @@ export class HUD {
       const wrap = document.getElementById(`res-${r.key}`);
       if (wrap) wrap.classList.toggle('res-zero', !(amounts[r.key] > 0));
     }
+    if (this._coinsEl) this._coinsEl.textContent = amounts.coins ?? 0;
   }
 
   updateDay(day)   { if (this._dayEl)  this._dayEl.textContent  = day; }
