@@ -1,6 +1,6 @@
 /**
  * main.js — Happy Bear Cozy Orchard
- * Entry point. Boots all systems, registers scenes, wires the game loop.
+ * Entry point. Shows main menu first, then boots all systems on save selection.
  */
 
 import { ResourceManager }   from './src/systems/resources.js';
@@ -9,6 +9,9 @@ import { CropSystem }        from './src/systems/crops.js';
 import { CraftingSystem }    from './src/systems/crafting.js';
 import { ConstructionSystem} from './src/systems/construction.js';
 import { ProgressionSystem } from './src/systems/progression.js';
+
+import { ProfileSystem }     from './src/systems/ProfileSystem.js';
+import { SaveSystem }        from './src/systems/SaveSystem.js';
 
 import { SceneManager, SCENES } from './src/scenes/sceneManager.js';
 import { OrchardScene }         from './src/scenes/orchard.js';
@@ -22,185 +25,447 @@ import { ActionMenu } from './src/ui/menus.js';
 
 import progressionData from './src/data/progression.json';
 
-// ── Global game state ─────────────────────────────────────────────────────────
+// ── DOM refs ────────────────────────────────────────────────────────────────
 
-const gameState = {
-  tier:    0,
-  day:     1,
-  unlocks: new Set(['orchard']),
-};
+const menuOverlay  = document.getElementById('menu-overlay');
+const menuContainer = document.getElementById('menu-container');
+const appEl        = document.getElementById('app');
 
-// ── Core systems ───────────────────────────────────────────────────────────────
+// ── Menu helpers ────────────────────────────────────────────────────────────
 
-const resources    = new ResourceManager();
-const tileGrid     = new TileGrid();
-const cropSystem   = new CropSystem(tileGrid);
-const crafting     = new CraftingSystem(resources, gameState);
-const construction = new ConstructionSystem(resources);
-const progression  = new ProgressionSystem(gameState, resources);
+function renderMainMenu() {
+  menuContainer.innerHTML = '';
 
-// ── UI helpers ─────────────────────────────────────────────────────────────────
+  const profile  = ProfileSystem.getSelectedProfile();
+  const profiles = ProfileSystem.getAllProfiles();
 
-const hud       = new HUD();
-const statusEl  = document.getElementById('status-msg');
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu-screen main-menu-screen';
 
-const bearSpeak = (msg) => {
-  // Speak from whichever bear is currently visible
-  ['bear-speech', 'cabin-bear-speech'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = msg;
-    el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('hidden'), 3500);
-  });
-};
+  wrapper.innerHTML = `
+    <div class="menu-bear">🐻</div>
+    <h1 class="menu-title">Happy Bear<br>Cozy Orchard</h1>
+    <p class="menu-subtitle">A cozy place to grow, craft, and sip 🍎</p>
+  `;
 
-const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
+  const nav = document.createElement('nav');
+  nav.className = 'menu-nav';
 
-const actionMenu = new ActionMenu((tile, action) => {
-  const result = tileGrid.performAction(tile, action, resources);
-  if (result.success) {
-    setStatus('Action complete! Keep going 🌿');
-  } else {
-    setStatus('⚠ ' + result.message);
-    bearSpeak(result.message);
+  const btns = [];
+
+  if (profile) {
+    btns.push({ label: '🌳 Continue', primary: true, onClick: () => showSaveSelect(profile) });
   }
-});
-
-// ── Scenes ─────────────────────────────────────────────────────────────────────
-
-const scenes = new SceneManager();
-
-const orchard = new OrchardScene({
-  tileGrid,
-  resources,
-  actionMenu,
-  statusEl,
-  bearEl:   document.getElementById('bear-sprite'),
-  speechEl: document.getElementById('bear-speech'),
-});
-
-const cabin = new CabinScene({
-  construction, crafting, resources, statusEl,
-  bearSpeakFn: bearSpeak,
-});
-
-const distillery = new DistilleryScene({
-  construction, crafting, resources, statusEl,
-  bearSpeakFn: bearSpeak,
-});
-
-const brewery = new BreweryScene({
-  construction, crafting, resources, statusEl,
-  bearSpeakFn: bearSpeak,
-});
-
-const roastery = new RoasteryScene({
-  construction, crafting, resources, statusEl,
-  bearSpeakFn: bearSpeak,
-});
-
-scenes.register(SCENES.ORCHARD,    orchard);
-scenes.register(SCENES.CABIN,      cabin);
-scenes.register(SCENES.DISTILLERY, distillery);
-scenes.register(SCENES.BREWERY,    brewery);
-scenes.register(SCENES.ROASTERY,   roastery);
-
-// ── Nav bar buttons ────────────────────────────────────────────────────────────
-
-document.querySelectorAll('[data-scene-target]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.dataset.sceneTarget;
-    if (!btn.disabled) scenes.switchTo(target);
-  });
-});
-
-// ── Progression → unlock scenes ────────────────────────────────────────────────
-
-const SCENE_UNLOCK_MAP = {
-  cabin:      'nav-cabin',
-  distillery: 'nav-distillery',
-  brewery:    'nav-brewery',
-  roastery:   'nav-roastery',
-};
-
-function applyUnlocks(tier) {
-  const tierDef = progressionData.tiers[tier];
-  if (!tierDef) return;
-
-  for (const u of tierDef.unlocks) {
-    const navId = SCENE_UNLOCK_MAP[u];
-    if (navId) {
-      const btn = document.getElementById(navId);
-      if (btn) btn.disabled = false;
+  btns.push({ label: profile ? '🌱 New Game' : '🌱 Start Game', primary: !profile, onClick: () => {
+    if (profiles.length === 0) {
+      renderProfileCreate();
+    } else {
+      renderProfileSelect();
     }
+  }});
+  if (profile) {
+    btns.push({ label: '📂 Load Game',  primary: false, onClick: () => showSaveSelect(profile) });
+  }
+  btns.push({ label: '👤 Profiles',   primary: false, onClick: renderProfileSelect });
+  btns.push({ label: '⚙️ Settings',   primary: false, onClick: renderSettings });
+
+  btns.forEach(({ label, primary, onClick }) => {
+    const btn = document.createElement('button');
+    btn.className = primary ? 'menu-btn menu-btn-primary' : 'menu-btn';
+    btn.textContent = label;
+    btn.addEventListener('click', onClick);
+    nav.appendChild(btn);
+  });
+
+  wrapper.appendChild(nav);
+
+  if (profile) {
+    const profileBadge = document.createElement('p');
+    profileBadge.className = 'menu-profile-badge';
+    profileBadge.textContent = `Playing as ${profile.playerName}`;
+    wrapper.appendChild(profileBadge);
   }
 
-  hud.updateTier(`${tierDef.icon} ${tierDef.name}`);
-  const badge = document.getElementById('tier-badge');
-  if (badge) badge.textContent = `${tierDef.icon} ${tierDef.name}`;
+  menuContainer.appendChild(wrapper);
 }
 
-progression.onChange(({ tier, def }) => {
-  applyUnlocks(tier);
-  bearSpeak(`New tier unlocked: ${def.icon} ${def.name}!`);
-  setStatus(`🎉 Tier unlocked: ${def.name} — explore the new scene!`);
-});
+function renderProfileCreate(onBack) {
+  menuContainer.innerHTML = '';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu-screen profile-screen';
+  wrapper.innerHTML = `<div class="menu-bear">🐾</div><h2 class="menu-title">Welcome!</h2><p class="menu-subtitle">What should we call you?</p>`;
 
-// ── Reactive bindings ──────────────────────────────────────────────────────────
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'profile-name-input';
+  input.placeholder = 'Your name…';
+  input.maxLength = 20;
+  input.autofocus = true;
 
-resources.onChange(amounts => {
-  hud.updateResources(amounts);
-});
+  const createBtn = document.createElement('button');
+  createBtn.className = 'menu-btn menu-btn-primary';
+  createBtn.textContent = '🐻 Enter the Orchard';
+  createBtn.addEventListener('click', async () => {
+    const name = input.value.trim() || 'Happy Bear';
+    const profile = await ProfileSystem.createProfile(name);
+    await showSaveSelect(profile);
+  });
 
-// ── Game loop ──────────────────────────────────────────────────────────────────
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') createBtn.click(); });
 
-let tickCount  = 0;
-const TICK_MS  = 3000;
-const TICKS_PER_DAY = 10;
+  wrapper.appendChild(input);
+  wrapper.appendChild(createBtn);
 
-setInterval(() => {
-  tickCount++;
-
-  const ripened = cropSystem.tick();
-  if (ripened) {
-    bearSpeak('Your crops are ready to harvest! 🍎');
-    setStatus('Some plants are ready to harvest — click them!');
+  if (onBack) {
+    const back = document.createElement('button');
+    back.className = 'menu-btn menu-btn-secondary';
+    back.textContent = '← Back';
+    back.addEventListener('click', onBack);
+    wrapper.appendChild(back);
   }
 
-  if (tickCount % TICKS_PER_DAY === 0) {
-    gameState.day++;
-    hud.updateDay(gameState.day);
-    const speeches = [
-      'Keep growing! 🌱', 'Water your plants! 💧', 'The orchard blooms! 🌸',
-      "Don't forget to water! 💧", 'More fruit, more cups! ☕',
-    ];
-    bearSpeak(speeches[Math.floor(Math.random() * speeches.length)]);
-    setStatus(`Day ${gameState.day} begins — keep building your orchard! 🌳`);
+  menuContainer.appendChild(wrapper);
+}
+
+function renderProfileSelect() {
+  menuContainer.innerHTML = '';
+  const profiles = ProfileSystem.getAllProfiles();
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu-screen profile-screen';
+  wrapper.innerHTML = `<div class="menu-bear">👤</div><h2 class="menu-title">Your Profiles</h2>`;
+
+  if (profiles.length > 0) {
+    const list = document.createElement('ul');
+    list.className = 'profile-list';
+    profiles.forEach(p => {
+      const item = document.createElement('li');
+      item.className = 'profile-card';
+      item.innerHTML = `<span class="profile-name">${p.playerName}</span><span class="profile-meta">Last visited ${new Date(p.lastPlayed).toLocaleDateString()}</span>`;
+      item.addEventListener('click', async () => {
+        await ProfileSystem.selectProfile(p.id);
+        await showSaveSelect(p);
+      });
+      const del = document.createElement('button');
+      del.className = 'profile-delete-btn';
+      del.textContent = '✕';
+      del.title = 'Delete profile';
+      del.addEventListener('click', async e => {
+        e.stopPropagation();
+        if (confirm(`Delete "${p.playerName}"? This cannot be undone.`)) {
+          await ProfileSystem.deleteProfile(p.id);
+          renderProfileSelect();
+        }
+      });
+      item.appendChild(del);
+      list.appendChild(item);
+    });
+    wrapper.appendChild(list);
   }
-}, TICK_MS);
 
-// ── Initial boot ───────────────────────────────────────────────────────────────
+  if (profiles.length < 4) {
+    const newBtn = document.createElement('button');
+    newBtn.className = 'menu-btn menu-btn-primary';
+    newBtn.textContent = '+ New Profile';
+    newBtn.addEventListener('click', () => renderProfileCreate(renderProfileSelect));
+    wrapper.appendChild(newBtn);
+  }
 
-hud.syncTier(0);           // render tier-0 resources immediately
-hud.updateResources(resources.amounts);
-hud.updateDay(1);
+  const back = document.createElement('button');
+  back.className = 'menu-btn menu-btn-secondary';
+  back.textContent = '← Back';
+  back.addEventListener('click', renderMainMenu);
+  wrapper.appendChild(back);
 
-const tier0Def = progressionData.tiers[0];
-const badge    = document.getElementById('tier-badge');
-if (badge && tier0Def) badge.textContent = `${tier0Def.icon} ${tier0Def.name}`;
+  menuContainer.appendChild(wrapper);
+}
 
-// Build orchard grid
-orchard.init();
+async function showSaveSelect(profile) {
+  await ProfileSystem.selectProfile(profile.id);
+  const slots = await SaveSystem.getAvailableSlots();
 
-// Init all scenes (registers tools, wires listeners)
-cabin.init();
-distillery.init();
-brewery.init();
-roastery.init();
+  menuContainer.innerHTML = '';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu-screen save-screen';
+  wrapper.innerHTML = `<div class="menu-bear">🍎</div><h2 class="menu-title">Choose Your Orchard</h2><p class="menu-subtitle">${profile.playerName}'s orchards</p>`;
 
-// Apply current unlocks (tier 0 only has 'orchard')
-applyUnlocks(0);
+  const grid = document.createElement('div');
+  grid.className = 'save-slot-grid';
 
-setStatus('Welcome to Happy Bear Cozy Orchard! 🐻  Click a tile to get started.');
-setTimeout(() => bearSpeak('Welcome to the orchard! 🌿'), 800);
+  slots.forEach(({ slot, occupied, data }) => {
+    const card = document.createElement('div');
+    card.className = `save-slot-card${occupied ? '' : ' save-slot-empty'}`;
+
+    if (occupied && data) {
+      card.innerHTML = `
+        <div class="save-slot-label">Orchard ${slot.replace('slot','')}</div>
+        <div class="save-slot-info">Day ${data.day} &nbsp;·&nbsp; ${data.season.charAt(0).toUpperCase()+data.season.slice(1)} &nbsp;·&nbsp; Cabin Lv${data.cabinLevel}</div>
+        <div class="save-slot-date">Last tended ${new Date(data.timestamp).toLocaleDateString()}</div>
+        <button class="save-slot-clear">✕ Clear</button>
+      `;
+      card.querySelector('.save-slot-clear').addEventListener('click', async e => {
+        e.stopPropagation();
+        if (confirm('Clear this orchard? This cannot be undone.')) {
+          await SaveSystem.clearSlot(slot);
+          showSaveSelect(profile);
+        }
+      });
+      card.addEventListener('click', e => {
+        if (e.target.classList.contains('save-slot-clear')) return;
+        launchGame(data, slot);
+      });
+    } else {
+      card.innerHTML = `
+        <div class="save-slot-label">Orchard ${slot.replace('slot','')}</div>
+        <div class="save-slot-begin">Begin Here 🌱</div>
+      `;
+      card.addEventListener('click', () => {
+        const newSave = SaveSystem.createNewSave(slot);
+        launchGame(newSave, slot);
+      });
+    }
+
+    grid.appendChild(card);
+  });
+
+  wrapper.appendChild(grid);
+
+  const back = document.createElement('button');
+  back.className = 'menu-btn menu-btn-secondary';
+  back.textContent = '← Back';
+  back.addEventListener('click', renderMainMenu);
+  wrapper.appendChild(back);
+
+  menuContainer.appendChild(wrapper);
+}
+
+function renderSettings() {
+  menuContainer.innerHTML = '';
+  const profile = ProfileSystem.getSelectedProfile();
+  const s = profile?.settings ?? {
+    gameplay: { textSpeed: 'normal', animationSpeed: 'normal', autosave: true, dayLength: 'normal', tutorialTips: true },
+    audio:    { musicVolume: 0.7, sfxVolume: 0.8, ambientVolume: 0.6 },
+    video:    { pixelScale: 2, fullscreen: false, uiScale: 'medium' },
+    accessibility: { highContrast: false, reducedMotion: false, largeText: false }
+  };
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu-screen settings-screen';
+  wrapper.innerHTML = `<div class="menu-bear">⚙️</div><h2 class="menu-title">Settings</h2>`;
+
+  function row(label, el) {
+    const r = document.createElement('div');
+    r.className = 'settings-row';
+    const lbl = document.createElement('label');
+    lbl.className = 'settings-label';
+    lbl.textContent = label;
+    r.appendChild(lbl);
+    r.appendChild(el);
+    return r;
+  }
+
+  function toggle(label, cat, key) {
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'settings-toggle';
+    cb.checked = s[cat][key];
+    cb.addEventListener('change', () => ProfileSystem.updateSetting(cat, key, cb.checked));
+    return row(label, cb);
+  }
+
+  function slider(label, cat, key, min, max) {
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex'; wrap.style.gap = '8px'; wrap.style.alignItems = 'center';
+    const sl = document.createElement('input');
+    sl.type = 'range'; sl.min = min; sl.max = max; sl.step = 0.05;
+    sl.value = s[cat][key]; sl.className = 'settings-slider';
+    const val = document.createElement('span');
+    val.textContent = Math.round(s[cat][key] * 100) + '%';
+    sl.addEventListener('input', () => {
+      ProfileSystem.updateSetting(cat, key, parseFloat(sl.value));
+      val.textContent = Math.round(sl.value * 100) + '%';
+    });
+    wrap.appendChild(sl); wrap.appendChild(val);
+    return row(label, wrap);
+  }
+
+  const section = (heading, ...rows) => {
+    const sec = document.createElement('div');
+    sec.className = 'settings-section';
+    const h = document.createElement('h3');
+    h.className = 'settings-heading'; h.textContent = heading;
+    sec.appendChild(h);
+    rows.forEach(r => sec.appendChild(r));
+    return sec;
+  };
+
+  wrapper.appendChild(section('Audio',
+    slider('Music', 'audio', 'musicVolume', 0, 1),
+    slider('SFX',   'audio', 'sfxVolume',   0, 1),
+    slider('Ambient','audio','ambientVolume',0, 1)
+  ));
+  wrapper.appendChild(section('Gameplay',
+    toggle('Autosave',     'gameplay', 'autosave'),
+    toggle('Tutorial Tips','gameplay', 'tutorialTips')
+  ));
+  wrapper.appendChild(section('Accessibility',
+    toggle('High Contrast', 'accessibility', 'highContrast'),
+    toggle('Reduced Motion','accessibility', 'reducedMotion'),
+    toggle('Larger Text',   'accessibility', 'largeText')
+  ));
+
+  const back = document.createElement('button');
+  back.className = 'menu-btn menu-btn-secondary';
+  back.textContent = '← Back';
+  back.addEventListener('click', renderMainMenu);
+  wrapper.appendChild(back);
+
+  menuContainer.appendChild(wrapper);
+}
+
+// ── Game launch ─────────────────────────────────────────────────────────────
+
+function launchGame(saveData, slot) {
+  menuOverlay.classList.add('hidden');
+  appEl.classList.remove('game-hidden');
+  initGame(saveData, slot);
+}
+
+// ── Game init (runs after menu flow) ────────────────────────────────────────
+
+function initGame(saveData) {
+  const resources    = new ResourceManager(saveData?.inventory ?? {});
+  const tileGrid     = new TileGrid();
+  const cropSystem   = new CropSystem(tileGrid);
+  const crafting     = new CraftingSystem(resources, { tier: 0, day: 1, unlocks: new Set(['orchard']) });
+  const construction = new ConstructionSystem(resources);
+  const progression  = new ProgressionSystem({ tier: 0, day: 1, unlocks: new Set(['orchard']) }, resources);
+
+  const gameState = { tier: 0, day: saveData?.day ?? 1, unlocks: new Set(['orchard']) };
+
+  const hud      = new HUD();
+  const statusEl = document.getElementById('status-msg');
+
+  const bearSpeak = (msg) => {
+    ['bear-speech', 'cabin-bear-speech'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3500);
+    });
+  };
+
+  const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
+
+  const actionMenu = new ActionMenu((tile, action) => {
+    const result = tileGrid.performAction(tile, action, resources);
+    if (result.success) {
+      setStatus('Action complete! Keep going 🌿');
+    } else {
+      setStatus('⚠ ' + result.message);
+      bearSpeak(result.message);
+    }
+  });
+
+  const scenes = new SceneManager();
+
+  const orchard = new OrchardScene({
+    tileGrid, resources, actionMenu, statusEl,
+    bearEl:   document.getElementById('bear-sprite'),
+    speechEl: document.getElementById('bear-speech'),
+  });
+
+  const cabin      = new CabinScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
+  const distillery = new DistilleryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
+  const brewery    = new BreweryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
+  const roastery   = new RoasteryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
+
+  scenes.register(SCENES.ORCHARD,    orchard);
+  scenes.register(SCENES.CABIN,      cabin);
+  scenes.register(SCENES.DISTILLERY, distillery);
+  scenes.register(SCENES.BREWERY,    brewery);
+  scenes.register(SCENES.ROASTERY,   roastery);
+
+  document.querySelectorAll('[data-scene-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!btn.disabled) scenes.switchTo(btn.dataset.sceneTarget);
+    });
+  });
+
+  const SCENE_UNLOCK_MAP = { cabin:'nav-cabin', distillery:'nav-distillery', brewery:'nav-brewery', roastery:'nav-roastery' };
+
+  function applyUnlocks(tier) {
+    const tierDef = progressionData.tiers[tier];
+    if (!tierDef) return;
+    for (const u of tierDef.unlocks) {
+      const btn = document.getElementById(SCENE_UNLOCK_MAP[u]);
+      if (btn) btn.disabled = false;
+    }
+    hud.updateTier(`${tierDef.icon} ${tierDef.name}`);
+    const badge = document.getElementById('tier-badge');
+    if (badge) badge.textContent = `${tierDef.icon} ${tierDef.name}`;
+  }
+
+  progression.onChange(({ tier, def }) => {
+    applyUnlocks(tier);
+    bearSpeak(`New tier unlocked: ${def.icon} ${def.name}!`);
+    setStatus(`🎉 Tier unlocked: ${def.name} — explore the new scene!`);
+  });
+
+  resources.onChange(amounts => hud.updateResources(amounts));
+
+  let tickCount = 0;
+  const TICK_MS = 3000;
+  const TICKS_PER_DAY = 10;
+
+  setInterval(() => {
+    tickCount++;
+    const ripened = cropSystem.tick();
+    if (ripened) {
+      bearSpeak('Your crops are ready to harvest! 🍎');
+      setStatus('Some plants are ready to harvest — click them!');
+    }
+    if (tickCount % TICKS_PER_DAY === 0) {
+      gameState.day++;
+      hud.updateDay(gameState.day);
+      const speeches = ['Keep growing! 🌱','Water your plants! 💧','The orchard blooms! 🌸',"Don't forget to water! 💧",'More fruit, more cups! ☕'];
+      bearSpeak(speeches[Math.floor(Math.random() * speeches.length)]);
+      setStatus(`Day ${gameState.day} begins — keep building your orchard! 🌳`);
+    }
+  }, TICK_MS);
+
+  hud.syncTier(0);
+  hud.updateResources(resources.amounts);
+  hud.updateDay(gameState.day);
+
+  const tier0Def = progressionData.tiers[0];
+  const badge    = document.getElementById('tier-badge');
+  if (badge && tier0Def) badge.textContent = `${tier0Def.icon} ${tier0Def.name}`;
+
+  orchard.init();
+  cabin.init();
+  distillery.init();
+  brewery.init();
+  roastery.init();
+  applyUnlocks(0);
+
+  const profile = ProfileSystem.getSelectedProfile();
+  const greeting = profile ? `Welcome back, ${profile.playerName}! 🐻` : 'Welcome to Happy Bear Cozy Orchard! 🐻';
+  setStatus(greeting + '  Click a tile to get started.');
+  setTimeout(() => bearSpeak('Welcome to the orchard! 🌿'), 800);
+}
+
+// ── Boot ─────────────────────────────────────────────────────────────────────
+
+async function boot() {
+  await ProfileSystem.loadProfiles();
+  const profiles = ProfileSystem.getAllProfiles();
+
+  if (profiles.length === 0) {
+    renderProfileCreate();
+  } else {
+    renderMainMenu();
+  }
+}
+
+boot();
