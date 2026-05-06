@@ -9,6 +9,7 @@ const ACTION_INFO = {
   [ACTION.PLANT]:   { label: '🌱 Plant',  desc: 'Plant a tree  →  costs 1 🍎' },
   [ACTION.WATER]:   { label: '💧 Water',  desc: 'Speed up growth (free)' },
   [ACTION.HARVEST]: { label: '🍎 Harvest',desc: 'Pick fruit  →  +3 🍎  +1 ☕' },
+  [ACTION.MINE]:    { label: '⛏️ Mine',   desc: 'Mine stone  →  +2 🪨' },
 };
 
 export class ActionMenu {
