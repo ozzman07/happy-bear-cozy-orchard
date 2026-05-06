@@ -1,7 +1,9 @@
 import {
   GRID_SIZE,
   TILE_STATE,
+  TILE_TYPE,
   ACTION,
+  RESOURCE,
   ACTION_COSTS,
   ACTION_YIELDS,
   ACTION_VALID_STATES,
@@ -10,10 +12,12 @@ import {
 } from './constants.js';
 
 export class Tile {
-  constructor(x, y, state = TILE_STATE.LOCKED) {
+  constructor(x, y, state = TILE_STATE.LOCKED, type = null) {
     this.x = x;
     this.y = y;
     this.state = state;
+    this.type = type;
+    this.cropId = null;
     this.growTicks = 0;
     this.growTicksNeeded = GROW_TICKS_NEEDED;
     this.watered = false;
@@ -34,16 +38,19 @@ export class Grid {
         const cx = 4, cy = 4;
         const dist = Math.max(Math.abs(x - cx), Math.abs(y - cy));
         let state;
+        let type = null;
         if (x >= 4 && x <= 5 && y >= 4 && y <= 5) {
           state = TILE_STATE.CLEARED;
         } else if (dist <= 2) {
           state = TILE_STATE.CLEARABLE;
+          const types = [TILE_TYPE.GRASS, TILE_TYPE.ROCK, TILE_TYPE.STUMP];
+          type = types[Math.floor(Math.random() * types.length)];
         } else if (dist === 3) {
           state = TILE_STATE.LOCKED;
         } else {
           state = TILE_STATE.LOCKED;
         }
-        this.tiles[y][x] = new Tile(x, y, state);
+        this.tiles[y][x] = new Tile(x, y, state, type);
       }
     }
     // Unlock the ring right outside the cleared centre
@@ -51,6 +58,8 @@ export class Grid {
       for (let x = 3; x <= 6; x++) {
         if (this.tiles[y][x].state === TILE_STATE.LOCKED) {
           this.tiles[y][x].state = TILE_STATE.CLEARABLE;
+          const types = [TILE_TYPE.GRASS, TILE_TYPE.ROCK, TILE_TYPE.STUMP];
+          this.tiles[y][x].type = types[Math.floor(Math.random() * types.length)];
         }
       }
     }
@@ -76,7 +85,20 @@ export class Grid {
     }
     resources.spend(costs);
 
-    const yields = ACTION_YIELDS[action] ?? {};
+    let yields = { ...(ACTION_YIELDS[action] ?? {}) };
+    if (action === ACTION.CLEAR) {
+      if (tile.type === TILE_TYPE.STUMP) {
+        yields[RESOURCE.WOOD] = 8;
+      } else if (tile.type === TILE_TYPE.GRASS) {
+        yields[RESOURCE.WOOD] = 3;
+      }
+    } else if (action === ACTION.DIG) {
+      if (tile.state === TILE_STATE.CLEARABLE && tile.type === TILE_TYPE.ROCK) {
+        yields[RESOURCE.STONE] = 5;
+      } else if (tile.state === TILE_STATE.CLEARED) {
+        yields[RESOURCE.STONE] = 1;
+      }
+    }
     for (const [type, amount] of Object.entries(yields)) {
       resources.add(type, amount);
     }
@@ -84,13 +106,16 @@ export class Grid {
     switch (action) {
       case ACTION.CLEAR:
         tile.state = TILE_STATE.CLEARED;
+        tile.cropId = null;
         this._unlockNeighbors(tile.x, tile.y);
         break;
       case ACTION.DIG:
         tile.state = TILE_STATE.CLEARED;
+        tile.cropId = null;
         break;
       case ACTION.PLANT:
         tile.state = TILE_STATE.PLANTED;
+        tile.cropId = 'apple';
         tile.growTicks = 0;
         tile.growTicksNeeded = GROW_TICKS_NEEDED;
         tile.watered = false;
@@ -100,8 +125,9 @@ export class Grid {
         tile.growTicksNeeded = Math.max(1, tile.growTicksNeeded - WATER_GROW_BONUS);
         break;
       case ACTION.HARVEST:
-        tile.state = TILE_STATE.CLEARED;
+        tile.state = TILE_STATE.PLANTED;
         tile.growTicks = 0;
+        tile.growTicksNeeded = GROW_TICKS_NEEDED;
         tile.watered = false;
         break;
     }

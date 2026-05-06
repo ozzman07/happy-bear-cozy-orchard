@@ -57,7 +57,12 @@ export class UI {
   }
 
   _renderTile(tile, el) {
-    const v = TILE_VISUAL[tile.state];
+    let v;
+    if (tile.state === TILE_STATE.CLEARABLE) {
+      v = TILE_VISUAL[tile.state][tile.type];
+    } else {
+      v = TILE_VISUAL[tile.state];
+    }
     el.className        = `tile tile-${tile.state}`;
     el.style.background = v.color;
     el.textContent      = v.emoji;

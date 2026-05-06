@@ -14,7 +14,7 @@
     "station": "fermenter",
     "inputs": { "juice": 1 },
     "outputs": { "cider": 1 },
-    "timerSecs": 8,
+    "timerSecs": 80,
     "unlockTier": 1
   },
   "bottle_cider": {
@@ -32,7 +32,7 @@
     "station": "still",
     "inputs": { "cider": 2 },
     "outputs": { "applejack": 1 },
-    "timerSecs": 15,
+    "timerSecs": 150,
     "unlockTier": 2
   },
   "distill_whiskey": {
@@ -41,7 +41,7 @@
     "station": "barrel",
     "inputs": { "applejack": 2 },
     "outputs": { "whiskey": 1 },
-    "timerSecs": 20,
+    "timerSecs": 200,
     "unlockTier": 3
   },
   "brew_beer": {
@@ -50,7 +50,7 @@
     "station": "brew_kettle",
     "inputs": { "fruit": 2, "hops": 1 },
     "outputs": { "fruit_beer": 1 },
-    "timerSecs": 12,
+    "timerSecs": 120,
     "unlockTier": 4
   },
   "roast_coffee": {
@@ -59,16 +59,16 @@
     "station": "roaster",
     "inputs": { "coffee_bean": 2 },
     "outputs": { "roasted_coffee": 1 },
-    "timerSecs": 10,
+    "timerSecs": 100,
     "unlockTier": 5
   },
   "brew_coffee": {
     "id": "brew_coffee",
-    "name": "Brew Coffee",
-    "station": "coffee_brewer",
-    "inputs": { "roasted_coffee": 1 },
-    "outputs": { "cups": 1 },
-    "timerSecs": 8,
+    "name": "Brew Coffee Stout",
+    "station": "brew_kettle",
+    "inputs": { "roasted_coffee": 1, "hops": 1 },
+    "outputs": { "coffee_stout": 1 },
+    "timerSecs": 140,
     "unlockTier": 5
   }
 }

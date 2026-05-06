@@ -42,6 +42,18 @@ export class OrchardScene {
 
     // React to grid changes
     this._grid.onChange(tiles => this._updateAllTiles(tiles));
+
+    // Show welcome modal
+    this._showWelcomeModal();
+  }
+
+  _showWelcomeModal() {
+    const modal = document.getElementById('welcome-modal');
+    modal.classList.remove('hidden');
+    const closeBtn = document.getElementById('close-welcome');
+    closeBtn.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
   }
 
   onEnter() {
@@ -69,7 +81,12 @@ export class OrchardScene {
 
   _renderTile(tile, el) {
     if (!el) return;
-    const v          = TILE_VISUAL[tile.state];
+    let v;
+    if (tile.state === TILE_STATE.CLEARABLE) {
+      v = TILE_VISUAL[tile.state][tile.type];
+    } else {
+      v = TILE_VISUAL[tile.state];
+    }
     el.className     = `tile tile-${tile.state}`;
     el.style.background = v.color;
     el.textContent   = v.emoji;

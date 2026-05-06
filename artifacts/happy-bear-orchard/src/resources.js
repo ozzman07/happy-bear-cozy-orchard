@@ -3,8 +3,8 @@ import { RESOURCE } from './constants.js';
 export class ResourceManager {
   constructor() {
     this.amounts = {
-      [RESOURCE.WOOD]:  5,
-      [RESOURCE.STONE]: 3,
+      [RESOURCE.WOOD]:  10,
+      [RESOURCE.STONE]: 5,
       [RESOURCE.FRUIT]: 2,
       [RESOURCE.CUPS]:  0,
     };

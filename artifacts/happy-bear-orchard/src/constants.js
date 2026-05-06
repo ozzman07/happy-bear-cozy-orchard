@@ -8,6 +8,12 @@ export const TILE_STATE = {
   HARVESTABLE: 'harvestable',
 };
 
+export const TILE_TYPE = {
+  GRASS: 'grass',
+  ROCK:  'rock',
+  STUMP: 'stump',
+};
+
 export const ACTION = {
   CLEAR:   'clear',
   DIG:     'dig',
@@ -35,7 +41,7 @@ export const RESOURCE = {
 
 export const ACTION_COSTS = {
   [ACTION.CLEAR]:   {},
-  [ACTION.DIG]:     { [RESOURCE.STONE]: 1 },
+  [ACTION.DIG]:     {},
   [ACTION.PLANT]:   { [RESOURCE.FRUIT]: 1 },
   [ACTION.WATER]:   {},
   [ACTION.HARVEST]: {},
@@ -43,8 +49,8 @@ export const ACTION_COSTS = {
 };
 
 export const ACTION_YIELDS = {
-  [ACTION.CLEAR]:   { [RESOURCE.WOOD]: 2 },
-  [ACTION.DIG]:     {},
+  [ACTION.CLEAR]:   { [RESOURCE.WOOD]: 5 },
+  [ACTION.DIG]:     { [RESOURCE.STONE]: 3 },
   [ACTION.PLANT]:   {},
   [ACTION.WATER]:   {},
   [ACTION.HARVEST]: { [RESOURCE.FRUIT]: 3 },
@@ -53,7 +59,7 @@ export const ACTION_YIELDS = {
 
 export const ACTION_VALID_STATES = {
   [ACTION.CLEAR]:   [TILE_STATE.CLEARABLE],
-  [ACTION.DIG]:     [TILE_STATE.CLEARED],
+  [ACTION.DIG]:     [TILE_STATE.CLEARABLE, TILE_STATE.CLEARED],
   [ACTION.PLANT]:   [TILE_STATE.CLEARED],
   [ACTION.WATER]:   [TILE_STATE.PLANTED],
   [ACTION.HARVEST]: [TILE_STATE.HARVESTABLE],
@@ -62,10 +68,14 @@ export const ACTION_VALID_STATES = {
 
 export const TILE_VISUAL = {
   [TILE_STATE.LOCKED]:      { emoji: '🔒', color: '#4a3728', label: 'Locked — clear a neighbour first' },
-  [TILE_STATE.CLEARABLE]:   { emoji: '🌿', color: '#2e5e30', label: 'Overgrown — clear it!' },
+  [TILE_STATE.CLEARABLE]:   {
+    [TILE_TYPE.GRASS]: { emoji: '🌿', color: '#2e5e30', label: 'Overgrown grass — clear for wood!' },
+    [TILE_TYPE.ROCK]:  { emoji: '🪨', color: '#6b6b6b', label: 'Rocky outcrop — dig for stone!' },
+    [TILE_TYPE.STUMP]: { emoji: '🪵', color: '#8b4513', label: 'Old stump — clear for wood!' },
+  },
   [TILE_STATE.CLEARED]:     { emoji: '🟫', color: '#7c4b1e', label: 'Cleared soil — dig or plant' },
-  [TILE_STATE.PLANTED]:     { emoji: '🌱', color: '#3d6b2a', label: 'Growing plant' },
-  [TILE_STATE.HARVESTABLE]: { emoji: '🍎', color: '#1b6b1b', label: 'Ready to harvest!' },
+  [TILE_STATE.PLANTED]:     { emoji: '�', color: '#3d6b2a', label: 'Apple tree growing' },
+  [TILE_STATE.HARVESTABLE]: { emoji: '🍎', color: '#1b6b1b', label: 'Apples ready to harvest!' },
 };
 
 export const GROW_TICKS_NEEDED = 5;

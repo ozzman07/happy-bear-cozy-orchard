@@ -3,7 +3,7 @@
     "id": "apple",
     "name": "Apple",
     "icon": "🍎",
-    "growTicks": 5,
+    "growTicks": 50,
     "yields": { "fruit": 3 },
     "plantCost": { "fruit": 1 },
     "unlockTier": 0
@@ -12,7 +12,7 @@
     "id": "hops",
     "name": "Hops",
     "icon": "🌾",
-    "growTicks": 7,
+    "growTicks": 70,
     "yields": { "hops": 2 },
     "plantCost": { "hops": 1 },
     "unlockTier": 3
@@ -21,7 +21,7 @@
     "id": "coffee",
     "name": "Coffee",
     "icon": "☕",
-    "growTicks": 10,
+    "growTicks": 100,
     "yields": { "coffee_bean": 2 },
     "plantCost": { "coffee_bean": 1 },
     "unlockTier": 5
