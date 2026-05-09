@@ -567,6 +567,11 @@ function initGame(saveData, slot) {
       const btn = document.getElementById('nav-store');
       if (btn) btn.disabled = false;
     }
+    if (sys.autoEnabled) {
+      orchard.autoEnabled = true;
+      const autoBtn = document.getElementById('orchard-auto-btn');
+      if (autoBtn) orchard._syncAutoBtn(autoBtn);
+    }
   }
 
   applyUnlocks(gameState.tier);
@@ -586,6 +591,7 @@ function initGame(saveData, slot) {
         tier:           gameState.tier,
         firstCrafts:    [...gameState.firstCrafts],
         marketUnlocked,
+        autoEnabled:    orchard.autoEnabled,
       },
     };
   }
