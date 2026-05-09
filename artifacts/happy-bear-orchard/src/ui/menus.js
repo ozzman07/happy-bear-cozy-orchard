@@ -39,11 +39,21 @@ export class ActionMenu {
   }
 
   show(tile, resources) {
-    // Permanent forest dividers are never interactive
-    if (tile.permanent) return;
-
     this.currentTile = tile;
     this._btnsEl.innerHTML = '';
+
+    // Permanent forest dividers — show a message but no actions
+    if (tile.permanent) {
+      this._titleEl.textContent = '🌲 Ancient Forest';
+      const msg = document.createElement('p');
+      msg.className = 'no-actions';
+      msg.textContent = 'These ancient trees can\'t be cleared — they separate growing zones.';
+      this._btnsEl.appendChild(msg);
+      this._menuEl.classList.remove('hidden');
+      this._overlayEl.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
 
     // For growing trees, show progress prominently in the title
     if (tile.state === TILE_STATE.PLANTED) {
