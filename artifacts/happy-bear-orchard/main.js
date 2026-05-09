@@ -503,6 +503,7 @@ function initGame(saveData, slot) {
   setInterval(() => {
     tickCount++;
     const ripened = cropSystem.tick();
+    tileGrid.completeMines(resources);
 
     if (construction.isOperational('harvest_bell')) {
       const harvested = tileGrid.autoHarvest(resources);

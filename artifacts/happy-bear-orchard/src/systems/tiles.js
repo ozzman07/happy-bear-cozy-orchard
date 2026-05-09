@@ -5,7 +5,7 @@
 import {
   GRID_SIZE, TILE_STATE, TILE_TYPE, ACTION,
   ACTION_COSTS, ACTION_YIELDS, ACTION_VALID_STATES,
-  GROW_TICKS_NEEDED, WATER_GROW_BONUS,
+  GROW_TICKS_NEEDED, WATER_GROW_BONUS, MINE_SECS, MINE_YIELD,
 } from '../constants.js';
 
 // ── Zone definitions ──────────────────────────────────────────────────────────
@@ -40,6 +40,7 @@ export class Tile {
     this.growTicksNeeded = GROW_TICKS_NEEDED;
     this.watered         = false;
     this.permanent       = false; // true → never unlocks via adjacency
+    this.miningEnd       = null;  // timestamp when current mine completes
   }
 }
 
@@ -135,8 +136,8 @@ export class TileGrid {
         tile.watered         = false;
         break;
       case ACTION.MINE:
-        // Establishes a mine shaft on first use; subsequent mines extract stone in place
-        tile.state = TILE_STATE.MINE_SHAFT;
+        tile.state     = TILE_STATE.MINING;
+        tile.miningEnd = Date.now() + MINE_SECS * 1000;
         break;
     }
 
@@ -161,6 +162,24 @@ export class TileGrid {
     }
     if (anyRipe) this._notify();
     return anyRipe;
+  }
+
+  /** Check for completed mine timers; award stone and flip to MINE_SHAFT. Returns count. */
+  completeMines(resources) {
+    let count = 0;
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const t = this.tiles[y][x];
+        if (t.state === TILE_STATE.MINING && t.miningEnd && Date.now() >= t.miningEnd) {
+          t.state     = TILE_STATE.MINE_SHAFT;
+          t.miningEnd = null;
+          for (const [res, amt] of Object.entries(MINE_YIELD)) resources.add(res, amt);
+          count++;
+        }
+      }
+    }
+    if (count) this._notify();
+    return count;
   }
 
   _unlockNeighbors(x, y) {
@@ -188,12 +207,14 @@ export class TileGrid {
         const saved = data[y][x];
         const tile  = this.tiles[y]?.[x];
         if (!tile || !saved) continue;
-        tile.state           = saved.state;
+        // MINING tiles that timed out while away become MINE_SHAFT on restore
+        tile.state           = (saved.state === TILE_STATE.MINING) ? TILE_STATE.MINE_SHAFT : saved.state;
         tile.tileType        = saved.tileType        ?? tile.tileType;
         tile.growTicks       = saved.growTicks       ?? 0;
         tile.growTicksNeeded = saved.growTicksNeeded ?? GROW_TICKS_NEEDED;
         tile.watered         = saved.watered         ?? false;
         tile.permanent       = saved.permanent       ?? false;
+        tile.miningEnd       = null; // don't restore timers; mine completes fresh
       }
     }
     this._notify();
