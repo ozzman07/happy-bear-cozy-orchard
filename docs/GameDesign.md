@@ -24,15 +24,17 @@ The orchard is a grid of tiles with states:
 - Cleared
 - Planted (tree, patch, vine, botanical)
 - Harvestable
+- Mine Shaft (active stone extraction site)
 - Decorative
 
 ### 3.2 Player Tools
 Players interact with tiles using:
-- Clear
+- Clear (removes overgrowth → +1 wood; or uproots a crop / decommissions a mine at no yield)
 - Dig
 - Plant
 - Water
-- Harvest
+- Harvest (auto-replants — tile stays in the growth cycle)
+- Mine (establishes a Mine Shaft on first use; subsequent mines extract +2 stone in place)
 
 ### 3.3 Crop Types
 - Apple Trees
@@ -87,11 +89,12 @@ The Cider Cabin is the player's production hub. As the game progresses, it expan
 
 ### 4.2 Beverage Workflows
 #### Cider
-1. Press fruit
-2. Ferment
-3. Flavor
-4. Age (optional)
-5. Bottle
+1. Press fruit (2 fruit → 1 juice, 12s) — repeat 3× to fill the Fermenter
+2. Ferment (3 juice → 1 cider, 90s) — repeat 3× to fill the Bottling Station
+3. Bottle (3 cider → 6 bottles, 20s)
+4. Market unlocks at 3 bottles held
+5. Flavor (optional, future)
+6. Age (optional, future)
 
 #### Craft Soda
 1. Gather botanicals

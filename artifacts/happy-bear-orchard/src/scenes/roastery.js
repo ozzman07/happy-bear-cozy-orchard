@@ -32,7 +32,10 @@ export class RoasteryScene {
 
   init() {
     for (const def of Object.values(TOOL_DEFS)) this._cs.register(def.id, def);
-    this._cs.onChange(() => this._renderAll());
+    this._cs.onChange(evt => {
+      this._renderAll();
+      if (evt.type === 'ready') this._bearSpeak?.(BearDialogue.toolBuilt(evt.toolId));
+    });
     this._craft.onChange(() => this._renderAll());
     this._res.onChange(() => this._renderAll());
     this._pollTimer = setInterval(() => this._renderAll(), 500);

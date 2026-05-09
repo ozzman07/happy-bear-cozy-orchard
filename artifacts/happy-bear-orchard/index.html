@@ -33,7 +33,7 @@
     <button class="nav-btn" data-scene-target="distillery" id="nav-distillery" disabled>🫧 Distillery</button>
     <button class="nav-btn" data-scene-target="brewery"    id="nav-brewery"    disabled>🍻 Brewery</button>
     <button class="nav-btn" data-scene-target="roastery"   id="nav-roastery"   disabled>☕ Roastery</button>
-    <button class="nav-btn nav-btn-store"  data-scene-target="store">🛒 Market</button>
+    <button class="nav-btn nav-btn-store"  data-scene-target="store" id="nav-store" disabled>🛒 Market</button>
   </nav>
 
   <!-- ══ Scenes ════════════════════════════════════════════════════════════ -->
@@ -45,12 +45,7 @@
         <div id="grid"></div>
       </div>
       <div id="bear-corner">
-        <div id="bear-sprite" class="bear-face">
-          <div class="eye left"></div>
-          <div class="eye right"></div>
-          <div class="nose"></div>
-          <div class="mouth"></div>
-        </div>
+        <img id="bear-sprite" class="bear-img" src="/bear.svg" alt="Happy Bear"/>
         <div id="bear-speech" class="hidden"></div>
       </div>
     </div>
@@ -69,15 +64,11 @@
               <div class="tool-slot" id="tool-slot-press"></div>
               <div class="tool-slot" id="tool-slot-fermenter"></div>
               <div class="tool-slot" id="tool-slot-bottling"></div>
+              <div class="tool-slot" id="tool-slot-harvest_bell"></div>
             </div>
           </div>
           <div id="cabin-bear-corner">
-            <div id="cabin-bear" class="bear-face">
-              <div class="eye left"></div>
-              <div class="eye right"></div>
-              <div class="nose"></div>
-              <div class="mouth"></div>
-            </div>
+            <img id="cabin-bear" class="bear-img" src="/bear.svg" alt="Happy Bear"/>
             <div id="cabin-bear-speech" class="hidden"></div>
             <div id="cabin-tip">Tap a blueprint<br>to build a tool!</div>
           </div>
@@ -101,12 +92,7 @@
             </div>
           </div>
           <div id="cabin-bear-corner">
-            <div id="cabin-bear" class="bear-face">
-              <div class="eye left"></div>
-              <div class="eye right"></div>
-              <div class="nose"></div>
-              <div class="mouth"></div>
-            </div>
+            <img id="cabin-bear" class="bear-img" src="/bear.svg" alt="Happy Bear"/>
             <div id="cabin-bear-speech" class="hidden"></div>
             <div id="cabin-tip">Distil cider into<br>Applejack &amp; Whiskey!</div>
           </div>
@@ -129,12 +115,7 @@
             </div>
           </div>
           <div id="cabin-bear-corner">
-            <div id="cabin-bear" class="bear-face">
-              <div class="eye left"></div>
-              <div class="eye right"></div>
-              <div class="nose"></div>
-              <div class="mouth"></div>
-            </div>
+            <img id="cabin-bear" class="bear-img" src="/bear.svg" alt="Happy Bear"/>
             <div id="cabin-bear-speech" class="hidden"></div>
             <div id="cabin-tip">Grow hops &amp; brew<br>fruit ales!</div>
           </div>
@@ -158,12 +139,7 @@
             </div>
           </div>
           <div id="cabin-bear-corner">
-            <div id="cabin-bear" class="bear-face">
-              <div class="eye left"></div>
-              <div class="eye right"></div>
-              <div class="nose"></div>
-              <div class="mouth"></div>
-            </div>
+            <img id="cabin-bear" class="bear-img" src="/bear.svg" alt="Happy Bear"/>
             <div id="cabin-bear-speech" class="hidden"></div>
             <div id="cabin-tip">Roast beans, then<br>brew into ☕ cups!</div>
           </div>
@@ -184,7 +160,7 @@
             <div id="store-grid"></div>
           </div>
           <div id="store-bear-corner">
-            <div id="store-bear">🐻</div>
+            <img id="store-bear" class="bear-img" src="/bear.svg" alt="Happy Bear"/>
             <div id="store-bear-speech" class="hidden"></div>
             <div id="store-tip">Sell your goods<br>for 🪙 coins!</div>
           </div>
@@ -193,6 +169,14 @@
     </div>
 
   </main>
+
+  <!-- ══ Story Bear notification ═════════════════════════════════════════ -->
+  <div id="story-bear-panel" class="hidden">
+    <div class="story-bear-inner">
+      <span class="story-bear-label">📖 Story Bear</span>
+      <p class="story-bear-quote"></p>
+    </div>
+  </div>
 
   <!-- ══ Orchard tile action menu ════════════════════════════════════════ -->
   <div id="overlay" class="hidden"></div>
@@ -205,12 +189,7 @@
   <!-- ══ Welcome Modal ════════════════════════════════════════════════════ -->
   <div id="welcome-modal" class="modal hidden">
     <div class="modal-content">
-      <div id="welcome-bear" class="bear-face">
-        <div class="eye left"></div>
-        <div class="eye right"></div>
-        <div class="nose"></div>
-        <div class="mouth"></div>
-      </div>
+      <img id="welcome-bear" class="bear-img bear-img-welcome" src="/bear.svg" alt="Happy Bear"/>
       <h2>Welcome to Happy Bear Cozy Orchard!</h2>
       <p>I'm Happy Bear, your friendly guide! 🌳🍎</p>
       <p><strong>Instructions:</strong></p>

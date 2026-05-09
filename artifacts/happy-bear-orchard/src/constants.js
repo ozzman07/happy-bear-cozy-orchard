@@ -6,6 +6,7 @@ export const TILE_STATE = {
   CLEARED:     'cleared',
   PLANTED:     'planted',
   HARVESTABLE: 'harvestable',
+  MINE_SHAFT:  'mine_shaft',
 };
 
 export const TILE_TYPE = {
@@ -49,7 +50,7 @@ export const ACTION_COSTS = {
 };
 
 export const ACTION_YIELDS = {
-  [ACTION.CLEAR]:   { [RESOURCE.WOOD]: 5 },
+  [ACTION.CLEAR]:   { [RESOURCE.WOOD]: 1 },
   [ACTION.DIG]:     { [RESOURCE.STONE]: 3 },
   [ACTION.PLANT]:   {},
   [ACTION.WATER]:   {},
@@ -58,12 +59,12 @@ export const ACTION_YIELDS = {
 };
 
 export const ACTION_VALID_STATES = {
-  [ACTION.CLEAR]:   [TILE_STATE.CLEARABLE],
+  [ACTION.CLEAR]:   [TILE_STATE.CLEARABLE, TILE_STATE.PLANTED, TILE_STATE.HARVESTABLE, TILE_STATE.MINE_SHAFT],
   [ACTION.DIG]:     [TILE_STATE.CLEARABLE, TILE_STATE.CLEARED],
   [ACTION.PLANT]:   [TILE_STATE.CLEARED],
   [ACTION.WATER]:   [TILE_STATE.PLANTED],
   [ACTION.HARVEST]: [TILE_STATE.HARVESTABLE],
-  [ACTION.MINE]:    [TILE_STATE.CLEARED],
+  [ACTION.MINE]:    [TILE_STATE.CLEARED, TILE_STATE.MINE_SHAFT],
 };
 
 export const TILE_VISUAL = {
@@ -74,8 +75,9 @@ export const TILE_VISUAL = {
     [TILE_TYPE.STUMP]: { emoji: '🪵', color: '#8b4513', label: 'Old stump — clear for wood!' },
   },
   [TILE_STATE.CLEARED]:     { emoji: '🟫', color: '#7c4b1e', label: 'Cleared soil — dig or plant' },
-  [TILE_STATE.PLANTED]:     { emoji: '�', color: '#3d6b2a', label: 'Apple tree growing' },
+  [TILE_STATE.PLANTED]:     { emoji: '🌱', color: '#3d6b2a', label: 'Apple tree growing' },
   [TILE_STATE.HARVESTABLE]: { emoji: '🍎', color: '#1b6b1b', label: 'Apples ready to harvest!' },
+  [TILE_STATE.MINE_SHAFT]:  { emoji: '⛏️', color: '#4a4040', label: 'Mine shaft — mine for stone' },
 };
 
 export const GROW_TICKS_NEEDED = 5;

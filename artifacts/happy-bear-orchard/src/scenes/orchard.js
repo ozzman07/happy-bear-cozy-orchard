@@ -63,10 +63,7 @@ export class OrchardScene {
   }
 
   onTick(ripened) {
-    if (ripened) {
-      this.bearSpeak('Your crops are ready to harvest! 🍎');
-      this.setStatus('Some plants are ready to harvest — click them!');
-    }
+    if (ripened) this.setStatus('Crops ready — tap them to harvest! 🍎');
   }
 
   onNewDay() { this.bearSpeak(BearDialogue.sceneGreeting('orchard')); }
@@ -81,6 +78,17 @@ export class OrchardScene {
 
   _renderTile(tile, el) {
     if (!el) return;
+
+    // Permanent gap tiles are zone dividers — render as dense treeline
+    if (tile.permanent) {
+      el.className        = 'tile tile-permanent';
+      el.style.background = '#1a3a1a';
+      el.textContent      = '🌲';
+      el.title            = 'Dense forest — separates growing zones';
+      el.style.removeProperty('--grow-pct');
+      return;
+    }
+
     let v = TILE_VISUAL[tile.state];
     // CLEARABLE has sub-types keyed by tileType — resolve to the right visual
     if (v && !v.color) v = v[tile.tileType] ?? v[TILE_TYPE.GRASS] ?? Object.values(v)[0];

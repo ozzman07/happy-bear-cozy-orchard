@@ -8,6 +8,28 @@ import {
   GROW_TICKS_NEEDED, WATER_GROW_BONUS,
 } from '../constants.js';
 
+// ── Zone definitions ──────────────────────────────────────────────────────────
+// Each zone is a rectangular region that unlocks as a group when a tier is reached.
+// Gap tiles between zones are permanently locked so adjacency can't bridge zones.
+export const ZONE_DEFS = {
+  start: { rowMin: 3, rowMax: 6, colMin: 3, colMax: 6 }, // always active
+  east:  { rowMin: 3, rowMax: 6, colMin: 8, colMax: 9 }, // Tier 1
+  north: { rowMin: 0, rowMax: 1, colMin: 0, colMax: 9 }, // Tier 2
+  west:  { rowMin: 3, rowMax: 6, colMin: 0, colMax: 1 }, // Tier 3
+  south: { rowMin: 8, rowMax: 9, colMin: 0, colMax: 9 }, // Tier 4
+};
+
+function inZone(x, y, zone) {
+  return y >= zone.rowMin && y <= zone.rowMax && x >= zone.colMin && x <= zone.colMax;
+}
+
+// Gap tiles permanently separate zones — adjacency unlock skips them.
+function isGapTile(x, y) {
+  if (y === 2 || y === 7) return true;                         // horizontal dividers
+  if ((x === 2 || x === 7) && y >= 3 && y <= 6) return true;  // vertical dividers
+  return false;
+}
+
 export class Tile {
   constructor(x, y, state = TILE_STATE.LOCKED, tileType = TILE_TYPE.GRASS) {
     this.x               = x;
@@ -17,6 +39,7 @@ export class Tile {
     this.growTicks       = 0;
     this.growTicksNeeded = GROW_TICKS_NEEDED;
     this.watered         = false;
+    this.permanent       = false; // true → never unlocks via adjacency
   }
 }
 
@@ -31,17 +54,36 @@ export class TileGrid {
     for (let y = 0; y < GRID_SIZE; y++) {
       this.tiles[y] = [];
       for (let x = 0; x < GRID_SIZE; x++) {
-        let state = TILE_STATE.LOCKED;
-        if (x === 5 && y === 5) {
-          state = TILE_STATE.HARVESTABLE;
-        } else if (x === 4 && y === 5) {
-          state = TILE_STATE.PLANTED;
-        } else if (x >= 4 && x <= 6 && y >= 4 && y <= 6) {
-          state = TILE_STATE.CLEARABLE;
+        const tile = new Tile(x, y, TILE_STATE.LOCKED);
+
+        if (isGapTile(x, y)) {
+          tile.permanent = true;
+        } else if (inZone(x, y, ZONE_DEFS.start)) {
+          // Starter tiles
+          if      (x === 5 && y === 5) tile.state = TILE_STATE.HARVESTABLE;
+          else if (x === 4 && y === 5) tile.state = TILE_STATE.PLANTED;
+          else                         tile.state = TILE_STATE.CLEARABLE;
         }
-        this.tiles[y][x] = new Tile(x, y, state);
+        // All other zones remain LOCKED until unlockZone() is called.
+
+        this.tiles[y][x] = tile;
       }
     }
+  }
+
+  /** Make every tile in a named zone CLEARABLE (no-op if already past LOCKED). */
+  unlockZone(zoneId) {
+    const zone = ZONE_DEFS[zoneId];
+    if (!zone) return;
+    for (let y = zone.rowMin; y <= zone.rowMax; y++) {
+      for (let x = zone.colMin; x <= zone.colMax; x++) {
+        const tile = this.tiles[y][x];
+        if (tile && tile.state === TILE_STATE.LOCKED && !tile.permanent) {
+          tile.state = TILE_STATE.CLEARABLE;
+        }
+      }
+    }
+    this._notify();
   }
 
   getTile(x, y) {
@@ -63,7 +105,10 @@ export class TileGrid {
     }
     resources.spend(costs);
 
-    const yields = ACTION_YIELDS[action] ?? {};
+    // CLEAR only yields wood when removing natural overgrowth, not when resetting a farm or mine
+    const yields = (action === ACTION.CLEAR && tile.state !== TILE_STATE.CLEARABLE)
+      ? {}
+      : (ACTION_YIELDS[action] ?? {});
     for (const [type, amt] of Object.entries(yields)) resources.add(type, amt);
 
     switch (action) {
@@ -83,12 +128,15 @@ export class TileGrid {
         tile.growTicksNeeded = Math.max(1, tile.growTicksNeeded - WATER_GROW_BONUS);
         break;
       case ACTION.HARVEST:
-        tile.state     = TILE_STATE.CLEARED;
-        tile.growTicks = 0;
-        tile.watered   = false;
+        // Farm tiles stay in the growth cycle — auto-replant after harvest
+        tile.state           = TILE_STATE.PLANTED;
+        tile.growTicks       = 0;
+        tile.growTicksNeeded = GROW_TICKS_NEEDED;
+        tile.watered         = false;
         break;
       case ACTION.MINE:
-        tile.state = TILE_STATE.CLEARED;
+        // Establishes a mine shaft on first use; subsequent mines extract stone in place
+        tile.state = TILE_STATE.MINE_SHAFT;
         break;
     }
 
@@ -118,8 +166,52 @@ export class TileGrid {
   _unlockNeighbors(x, y) {
     for (const [dx, dy] of [[-1,0],[1,0],[0,-1],[0,1]]) {
       const n = this.getTile(x + dx, y + dy);
-      if (n && n.state === TILE_STATE.LOCKED) n.state = TILE_STATE.CLEARABLE;
+      if (n && n.state === TILE_STATE.LOCKED && !n.permanent) n.state = TILE_STATE.CLEARABLE;
     }
+  }
+
+  snapshot() {
+    return this.tiles.map(row => row.map(t => ({
+      state:           t.state,
+      tileType:        t.tileType,
+      growTicks:       t.growTicks,
+      growTicksNeeded: t.growTicksNeeded,
+      watered:         t.watered,
+      permanent:       t.permanent,
+    })));
+  }
+
+  restore(data) {
+    if (!data) return;
+    for (let y = 0; y < data.length; y++) {
+      for (let x = 0; x < (data[y]?.length ?? 0); x++) {
+        const saved = data[y][x];
+        const tile  = this.tiles[y]?.[x];
+        if (!tile || !saved) continue;
+        tile.state           = saved.state;
+        tile.tileType        = saved.tileType        ?? tile.tileType;
+        tile.growTicks       = saved.growTicks       ?? 0;
+        tile.growTicksNeeded = saved.growTicksNeeded ?? GROW_TICKS_NEEDED;
+        tile.watered         = saved.watered         ?? false;
+        tile.permanent       = saved.permanent       ?? false;
+      }
+    }
+    this._notify();
+  }
+
+  /** Harvest every ripe tile. Returns the number of tiles harvested. */
+  autoHarvest(resources) {
+    let count = 0;
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const tile = this.tiles[y][x];
+        if (tile.state === TILE_STATE.HARVESTABLE) {
+          this.performAction(tile, ACTION.HARVEST, resources);
+          count++;
+        }
+      }
+    }
+    return count;
   }
 
   onChange(fn)  { this._listeners.push(fn); }

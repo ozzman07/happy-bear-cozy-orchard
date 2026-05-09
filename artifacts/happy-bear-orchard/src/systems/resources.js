@@ -47,6 +47,14 @@ export class ResourceManager {
     return true;
   }
 
+  snapshot() { return { ...this.amounts }; }
+
+  restore(data) {
+    if (!data) return;
+    Object.assign(this.amounts, data);
+    this._notify();
+  }
+
   onChange(fn) { this._listeners.push(fn); }
   _notify()    { this._listeners.forEach(fn => fn({ ...this.amounts })); }
 }

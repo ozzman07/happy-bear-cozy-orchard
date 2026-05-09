@@ -52,5 +52,11 @@ export class SceneManager {
     });
   }
 
+  /** Route a game-loop tick to the active scene. */
+  onTick(ripened) { this._handlers[this._current]?.onTick?.(ripened); }
+
+  /** Route a new-day event to the active scene. */
+  onNewDay(day)   { this._handlers[this._current]?.onNewDay?.(day); }
+
   onChange(fn) { this._listeners.push(fn); }
 }

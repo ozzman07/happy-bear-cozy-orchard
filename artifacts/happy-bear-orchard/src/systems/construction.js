@@ -63,17 +63,28 @@ export class ConstructionSystem {
     if (changed) this._notify({ type: 'poll' });
   }
 
-  /** Snapshot of all tool states for rendering. */
   snapshot() {
     return Object.fromEntries(
       Object.entries(this._tools).map(([id, e]) => [id, {
-        state: e.state,
+        state:    e.state,
         secsLeft: e.constructionEnd
           ? Math.max(0, Math.ceil((e.constructionEnd - Date.now()) / 1000))
           : 0,
-        def: e.def,
       }])
     );
+  }
+
+  restore(data) {
+    if (!data) return;
+    for (const [toolId, saved] of Object.entries(data)) {
+      const entry = this._tools[toolId];
+      if (!entry) continue;
+      entry.state = saved.state;
+      entry.constructionEnd = (saved.state === BUILD_STATE.CONSTRUCTING && saved.secsLeft > 0)
+        ? Date.now() + saved.secsLeft * 1000
+        : null;
+      if (saved.state === BUILD_STATE.OPERATIONAL) entry.constructionEnd = null;
+    }
   }
 
   onChange(fn) { this._listeners.push(fn); }
