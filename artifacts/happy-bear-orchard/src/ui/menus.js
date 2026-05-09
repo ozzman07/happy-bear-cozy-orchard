@@ -39,10 +39,20 @@ export class ActionMenu {
   }
 
   show(tile, resources) {
+    // Permanent forest dividers are never interactive
+    if (tile.permanent) return;
+
     this.currentTile = tile;
-    const stateName  = tile.state.charAt(0).toUpperCase() + tile.state.slice(1);
-    this._titleEl.textContent = `Tile (${tile.x + 1}, ${tile.y + 1})  —  ${stateName}`;
-    this._btnsEl.innerHTML   = '';
+    this._btnsEl.innerHTML = '';
+
+    // For growing trees, show progress prominently in the title
+    if (tile.state === TILE_STATE.PLANTED) {
+      const pct = Math.min(100, Math.round((tile.growTicks / tile.growTicksNeeded) * 100));
+      this._titleEl.textContent = `🌱 Growing — ${pct}% complete`;
+    } else {
+      const stateName = tile.state.charAt(0).toUpperCase() + tile.state.slice(1);
+      this._titleEl.textContent = `Tile (${tile.x + 1}, ${tile.y + 1})  —  ${stateName}`;
+    }
 
     const available = Object.values(ACTION).filter(a =>
       ACTION_VALID_STATES[a]?.includes(tile.state)
