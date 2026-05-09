@@ -40,9 +40,7 @@ export class DistilleryScene {
 
     this._cs.onChange(evt => {
       this._renderAll();
-      if (evt.type === 'ready') {
-        this._bearSpeak?.(`${TOOL_DEFS[evt.toolId]?.name} is ready! 🎉`);
-      }
+      if (evt.type === 'ready') this._bearSpeak?.(BearDialogue.toolBuilt(evt.toolId));
     });
     this._craft.onChange(() => this._renderAll());
     this._res.onChange(() => this._renderAll());

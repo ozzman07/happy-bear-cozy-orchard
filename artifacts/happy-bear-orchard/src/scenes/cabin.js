@@ -23,12 +23,18 @@ const TOOL_DEFS = {
     costs: { wood: 5, stone: 3 }, constructionSecs: 10,
     recipeId: 'bottle_cider',
   },
+  harvest_bell: {
+    id: 'harvest_bell', name: '🔔 Harvest Bell', icon: '🔔',
+    description: 'Rings each harvest — automatically collects all ripe crops',
+    costs: { wood: 6, stone: 4 }, constructionSecs: 20,
+    recipeId: null,
+  },
 };
 
 const RECIPE_LABELS = {
   press_juice:    { label: 'Press Fruit',  cost: '2🍎', yield: '1🧃' },
-  ferment_cider:  { label: 'Ferment',      cost: '1🧃', yield: '1🫗' },
-  bottle_cider:   { label: 'Bottle Cider', cost: '1🫗', yield: '3🍾' },
+  ferment_cider:  { label: 'Ferment',      cost: '3🧃', yield: '1🫗' },
+  bottle_cider:   { label: 'Bottle Cider', cost: '3🫗', yield: '6🍾' },
 };
 
 export class CabinScene {
@@ -51,19 +57,13 @@ export class CabinScene {
     this._cs.onChange(evt => {
       this._renderAll();
       if (evt.type === 'ready') {
-        this._bearSpeak?.(`${TOOL_DEFS[evt.toolId]?.name} is ready! 🎉`);
-        this._setStatus('New tool ready — tap it to make cider!');
+        this._bearSpeak?.(BearDialogue.toolBuilt(evt.toolId));
+        this._setStatus('New tool ready — tap it to start crafting!');
       }
     });
 
-    // Re-render on crafting events
-    this._craft.onChange(evt => {
-      this._renderAll();
-      if (evt.type === 'done') {
-        this._bearSpeak?.('Done! Check your resources 🍺');
-        this._setStatus('Crafting complete!');
-      }
-    });
+    // Re-render on crafting events (dialogue handled centrally in main.js)
+    this._craft.onChange(() => this._renderAll());
 
     // Re-render on resource changes (affordability)
     this._res.onChange(() => this._renderAll());
@@ -131,6 +131,15 @@ export class CabinScene {
   }
 
   _operationalHTML(toolId, def) {
+    if (!def.recipeId) {
+      return `<div class="tool-card tool-operational tool-passive">
+        <div class="tool-card-badge">Active</div>
+        <div class="tool-card-icon">${def.icon}</div>
+        <div class="tool-name">${def.name}</div>
+        <div class="tool-desc">${def.description}</div>
+        <div class="tool-passive-label">✅ Running automatically</div>
+      </div>`;
+    }
     const rl        = RECIPE_LABELS[def.recipeId] ?? {};
     const busy      = this._craft.isBusy(toolId);
     const secsLeft  = this._craft.secsRemaining(toolId);

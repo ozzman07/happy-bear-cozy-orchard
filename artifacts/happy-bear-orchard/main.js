@@ -338,15 +338,16 @@ function launchGame(saveData, slot) {
 
 // ── Game init (runs after menu flow) ────────────────────────────────────────
 
-function initGame(saveData) {
-  const resources    = new ResourceManager(saveData?.inventory ?? {});
+function initGame(saveData, slot) {
+  const savedTier    = saveData?.systems?.tier ?? 0;
+  const resources    = new ResourceManager();
   const tileGrid     = new TileGrid();
   const cropSystem   = new CropSystem(tileGrid);
-  const crafting     = new CraftingSystem(resources, { tier: 0, day: 1, unlocks: new Set(['orchard']) });
+  const crafting     = new CraftingSystem(resources, { tier: savedTier, day: 1, unlocks: new Set(['orchard']) });
   const construction = new ConstructionSystem(resources);
-  const progression  = new ProgressionSystem({ tier: 0, day: 1, unlocks: new Set(['orchard']) }, resources);
+  const progression  = new ProgressionSystem({ tier: savedTier, day: 1, unlocks: new Set(['orchard']) }, resources);
 
-  const gameState = { tier: 0, day: saveData?.day ?? 1, unlocks: new Set(['orchard']) };
+  const gameState = { tier: 0, day: saveData?.day ?? 1, unlocks: new Set(['orchard']), firstCrafts: new Set() };
 
   const hud      = new HUD();
   const statusEl = document.getElementById('status-msg');
@@ -359,6 +360,20 @@ function initGame(saveData) {
       el.classList.remove('hidden');
       setTimeout(() => el.classList.add('hidden'), 3500);
     });
+  };
+
+  const showStoryBear = (moment) => {
+    const quote = BearDialogue.storyBearQuote(moment);
+    if (!quote) return;
+    const panel = document.getElementById('story-bear-panel');
+    if (!panel) return;
+    panel.querySelector('.story-bear-quote').textContent = `"${quote}"`;
+    panel.classList.remove('hidden');
+    panel.classList.add('story-bear-visible');
+    setTimeout(() => {
+      panel.classList.remove('story-bear-visible');
+      setTimeout(() => panel.classList.add('hidden'), 600);
+    }, 6000);
   };
 
   const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
@@ -411,7 +426,12 @@ function initGame(saveData) {
     });
   });
 
-  const SCENE_UNLOCK_MAP = { cabin:'nav-cabin', distillery:'nav-distillery', brewery:'nav-brewery', roastery:'nav-roastery' };
+  const SCENE_UNLOCK_MAP = { cabin:'nav-cabin', distillery:'nav-distillery', brewery:'nav-brewery', roastery:'nav-roastery', store:'nav-store' };
+  const MARKET_BOTTLE_THRESHOLD = 3;
+  let marketUnlocked = false;
+
+  // Which orchard zone opens with each tier (cumulative — applyUnlocks re-runs all)
+  const TIER_ZONE_MAP = { 1: 'east', 2: 'north', 3: 'west', 4: 'south' };
 
   function applyUnlocks(tier) {
     const tierDef = progressionData.tiers[tier];
@@ -420,6 +440,11 @@ function initGame(saveData) {
       const btn = document.getElementById(SCENE_UNLOCK_MAP[u]);
       if (btn) btn.disabled = false;
     }
+    // Unlock all orchard zones up to current tier (cumulative, safe to re-run)
+    for (let t = 1; t <= tier; t++) {
+      const zone = TIER_ZONE_MAP[t];
+      if (zone) tileGrid.unlockZone(zone);
+    }
     hud.syncTier(tier);
     hud.updateResources(resources.amounts);
     hud.updateTier(`${tierDef.icon} ${tierDef.name}`);
@@ -427,15 +452,38 @@ function initGame(saveData) {
     if (badge) badge.textContent = `${tierDef.icon} ${tierDef.name}`;
   }
 
+  // Central craft-complete handler — fires for all production scenes
+  crafting.onChange(evt => {
+    if (evt.type !== 'done') return;
+    const isFirst = !gameState.firstCrafts.has(evt.recipeId);
+    if (isFirst) {
+      gameState.firstCrafts.add(evt.recipeId);
+      // Story Bear appears on the first cider bottled
+      if (evt.recipeId === 'bottle_cider') setTimeout(() => showStoryBear('first_cider'), 4000);
+    }
+    bearSpeak(BearDialogue.craftComplete(evt.recipeId, isFirst));
+    setStatus('Crafting complete!');
+  });
+
   progression.onChange(({ tier }) => {
     applyUnlocks(tier);
+    gameState.tier = tier;
     const lines = BearDialogue.tierUnlock(tier);
     bearSpeak(lines.bear);
     setStatus(lines.status);
-    setTimeout(() => bearSpeak(lines.bear), 6000);
+    setTimeout(() => showStoryBear(`tier${tier}_unlock`), 5000);
   });
 
-  resources.onChange(amounts => hud.updateResources(amounts));
+  resources.onChange(amounts => {
+    hud.updateResources(amounts);
+    if (!marketUnlocked && (amounts.bottles ?? 0) >= MARKET_BOTTLE_THRESHOLD) {
+      marketUnlocked = true;
+      const btn = document.getElementById('nav-store');
+      if (btn) btn.disabled = false;
+      bearSpeak("The market's open! Take your bottles down and see what they fetch. I think we've earned it.");
+      setStatus('🛒 Happy Bear Market unlocked — sell your cider!');
+    }
+  });
 
   let tickCount = 0;
   const TICK_MS = 3000;
@@ -444,25 +492,31 @@ function initGame(saveData) {
   setInterval(() => {
     tickCount++;
     const ripened = cropSystem.tick();
-    if (ripened) {
-      bearSpeak('Your crops are ready to harvest! 🍎');
-      setStatus('Some plants are ready to harvest — click them!');
+
+    if (construction.isOperational('harvest_bell')) {
+      const harvested = tileGrid.autoHarvest(resources);
+      if (harvested > 0) {
+        bearSpeak(`🔔 Bell rang — ${harvested} crop${harvested > 1 ? 's' : ''} collected!`);
+        setStatus(`Harvest Bell collected ${harvested} crop${harvested > 1 ? 's' : ''}. 🔔`);
+      }
+    } else if (ripened) {
+      bearSpeak(BearDialogue.cropsRipened());
+      setStatus('Crops are ready — head to the orchard!');
     }
+    scenes.onTick(ripened);
+
     if (tickCount % TICKS_PER_DAY === 0) {
       gameState.day++;
       hud.updateDay(gameState.day);
       bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
       setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
+      scenes.onNewDay(gameState.day);
+      autoSave();
     }
   }, TICK_MS);
 
-  hud.syncTier(0);
   hud.updateResources(resources.amounts);
   hud.updateDay(gameState.day);
-
-  const tier0Def = progressionData.tiers[0];
-  const badge    = document.getElementById('tier-badge');
-  if (badge && tier0Def) badge.textContent = `${tier0Def.icon} ${tier0Def.name}`;
 
   orchard.init();
   cabin.init();
@@ -470,11 +524,55 @@ function initGame(saveData) {
   brewery.init();
   roastery.init();
   store.init();
-  applyUnlocks(0);
+
+  // ── Restore saved state (must happen after scene inits so tools are registered) ──
+  const sys = saveData?.systems;
+  if (sys) {
+    resources.restore(sys.resources);
+    tileGrid.restore(sys.tiles);
+    construction.restore(sys.construction);
+    if (sys.tier !== undefined) {
+      gameState.tier = sys.tier;
+    }
+    if (sys.firstCrafts) {
+      sys.firstCrafts.forEach(id => gameState.firstCrafts.add(id));
+    }
+    if (sys.marketUnlocked) {
+      marketUnlocked = true;
+      const btn = document.getElementById('nav-store');
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  applyUnlocks(gameState.tier);
+
+  // ── Autosave helpers ──────────────────────────────────────────────────────
+  function buildSnapshot() {
+    return {
+      day:          gameState.day,
+      season:       'spring',
+      cabinLevel:   1,
+      orchardState: { tiles: [], zonesCleared: [], tilesCleared: 0 },
+      inventory:    resources.snapshot(),
+      systems: {
+        resources:      resources.snapshot(),
+        tiles:          tileGrid.snapshot(),
+        construction:   construction.snapshot(),
+        tier:           gameState.tier,
+        firstCrafts:    [...gameState.firstCrafts],
+        marketUnlocked,
+      },
+    };
+  }
+
+  function autoSave() {
+    if (!slot) return;
+    SaveSystem.saveGame(slot, buildSnapshot());
+  }
 
   const profile    = ProfileSystem.getSelectedProfile();
   const playerName = profile?.playerName ?? 'friend';
-  const isNewGame  = !saveData?.timestamp;
+  const isNewGame  = !saveData?.systems;
   const welcome    = BearDialogue.welcome(playerName, isNewGame);
   setStatus(welcome.status);
   setTimeout(() => {

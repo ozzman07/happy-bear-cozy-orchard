@@ -26,9 +26,18 @@ Each recipe includes:
 **Category:** Cider  
 **Ingredients:** Apples  
 **Tools:** Press → Fermenter → Bottling Station  
-**Unlock:** Starter recipe  
+**Unlock:** Starter recipe (Cabin unlocks at 10 fruit; Market unlocks when player holds 3 bottles)  
 **Season:** All  
 **Notes:** The foundational cider of the orchard.
+
+### Implemented Recipe Chain
+| Step | Input | Output | Time |
+|---|---|---|---|
+| Press Juice | 2 🍎 fruit | 1 🧃 juice | 12s |
+| Ferment Cider | 3 🧃 juice | 1 🫗 cider | 90s |
+| Bottle Cider | 3 🫗 cider | 6 🍾 bottles | 20s |
+
+**Batch logic:** Press 3× to accumulate enough juice for one fermentation run. Ferment 3× to accumulate enough cider for one bottling run. One full pipeline (6 bottles) requires 18 fruit and ~5 minutes of active management.
 
 ## Autumn Hug
 **Ingredients:** Apples, Cinnamon  

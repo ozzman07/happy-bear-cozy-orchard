@@ -17,12 +17,14 @@ This file defines every tool in the game.
 ## Purpose
 Extracts juice from fruit.
 
-## Construction Cost
-- 10 Wood  
-- 5 Stone  
-- 50 Cups  
+## Construction Cost (implemented)
+- 4 Wood
+- 2 Stone
 
-## Upgrade Levels
+## Recipe
+- Input: 2 fruit → Output: 1 juice — Time: 12s
+
+## Upgrade Levels (planned)
 **Level 1:** Basic pressing  
 **Level 2:** Faster pressing  
 **Level 3:** Multi-fruit pressing  
@@ -42,12 +44,14 @@ Extracts juice from fruit.
 ## Purpose
 Ferments juice into cider or other bases.
 
-## Construction Cost
-- 8 Wood  
-- 4 Stone  
-- 40 Cups  
+## Construction Cost (implemented)
+- 3 Wood
+- 4 Stone
 
-## Upgrade Levels
+## Recipe
+- Input: 3 juice → Output: 1 cider — Time: 90s
+
+## Upgrade Levels (planned)
 **Level 1:** Basic fermentation  
 **Level 2:** Faster fermentation  
 **Level 3:** Dual-batch fermentation  
@@ -67,12 +71,15 @@ Ferments juice into cider or other bases.
 ## Purpose
 Bottles finished beverages.
 
-## Construction Cost
-- 6 Wood  
-- 2 Stone  
-- 30 Cups  
+## Construction Cost (implemented)
+- 5 Wood
+- 3 Stone
 
-## Upgrade Levels
+## Recipe
+- Input: 3 cider → Output: 6 bottles — Time: 20s
+- Market unlocks when player holds ≥ 3 bottles
+
+## Upgrade Levels (planned)
 **Level 1:** Basic bottling  
 **Level 2:** Faster bottling  
 **Level 3:** Multi-bottle batching  

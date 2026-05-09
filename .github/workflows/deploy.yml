@@ -37,7 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build game
-        run: pnpm run build
+        run: pnpm --filter @workspace/happy-bear-orchard run build
         env:
           BASE_PATH: /happy-bear-cozy-orchard/
           PORT: 8080

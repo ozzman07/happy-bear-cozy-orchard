@@ -5,25 +5,25 @@
     "station": "press",
     "inputs": { "fruit": 2 },
     "outputs": { "juice": 1 },
-    "timerSecs": 0,
+    "timerSecs": 12,
     "unlockTier": 1
   },
   "ferment_cider": {
     "id": "ferment_cider",
     "name": "Ferment Cider",
     "station": "fermenter",
-    "inputs": { "juice": 1 },
+    "inputs": { "juice": 3 },
     "outputs": { "cider": 1 },
-    "timerSecs": 80,
+    "timerSecs": 90,
     "unlockTier": 1
   },
   "bottle_cider": {
     "id": "bottle_cider",
     "name": "Bottle Cider",
     "station": "bottling",
-    "inputs": { "cider": 1 },
-    "outputs": { "bottles": 3 },
-    "timerSecs": 0,
+    "inputs": { "cider": 3 },
+    "outputs": { "bottles": 6 },
+    "timerSecs": 20,
     "unlockTier": 1
   },
   "distill_applejack": {
@@ -67,7 +67,7 @@
     "name": "Brew Coffee Stout",
     "station": "brew_kettle",
     "inputs": { "roasted_coffee": 1, "hops": 1 },
-    "outputs": { "coffee_stout": 1 },
+    "outputs": { "cups": 1 },
     "timerSecs": 140,
     "unlockTier": 5
   }
