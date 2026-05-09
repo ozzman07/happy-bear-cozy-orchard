@@ -63,6 +63,23 @@ export class DistilleryScene {
   _renderTool(toolId) {
     const slot = document.getElementById(`tool-slot-${toolId}`);
     if (!slot) return;
+
+    if (!slot._delegated) {
+      slot.addEventListener('click', e => {
+        const def = TOOL_DEFS[toolId];
+        if (e.target.closest('.btn-build')) {
+          const r = this._cs.build(toolId);
+          if (!r.success) this._setStatus('⚠ ' + r.message);
+        }
+        if (e.target.closest('.btn-use')) {
+          const r = this._craft.craft(def.recipeId, toolId);
+          if (!r.success) this._setStatus('⚠ ' + r.message);
+          else this._setStatus('Distilling… 🫧');
+        }
+      });
+      slot._delegated = true;
+    }
+
     const state = this._cs.getState(toolId);
     const def   = TOOL_DEFS[toolId];
 
@@ -71,18 +88,6 @@ export class DistilleryScene {
     if (state === BUILD_STATE.CONSTRUCTING) html = this._constructingHTML(toolId, def);
     if (state === BUILD_STATE.OPERATIONAL)  html = this._operationalHTML(toolId, def);
     slot.innerHTML = html;
-
-    slot.querySelector('.btn-build')?.addEventListener('click', () => {
-      const r = this._cs.build(toolId);
-      if (!r.success) { this._setStatus('⚠ ' + r.message); }
-      this._renderTool(toolId);
-    });
-    slot.querySelector('.btn-use')?.addEventListener('click', () => {
-      const r = this._craft.craft(def.recipeId, toolId);
-      if (!r.success) { this._setStatus('⚠ ' + r.message); }
-      else this._setStatus('Distilling… 🫧');
-      this._renderTool(toolId);
-    });
   }
 
   _blueprintHTML(def) {

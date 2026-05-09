@@ -91,6 +91,17 @@ export class CabinScene {
   _renderTool(toolId) {
     const slot = document.getElementById(`tool-slot-${toolId}`);
     if (!slot) return;
+
+    // Wire up delegation once so clicks survive innerHTML replacement
+    if (!slot._delegated) {
+      slot.addEventListener('click', e => {
+        const def = TOOL_DEFS[toolId];
+        if (e.target.closest('.btn-build')) this._doBuild(toolId);
+        if (e.target.closest('.btn-use'))   this._doCraft(toolId, def);
+      });
+      slot._delegated = true;
+    }
+
     const state = this._cs.getState(toolId);
     const def   = TOOL_DEFS[toolId];
 
@@ -100,8 +111,6 @@ export class CabinScene {
     if (state === BUILD_STATE.OPERATIONAL)  html = this._operationalHTML(toolId, def);
 
     slot.innerHTML = html;
-    slot.querySelector('.btn-build')?.addEventListener('click', () => this._doBuild(toolId));
-    slot.querySelector('.btn-use')?.addEventListener('click', () => this._doCraft(toolId, def));
   }
 
   _blueprintHTML(def) {

@@ -92,18 +92,23 @@ export class BreweryScene {
       </div>`;
     }
 
+    if (!slot._delegated) {
+      slot.addEventListener('click', e => {
+        const def = TOOL_DEFS[toolId];
+        if (e.target.closest('.btn-build')) {
+          const r = this._cs.build(toolId);
+          if (!r.success) this._setStatus('⚠ ' + r.message);
+        }
+        if (e.target.closest('.btn-use')) {
+          const r = this._craft.craft(def.recipeId, toolId);
+          if (!r.success) this._setStatus('⚠ ' + r.message);
+          else this._setStatus('Brewing! 🍻');
+        }
+      });
+      slot._delegated = true;
+    }
+
     slot.innerHTML = html;
-    slot.querySelector('.btn-build')?.addEventListener('click', () => {
-      const r = this._cs.build(toolId);
-      if (!r.success) this._setStatus('⚠ ' + r.message);
-      this._renderTool(toolId);
-    });
-    slot.querySelector('.btn-use')?.addEventListener('click', () => {
-      const r = this._craft.craft(def.recipeId, toolId);
-      if (!r.success) this._setStatus('⚠ ' + r.message);
-      else this._setStatus('Brewing! 🍻');
-      this._renderTool(toolId);
-    });
   }
 
   _setStatus(msg) { if (this._statusEl) this._statusEl.textContent = msg; }
