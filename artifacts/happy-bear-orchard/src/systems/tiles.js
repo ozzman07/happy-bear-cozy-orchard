@@ -150,11 +150,13 @@ export class TileGrid {
   /** Advance crop growth; returns true if any tile became harvestable. */
   tick() {
     let anyRipe = false;
+    let anyGrowing = false;
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
         const t = this.tiles[y][x];
         if (t.state === TILE_STATE.PLANTED) {
           t.growTicks++;
+          anyGrowing = true;
           if (t.growTicks >= t.growTicksNeeded) {
             t.state = TILE_STATE.HARVESTABLE;
             anyRipe = true;
@@ -162,7 +164,7 @@ export class TileGrid {
         }
       }
     }
-    if (anyRipe) this._notify();
+    if (anyGrowing || anyRipe) this._notify();
     return anyRipe;
   }
 
@@ -261,6 +263,21 @@ export class TileGrid {
         const tile = this.tiles[y][x];
         if (tile.state === TILE_STATE.PLANTED && !tile.watered) {
           this.performAction(tile, ACTION.WATER, resources);
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  /** Plant every cleared soil tile (costs 1 fruit each). Returns number planted. */
+  autoPlant(resources) {
+    let count = 0;
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const tile = this.tiles[y][x];
+        if (tile.state === TILE_STATE.CLEARED && resources.canAfford(ACTION_COSTS[ACTION.PLANT] ?? {})) {
+          this.performAction(tile, ACTION.PLANT, resources);
           count++;
         }
       }

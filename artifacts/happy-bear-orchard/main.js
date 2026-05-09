@@ -509,9 +509,13 @@ function initGame(saveData, slot) {
       tileGrid.autoWater(resources);
       tileGrid.autoMine(resources);
       const harvested = tileGrid.autoHarvest(resources);
+      const planted   = tileGrid.autoPlant(resources);
       if (harvested > 0) {
         bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
         setStatus(`Auto-harvest: ${harvested} crop${harvested > 1 ? 's' : ''} collected. 🌳`);
+      } else if (planted > 0) {
+        bearSpeak(`🌱 Auto-planted ${planted} tile${planted > 1 ? 's' : ''}!`);
+        setStatus(`Auto-planted ${planted} tile${planted > 1 ? 's' : ''} — growing! 🌱`);
       }
     } else if (ripened) {
       bearSpeak(BearDialogue.cropsRipened());

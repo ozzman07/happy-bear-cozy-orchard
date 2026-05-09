@@ -49,20 +49,21 @@ export class OrchardScene {
         this.autoEnabled = !this.autoEnabled;
         this._syncAutoBtn(autoBtn);
         this.setStatus(this.autoEnabled
-          ? 'Auto-orchard ON — water, harvest, and mining start automatically. 🤖'
-          : 'Auto-orchard OFF — back to manual control. 🌿');
+          ? 'Auto ON — water, plant, harvest, and mine all run automatically. 🤖'
+          : 'Auto OFF — back to manual control. 🌿');
       });
     }
 
     // React to grid changes
     this._grid.onChange(tiles => this._updateAllTiles(tiles));
 
-    // Poll every second to keep mining countdowns live
+    // Poll every second to keep mining progress and grow bars live
     setInterval(() => {
       for (let y = 0; y < GRID_SIZE; y++)
         for (let x = 0; x < GRID_SIZE; x++) {
           const t = this._grid.tiles[y]?.[x];
-          if (t?.state === TILE_STATE.MINING) this._renderTile(t, this._tileEls[y]?.[x]);
+          if (t?.state === TILE_STATE.MINING || t?.state === TILE_STATE.PLANTED)
+            this._renderTile(t, this._tileEls[y]?.[x]);
         }
     }, 1000);
 
