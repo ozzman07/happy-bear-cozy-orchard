@@ -161,6 +161,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: calc(var(--tile-size) * 0.48);
   cursor: pointer; user-select: none; position: relative;
+  touch-action: manipulation;
   transition: transform 0.1s, filter 0.15s;
   overflow: hidden;
 }
@@ -184,7 +185,7 @@ body {
 }
 
 /* ─── Bear corner (orchard) ──────────────────────────── */
-#bear-corner { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#bear-corner { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 160px; justify-content: flex-start; }
 #bear-sprite {
   font-size: clamp(48px, 8vw, 76px);
   animation: bear-idle 3s ease-in-out infinite;

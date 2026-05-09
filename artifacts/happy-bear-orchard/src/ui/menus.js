@@ -74,11 +74,13 @@ export class ActionMenu {
     }
     this._menuEl.classList.remove('hidden');
     this._overlayEl.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
   }
 
   hide() {
     this._menuEl.classList.add('hidden');
     this._overlayEl.classList.add('hidden');
+    document.body.style.overflow = '';
     this.currentTile = null;
   }
 }
