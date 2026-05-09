@@ -508,15 +508,14 @@ function initGame(saveData, slot) {
     if (orchard.autoEnabled) {
       tileGrid.autoWater(resources);
       tileGrid.autoMine(resources);
-      const harvested = tileGrid.autoHarvest(resources);
-      const planted   = tileGrid.autoPlant(resources);
-      if (harvested > 0) {
-        bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
-        setStatus(`Auto-harvest: ${harvested} crop${harvested > 1 ? 's' : ''} collected. 🌳`);
-      } else if (planted > 0) {
-        bearSpeak(`🌱 Auto-planted ${planted} tile${planted > 1 ? 's' : ''}!`);
-        setStatus(`Auto-planted ${planted} tile${planted > 1 ? 's' : ''} — growing! 🌱`);
-      }
+      // Delay harvest 800ms so HARVESTABLE tiles (🍎) are visible before auto-collecting
+      setTimeout(() => {
+        const harvested = tileGrid.autoHarvest(resources);
+        if (harvested > 0) {
+          bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
+          setStatus(`Auto-harvest: ${harvested} crop${harvested > 1 ? 's' : ''} collected. 🌳`);
+        }
+      }, 800);
     } else if (ripened) {
       bearSpeak(BearDialogue.cropsRipened());
       setStatus('Crops are ready — head to the orchard!');

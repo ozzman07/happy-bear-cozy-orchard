@@ -150,13 +150,11 @@ export class TileGrid {
   /** Advance crop growth; returns true if any tile became harvestable. */
   tick() {
     let anyRipe = false;
-    let anyGrowing = false;
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
         const t = this.tiles[y][x];
         if (t.state === TILE_STATE.PLANTED) {
           t.growTicks++;
-          anyGrowing = true;
           if (t.growTicks >= t.growTicksNeeded) {
             t.state = TILE_STATE.HARVESTABLE;
             anyRipe = true;
@@ -164,7 +162,7 @@ export class TileGrid {
         }
       }
     }
-    if (anyGrowing || anyRipe) this._notify();
+    if (anyRipe) this._notify();
     return anyRipe;
   }
 
