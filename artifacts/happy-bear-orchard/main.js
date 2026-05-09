@@ -503,12 +503,20 @@ function initGame(saveData, slot) {
   setInterval(() => {
     tickCount++;
     const ripened = cropSystem.tick();
-    tileGrid.completeMines(resources);
+    const mined   = tileGrid.completeMines(resources);
+
+    // Always notify when a mine completes (even without auto)
+    if (mined > 0) {
+      const stone = mined * 2; // matches MINE_YIELD stone per mine
+      bearSpeak(`⛏️ Mine complete! +${stone} 🪨`);
+      setStatus(`Mine yielded ${stone} stone. 🪨`);
+    }
 
     if (orchard.autoEnabled) {
       tileGrid.autoWater(resources);
-      tileGrid.autoMine(resources);
-      // Delay harvest 800ms so HARVESTABLE tiles (🍎) are visible before auto-collecting
+      // Delay mine restart so MINE_SHAFT state renders briefly before restarting
+      setTimeout(() => tileGrid.autoMine(resources), 600);
+      // Delay harvest so HARVESTABLE tiles (🍎) are visible before auto-collecting
       setTimeout(() => {
         const harvested = tileGrid.autoHarvest(resources);
         if (harvested > 0) {
