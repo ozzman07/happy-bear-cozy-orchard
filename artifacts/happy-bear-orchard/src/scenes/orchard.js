@@ -116,9 +116,13 @@ export class OrchardScene {
     }
 
     if (tile.state === TILE_STATE.MINING && tile.miningEnd) {
-      const secsLeft = Math.max(0, Math.ceil((tile.miningEnd - Date.now()) / 1000));
-      el.textContent = secsLeft > 0 ? `${secsLeft}` : '⛏️';
-      el.title       = `Mining… ${secsLeft}s left`;
+      const total    = (tile.miningEnd - tile.miningStart) || 1;
+      const elapsed  = Date.now() - tile.miningStart;
+      const pct      = Math.min(100, Math.round((elapsed / total) * 100));
+      el.classList.add('mining');
+      el.style.setProperty('--mine-pct', pct + '%');
+    } else {
+      el.style.removeProperty('--mine-pct');
     }
   }
 

@@ -41,6 +41,7 @@ export class Tile {
     this.watered         = false;
     this.permanent       = false; // true → never unlocks via adjacency
     this.miningEnd       = null;  // timestamp when current mine completes
+    this.miningStart     = null;  // timestamp when mine started (for progress %)
   }
 }
 
@@ -136,8 +137,9 @@ export class TileGrid {
         tile.watered         = false;
         break;
       case ACTION.MINE:
-        tile.state     = TILE_STATE.MINING;
-        tile.miningEnd = Date.now() + MINE_SECS * 1000;
+        tile.state        = TILE_STATE.MINING;
+        tile.miningStart  = Date.now();
+        tile.miningEnd    = Date.now() + MINE_SECS * 1000;
         break;
     }
 
@@ -171,8 +173,9 @@ export class TileGrid {
       for (let x = 0; x < GRID_SIZE; x++) {
         const t = this.tiles[y][x];
         if (t.state === TILE_STATE.MINING && t.miningEnd && Date.now() >= t.miningEnd) {
-          t.state     = TILE_STATE.MINE_SHAFT;
-          t.miningEnd = null;
+          t.state        = TILE_STATE.MINE_SHAFT;
+          t.miningEnd    = null;
+          t.miningStart  = null;
           for (const [res, amt] of Object.entries(MINE_YIELD)) resources.add(res, amt);
           count++;
         }
