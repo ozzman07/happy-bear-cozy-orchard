@@ -352,15 +352,26 @@ function initGame(saveData, slot) {
   const hud      = new HUD();
   const statusEl = document.getElementById('status-msg');
 
+  let _lastBearMsg = '';
+  let _bearHideTimers = {};
+
   const bearSpeak = (msg) => {
+    _lastBearMsg = msg;
     ['bear-speech', 'cabin-bear-speech', 'store-bear-speech'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       el.textContent = msg;
       el.classList.remove('hidden');
-      setTimeout(() => el.classList.add('hidden'), 3500);
+      clearTimeout(_bearHideTimers[id]);
+      _bearHideTimers[id] = setTimeout(() => el.classList.add('hidden'), 7000);
     });
   };
+
+  // Clicking any bear sprite replays the last message
+  document.querySelectorAll('.bear-img').forEach(img => {
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', () => { if (_lastBearMsg) bearSpeak(_lastBearMsg); });
+  });
 
   const showStoryBear = (moment) => {
     const quote = BearDialogue.storyBearQuote(moment);
