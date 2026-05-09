@@ -238,6 +238,21 @@ export class TileGrid {
     return count;
   }
 
+  /** Start mining on all idle mine shafts. Returns number started. */
+  autoMine(resources) {
+    let count = 0;
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const tile = this.tiles[y][x];
+        if (tile.state === TILE_STATE.MINE_SHAFT) {
+          this.performAction(tile, ACTION.MINE, resources);
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
   /** Water every planted tile. Returns number watered. */
   autoWater(resources) {
     let count = 0;

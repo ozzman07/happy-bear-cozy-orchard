@@ -15,6 +15,7 @@ export class OrchardScene {
     this._speechEl  = speechEl;
     this._tileEls   = [];
     this._speechTmr = null;
+    this.autoEnabled = false;
   }
 
   /** Build the grid DOM. Call once after mount. */
@@ -38,6 +39,19 @@ export class OrchardScene {
         this._tileEls[y][x] = el;
         this._renderTile(this._grid.tiles[y][x], el);
       }
+    }
+
+    // Auto toggle button
+    const autoBtn = document.getElementById('orchard-auto-btn');
+    if (autoBtn) {
+      this._syncAutoBtn(autoBtn);
+      autoBtn.addEventListener('click', () => {
+        this.autoEnabled = !this.autoEnabled;
+        this._syncAutoBtn(autoBtn);
+        this.setStatus(this.autoEnabled
+          ? 'Auto-orchard ON — water, harvest, and mining start automatically. 🤖'
+          : 'Auto-orchard OFF — back to manual control. 🌿');
+      });
     }
 
     // React to grid changes
@@ -72,7 +86,12 @@ export class OrchardScene {
   }
 
   onTick(ripened) {
-    if (ripened) this.setStatus('Crops ready — tap them to harvest! 🍎');
+    if (ripened && !this.autoEnabled) this.setStatus('Crops ready — tap them to harvest! 🍎');
+  }
+
+  _syncAutoBtn(btn) {
+    btn.textContent = this.autoEnabled ? '🤖 Auto: ON' : '🤖 Auto: OFF';
+    btn.classList.toggle('auto-btn-on', this.autoEnabled);
   }
 
   onNewDay() { this.bearSpeak(BearDialogue.sceneGreeting('orchard')); }

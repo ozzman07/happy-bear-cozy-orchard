@@ -497,25 +497,20 @@ function initGame(saveData, slot) {
   });
 
   let tickCount = 0;
-  const TICK_MS        = 3000;
-  const TICKS_PER_DAY  = 10;
-  const AUTO_ORCHARD_DAY = 45;
+  const TICK_MS       = 3000;
+  const TICKS_PER_DAY = 10;
 
   setInterval(() => {
     tickCount++;
-    const ripened    = cropSystem.tick();
+    const ripened = cropSystem.tick();
     tileGrid.completeMines(resources);
 
-    const autoActive = construction.isOperational('harvest_bell') || gameState.day >= AUTO_ORCHARD_DAY;
-
-    if (autoActive) {
+    if (orchard.autoEnabled) {
       tileGrid.autoWater(resources);
+      tileGrid.autoMine(resources);
       const harvested = tileGrid.autoHarvest(resources);
       if (harvested > 0) {
-        const bell = construction.isOperational('harvest_bell');
-        bearSpeak(bell
-          ? `🔔 Bell rang — ${harvested} crop${harvested > 1 ? 's' : ''} collected!`
-          : `🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
+        bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
         setStatus(`Auto-harvest: ${harvested} crop${harvested > 1 ? 's' : ''} collected. 🌳`);
       }
     } else if (ripened) {
@@ -527,13 +522,8 @@ function initGame(saveData, slot) {
     if (tickCount % TICKS_PER_DAY === 0) {
       gameState.day++;
       hud.updateDay(gameState.day);
-      if (gameState.day === AUTO_ORCHARD_DAY) {
-        bearSpeak("I've got the rhythm of this orchard now. I'll keep everything watered and harvested from here!");
-        setStatus('Day 45 — orchard running automatically. Water and harvest handled! 🌳');
-      } else {
-        bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
-        setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
-      }
+      bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
+      setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
       scenes.onNewDay(gameState.day);
       autoSave();
     }

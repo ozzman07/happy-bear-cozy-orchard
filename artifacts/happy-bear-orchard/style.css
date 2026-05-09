@@ -140,7 +140,18 @@ body {
 
 /* ─── Orchard Scene ──────────────────────────────────── */
 #scene-orchard { flex-direction: row; align-items: center; justify-content: center; gap: 20px; padding: 16px; }
-#orchard-container { display: flex; flex-direction: column; align-items: center; }
+#orchard-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#orchard-toolbar   { display: flex; gap: 8px; }
+.orchard-auto-btn {
+  background: rgba(255,255,255,0.08); color: var(--color-text-dim);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
+  padding: 4px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  touch-action: manipulation; transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.orchard-auto-btn.auto-btn-on {
+  background: rgba(80,180,80,0.25); color: #90e890;
+  border-color: #50b050;
+}
 
 /* ─── Grid ───────────────────────────────────────────── */
 #grid {
