@@ -322,6 +322,7 @@ body {
 .tool-operational .tool-card-badge { background: rgba(74,128,48,0.38); color: #90d060; }
 .tool-operational .tool-name  { color: #d8f0a0; }
 .tool-recipe { color: #a0d080; }
+.tool-needs  { font-size: 0.7rem; color: #e0a040; margin-top: 2px; }
 .tool-busy   { border-color: #c8a030 !important; background: linear-gradient(145deg,#3a3a10,#2a2a08) !important; }
 
 .btn-use {

@@ -145,12 +145,29 @@ export class CabinScene {
     const secsLeft  = this._craft.secsRemaining(toolId);
     const recipe    = this._craft.getRecipe(def.recipeId);
     const canAfford = recipe ? this._res.canAfford(recipe.inputs) : false;
+
+    // Build a shortfall hint when idle and can't afford — e.g. "Need 2 more 🧃"
+    let needsHint = '';
+    if (!busy && !canAfford && recipe) {
+      const parts = Object.entries(recipe.inputs)
+        .map(([res, needed]) => {
+          const have = this._res.amounts[res] ?? 0;
+          const short = needed - have;
+          if (short <= 0) return null;
+          const icon = { juice: '🧃', cider: '🫗', fruit: '🍎', wood: '🪵', stone: '🪨' }[res] ?? res;
+          return `${short} more ${icon}`;
+        })
+        .filter(Boolean);
+      if (parts.length) needsHint = `<div class="tool-needs">Need ${parts.join(', ')}</div>`;
+    }
+
     return `<div class="tool-card tool-operational${busy?' tool-busy':''}">
       <div class="tool-card-badge">Operational</div>
       <div class="tool-card-icon">${def.icon}</div>
       <div class="tool-name">${def.name}</div>
       <div class="tool-recipe">${rl.cost ?? ''} → ${rl.yield ?? ''}</div>
       <div class="tool-desc">${busy ? `⏳ Working… ${secsLeft}s` : def.description}</div>
+      ${needsHint}
       <button class="btn-use"${(canAfford && !busy) ? '' : ' disabled'}>
         ${busy ? `⏳ ${secsLeft}s` : (rl.label ?? 'Use')}
       </button>
