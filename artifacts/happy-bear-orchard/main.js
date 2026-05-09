@@ -445,17 +445,25 @@ function initGame(saveData, slot) {
   const TIER_ZONE_MAP = { 1: 'east', 2: 'north', 3: 'west', 4: 'south' };
 
   function applyUnlocks(tier) {
-    const tierDef = progressionData.tiers[tier];
-    if (!tierDef) return;
-    for (const u of tierDef.unlocks) {
-      const btn = document.getElementById(SCENE_UNLOCK_MAP[u]);
-      if (btn) btn.disabled = false;
+    // Run cumulatively for all tiers up to current (safe to re-run on restore)
+    for (let t = 0; t <= tier; t++) {
+      const def = progressionData.tiers[t];
+      if (!def) continue;
+      for (const u of def.unlocks) {
+        // Unlock scene nav button if applicable
+        const btn = document.getElementById(SCENE_UNLOCK_MAP[u]);
+        if (btn) btn.disabled = false;
+        // Auto-build any tool that was unlocked — no resource cost, no timer
+        construction.buildInstant(u);
+      }
     }
-    // Unlock all orchard zones up to current tier (cumulative, safe to re-run)
+    // Unlock orchard zones up to current tier
     for (let t = 1; t <= tier; t++) {
       const zone = TIER_ZONE_MAP[t];
       if (zone) tileGrid.unlockZone(zone);
     }
+    const tierDef = progressionData.tiers[tier];
+    if (!tierDef) return;
     hud.syncTier(tier);
     hud.updateResources(resources.amounts);
     hud.updateTier(`${tierDef.icon} ${tierDef.name}`);

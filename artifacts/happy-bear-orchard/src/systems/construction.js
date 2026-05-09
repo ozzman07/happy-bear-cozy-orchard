@@ -43,6 +43,15 @@ export class ConstructionSystem {
     return { success: true };
   }
 
+  /** Make a tool operational immediately — no resource cost, no timer. */
+  buildInstant(toolId) {
+    const entry = this._tools[toolId];
+    if (!entry || entry.state === BUILD_STATE.OPERATIONAL) return;
+    entry.state           = BUILD_STATE.OPERATIONAL;
+    entry.constructionEnd = null;
+    this._notify({ type: 'ready', toolId });
+  }
+
   secsRemaining(toolId) {
     const entry = this._tools[toolId];
     if (!entry?.constructionEnd) return 0;
