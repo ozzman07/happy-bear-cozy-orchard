@@ -3,16 +3,17 @@
  * Moved from src/grid.js, simplified and decoupled from resources.
  */
 import {
-  GRID_SIZE, TILE_STATE, ACTION,
+  GRID_SIZE, TILE_STATE, TILE_TYPE, ACTION,
   ACTION_COSTS, ACTION_YIELDS, ACTION_VALID_STATES,
   GROW_TICKS_NEEDED, WATER_GROW_BONUS,
 } from '../constants.js';
 
 export class Tile {
-  constructor(x, y, state = TILE_STATE.LOCKED) {
+  constructor(x, y, state = TILE_STATE.LOCKED, tileType = TILE_TYPE.GRASS) {
     this.x               = x;
     this.y               = y;
     this.state           = state;
+    this.tileType        = tileType;
     this.growTicks       = 0;
     this.growTicksNeeded = GROW_TICKS_NEEDED;
     this.watered         = false;

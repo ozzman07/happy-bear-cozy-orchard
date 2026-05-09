@@ -1,7 +1,7 @@
 /**
  * OrchardScene — renders and manages the 10×10 tile grid.
  */
-import { GRID_SIZE, TILE_STATE, TILE_VISUAL } from '../constants.js';
+import { GRID_SIZE, TILE_STATE, TILE_TYPE, TILE_VISUAL } from '../constants.js';
 import { BearDialogue } from '../systems/BearDialogue.js';
 
 
@@ -81,12 +81,10 @@ export class OrchardScene {
 
   _renderTile(tile, el) {
     if (!el) return;
-    let v;
-    if (tile.state === TILE_STATE.CLEARABLE) {
-      v = TILE_VISUAL[tile.state][tile.type];
-    } else {
-      v = TILE_VISUAL[tile.state];
-    }
+    let v = TILE_VISUAL[tile.state];
+    // CLEARABLE has sub-types keyed by tileType — resolve to the right visual
+    if (v && !v.color) v = v[tile.tileType] ?? v[TILE_TYPE.GRASS] ?? Object.values(v)[0];
+    if (!v) return;
     el.className     = `tile tile-${tile.state}`;
     el.style.background = v.color;
     el.textContent   = v.emoji;
