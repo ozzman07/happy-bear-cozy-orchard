@@ -238,6 +238,21 @@ export class TileGrid {
     return count;
   }
 
+  /** Water every planted tile. Returns number watered. */
+  autoWater(resources) {
+    let count = 0;
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const tile = this.tiles[y][x];
+        if (tile.state === TILE_STATE.PLANTED && !tile.watered) {
+          this.performAction(tile, ACTION.WATER, resources);
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
   onChange(fn)  { this._listeners.push(fn); }
   _notify()     { this._listeners.forEach(fn => fn(this.tiles)); }
 }
