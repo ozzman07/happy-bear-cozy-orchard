@@ -104,6 +104,20 @@ body {
 
 #day-counter { font-size: 0.78rem; color: var(--color-text-dim); white-space: nowrap; font-style: italic; }
 
+#stats-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  padding: 0;
+}
+#stats-btn:hover { background: rgba(200,134,58,0.25); border-color: var(--color-accent); }
+
 /* ═══════════════════════════════════════════
    SCENE NAV BAR
 ═══════════════════════════════════════════ */
@@ -1188,6 +1202,90 @@ body {
   color: #6a5040;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════
+   STATISTICS MODAL
+═══════════════════════════════════════════ */
+#stats-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,6,2,0.75);
+  backdrop-filter: blur(3px);
+}
+
+#stats-card {
+  background: linear-gradient(160deg, #2a1c0e 0%, #1a1006 100%);
+  border: 2px solid #5c3d1a;
+  border-radius: 18px;
+  width: 92%;
+  max-width: 400px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  animation: ceremony-rise 0.3s cubic-bezier(0.34,1.4,0.64,1) forwards;
+}
+
+#stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+#stats-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-accent);
+  letter-spacing: 0.03em;
+}
+
+#stats-close {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  color: var(--color-text-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+#stats-close:hover { background: rgba(255,80,60,0.25); border-color: #ff5040; color: #fff; }
+
+#stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 16px 20px 20px;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 14px 12px 12px;
+  text-align: center;
+}
+
+.stat-icon  { font-size: 1.6rem; line-height: 1; margin-bottom: 6px; }
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 0.68rem;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /* ── Confetti particles ── */
