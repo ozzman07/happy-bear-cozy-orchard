@@ -57,6 +57,7 @@ export class CraftingSystem {
       const timerMs   = recipe.timerSecs * 1000 * speedMult;
 
       this._busySlots[stationId] = true;
+      this._busySlots[stationId + '_start'] = Date.now();
       this._busySlots[stationId + '_end'] = Date.now() + timerMs;
       this._notify({ type: 'started', recipeId, stationId });
       setTimeout(finish, timerMs);
@@ -72,6 +73,14 @@ export class CraftingSystem {
     const end = this._busySlots[stationId + '_end'];
     if (!end) return 0;
     return Math.max(0, Math.ceil((end - Date.now()) / 1000));
+  }
+
+  /** Completion percentage 0-100 for a running craft timer. */
+  progressPct(stationId) {
+    const start = this._busySlots[stationId + '_start'];
+    const end   = this._busySlots[stationId + '_end'];
+    if (!start || !end) return 0;
+    return Math.min(100, Math.round((Date.now() - start) / (end - start) * 100));
   }
 
   onChange(fn)  { this._listeners.push(fn); }
