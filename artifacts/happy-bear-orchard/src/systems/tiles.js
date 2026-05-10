@@ -5,7 +5,8 @@
 import {
   GRID_SIZE, TILE_STATE, TILE_TYPE, ACTION,
   ACTION_COSTS, ACTION_YIELDS, ACTION_VALID_STATES,
-  GROW_TICKS_NEEDED, WATER_GROW_BONUS, MINE_SECS, MINE_YIELD, ROT_TICKS_NEEDED,
+  GROW_TICKS_NEEDED, WATER_GROW_BONUS, MINE_SECS, MINE_YIELD,
+  ROT_TICKS_NEEDED, TIMBER_GROW_TICKS, TIMBER_YIELD, RESOURCE,
 } from '../constants.js';
 
 // ── Zone definitions ──────────────────────────────────────────────────────────
@@ -44,6 +45,7 @@ export class Tile {
     this.miningEnd       = null;  // timestamp when current mine completes
     this.miningStart     = null;  // timestamp when mine started (for progress %)
     this.rotTicks        = 0;     // ticks spent in HARVESTABLE state without harvest
+    this.cropType        = 'apple'; // 'apple' | 'timber'
   }
 }
 
@@ -110,9 +112,13 @@ export class TileGrid {
     resources.spend(costs);
 
     // CLEAR only yields wood when removing natural overgrowth, not when resetting a farm or mine
-    const yields = (action === ACTION.CLEAR && tile.state !== TILE_STATE.CLEARABLE)
+    // HARVEST yield depends on crop type — timber trees give wood, not fruit
+    let yields = (action === ACTION.CLEAR && tile.state !== TILE_STATE.CLEARABLE)
       ? {}
       : (ACTION_YIELDS[action] ?? {});
+    if (action === ACTION.HARVEST && tile.cropType === 'timber') {
+      yields = { [RESOURCE.WOOD]: TIMBER_YIELD };
+    }
     for (const [type, amt] of Object.entries(yields)) resources.add(type, amt);
 
     switch (action) {
@@ -123,8 +129,16 @@ export class TileGrid {
       case ACTION.DIG:   tile.state = TILE_STATE.CLEARED; break;
       case ACTION.PLANT:
         tile.state           = TILE_STATE.PLANTED;
+        tile.cropType        = 'apple';
         tile.growTicks       = 0;
         tile.growTicksNeeded = GROW_TICKS_NEEDED;
+        tile.watered         = false;
+        break;
+      case ACTION.PLANT_TREE:
+        tile.state           = TILE_STATE.PLANTED;
+        tile.cropType        = 'timber';
+        tile.growTicks       = 0;
+        tile.growTicksNeeded = TIMBER_GROW_TICKS;
         tile.watered         = false;
         break;
       case ACTION.WATER:
@@ -135,7 +149,7 @@ export class TileGrid {
         // Farm tiles stay in the growth cycle — auto-replant after harvest
         tile.state           = TILE_STATE.PLANTED;
         tile.growTicks       = 0;
-        tile.growTicksNeeded = GROW_TICKS_NEEDED;
+        tile.growTicksNeeded = tile.cropType === 'timber' ? TIMBER_GROW_TICKS : GROW_TICKS_NEEDED;
         tile.watered         = false;
         tile.rotTicks        = 0;
         break;
@@ -172,7 +186,7 @@ export class TileGrid {
             t.rotTicks = 0;
             anyRipe    = true;
           }
-        } else if (t.state === TILE_STATE.HARVESTABLE) {
+        } else if (t.state === TILE_STATE.HARVESTABLE && t.cropType !== 'timber') {
           t.rotTicks++;
           if (t.rotTicks >= ROT_TICKS_NEEDED) {
             t.state    = TILE_STATE.ROTTED;
@@ -216,6 +230,7 @@ export class TileGrid {
     return this.tiles.map(row => row.map(t => ({
       state:           t.state,
       tileType:        t.tileType,
+      cropType:        t.cropType,
       growTicks:       t.growTicks,
       growTicksNeeded: t.growTicksNeeded,
       watered:         t.watered,
@@ -239,6 +254,7 @@ export class TileGrid {
         tile.watered         = saved.watered         ?? false;
         tile.permanent       = saved.permanent       ?? false;
         tile.rotTicks        = saved.rotTicks        ?? 0;
+        tile.cropType        = saved.cropType        ?? 'apple';
         tile.miningEnd       = null; // don't restore timers; mine completes fresh
       }
     }
