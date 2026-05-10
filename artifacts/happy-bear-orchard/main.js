@@ -4,6 +4,7 @@
  */
 
 import { ResourceManager }   from './src/systems/resources.js';
+import { QuestSystem }       from './src/systems/QuestSystem.js';
 import { TileGrid }          from './src/systems/tiles.js';
 import { CropSystem }        from './src/systems/crops.js';
 import { CraftingSystem }    from './src/systems/crafting.js';
@@ -528,10 +529,12 @@ function initGame(saveData, slot) {
     if (result.success) {
       if (action === 'harvest') {
         gameStats.harvests++;
+        questSystem.increment('harvest');
         bearSpeak(BearDialogue.harvestReaction());
         bearBounce();
         setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
       } else {
+        if (action === 'clear') questSystem.increment('clear');
         setStatus('Action complete! Keep going 🌿');
       }
     } else {
@@ -555,10 +558,74 @@ function initGame(saveData, slot) {
 
   const storeSystem = new StoreSystem(resources);
   storeSystem.onChange(evt => {
-    if (evt.type === 'sell')    gameStats.itemsSold    += evt.amount;
+    if (evt.type === 'sell')    { gameStats.itemsSold += evt.amount; questSystem.increment('sell_coins', evt.coins); }
     if (evt.type === 'upgrade') gameStats.upgradesBought++;
   });
   crafting.setStore(storeSystem);
+
+  const questSystem = new QuestSystem(resources);
+  const questsBadgeEl = document.getElementById('quests-badge');
+
+  const syncQuestsBadge = () => {
+    if (questsBadgeEl) questsBadgeEl.classList.toggle('hidden', !questSystem.hasUnclaimed());
+  };
+
+  const renderQuestModal = () => {
+    const listEl = document.getElementById('quests-list');
+    if (!listEl) return;
+    listEl.innerHTML = questSystem.getActive().map(q => {
+      const pct     = Math.min(100, Math.round((q.progress / q.target) * 100));
+      const done    = q.progress >= q.target;
+      const cls     = q.claimed ? 'quest-claimed' : done ? 'quest-done' : '';
+      const bottom  = q.claimed
+        ? `<span class="quest-claimed-label">✅ Claimed +${q.reward} 🪙</span>`
+        : done
+          ? `<button class="quest-claim-btn" data-quest-id="${q.id}">Claim ${q.reward} 🪙</button>`
+          : `<span class="quest-count">${q.progress} / ${q.target}</span>`;
+      return `<div class="quest-card ${cls}">
+        <div class="quest-top">
+          <span class="quest-icon">${q.icon}</span>
+          <span class="quest-label">${q.label}</span>
+          <span class="quest-reward">+${q.reward} 🪙</span>
+        </div>
+        <div class="quest-bar-wrap"><div class="quest-bar-fill" style="width:${pct}%"></div></div>
+        <div class="quest-bottom">${bottom}</div>
+      </div>`;
+    }).join('');
+
+    listEl.querySelectorAll('.quest-claim-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const result = questSystem.claimReward(btn.dataset.questId);
+        if (result.success) {
+          bearSpeak(`+${result.reward} 🪙 Quest reward claimed!`);
+          bearBounce();
+          renderQuestModal();
+          syncQuestsBadge();
+        }
+      });
+    });
+  };
+
+  const showQuests = () => {
+    renderQuestModal();
+    document.getElementById('quests-modal')?.classList.remove('hidden');
+  };
+  const hideQuests = () => document.getElementById('quests-modal')?.classList.add('hidden');
+
+  document.getElementById('quests-btn')?.addEventListener('click', showQuests);
+  document.getElementById('quests-close')?.addEventListener('click', e => { e.stopPropagation(); hideQuests(); });
+  document.getElementById('quests-modal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('quests-modal')) hideQuests();
+  });
+
+  questSystem.onChange(evt => {
+    if (evt.type === 'complete') {
+      syncQuestsBadge();
+      scenes.setBadge('orchard', '📋');
+      bearSpeak('Quest complete! Open your daily quests to claim your reward. 📋');
+    }
+    if (evt.type === 'progress' || evt.type === 'rolled') syncQuestsBadge();
+  });
   const store       = new StoreScene({
     store: storeSystem, resources, statusEl,
     bearSpeakFn: bearSpeak,
@@ -628,6 +695,7 @@ function initGame(saveData, slot) {
       if (evt.recipeId === 'bottle_cider') setTimeout(() => showStoryBear('first_cider'), 4000);
     }
     gameStats.crafts++;
+    questSystem.increment('craft');
     bearSpeak(BearDialogue.craftComplete(evt.recipeId, isFirst));
     bearBounce();
     setStatus('Crafting complete!');
@@ -685,6 +753,7 @@ function initGame(saveData, slot) {
         const harvested = harvestedTiles.length;
         if (harvested > 0) {
           gameStats.harvests += harvested;
+          questSystem.increment('harvest', harvested);
           harvestedTiles.forEach(({ x, y }) => orchard.popFloat(x, y, '🍎'));
           bearBounce();
           bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
@@ -701,6 +770,7 @@ function initGame(saveData, slot) {
     if (tickCount % TICKS_PER_DAY === 0) {
       gameState.day++;
       hud.updateDay(gameState.day);
+      questSystem.onNewDay(gameState.tier);
       bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
       setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
       scenes.onNewDay(gameState.day);
@@ -743,12 +813,13 @@ function initGame(saveData, slot) {
     if (sys.upgrades) {
       storeSystem.restore(sys.upgrades);
     }
-    if (sys.stats) {
-      Object.assign(gameStats, sys.stats);
-    }
+    if (sys.stats)  Object.assign(gameStats, sys.stats);
+    if (sys.quests) questSystem.restore(sys.quests);
+    else            questSystem.rollQuests(gameState.tier);
   }
 
   applyUnlocks(gameState.tier);
+  if (!sys) questSystem.rollQuests(gameState.tier);
 
   // ── Autosave helpers ──────────────────────────────────────────────────────
   function buildSnapshot() {
@@ -768,6 +839,7 @@ function initGame(saveData, slot) {
         autoEnabled:    orchard.autoEnabled,
         upgrades:       storeSystem.snapshot(),
         stats:          { ...gameStats },
+        quests:         questSystem.snapshot(),
       },
     };
   }
