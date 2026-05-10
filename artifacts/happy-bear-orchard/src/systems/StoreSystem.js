@@ -6,11 +6,15 @@ import upgradesData from '../data/upgrades.json';
 
 export class StoreSystem {
   constructor(resources) {
-    this._res         = resources;
-    this._listeners   = [];
-    this._totalEarned = 0;
-    this._purchased   = new Set();   // upgrade ids
+    this._res              = resources;
+    this._listeners        = [];
+    this._totalEarned      = 0;
+    this._purchased        = new Set();   // upgrade ids
+    this._priceMultiplier  = 1.0;
   }
+
+  /** Called by MarketSystem when market level changes. */
+  setPriceMultiplier(mult) { this._priceMultiplier = mult; }
 
   // ── Selling ────────────────────────────────────────────────────────────────
 
@@ -32,7 +36,7 @@ export class StoreSystem {
     const amount = qty === 'all' ? have : Math.min(Number(qty), have);
     if (amount < 1) return { success: false, message: 'Nothing to sell.' };
 
-    const coins = amount * item.price;
+    const coins = amount * Math.round(item.price * this._priceMultiplier);
     this._res.spend({ [key]: amount });
     this._res.add('coins', coins);
     this._totalEarned += coins;
