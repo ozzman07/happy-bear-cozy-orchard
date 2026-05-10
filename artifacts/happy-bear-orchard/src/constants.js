@@ -18,13 +18,14 @@ export const TILE_TYPE = {
 };
 
 export const ACTION = {
-  CLEAR:   'clear',
-  DIG:     'dig',
-  PLANT:   'plant',
-  WATER:   'water',
-  HARVEST: 'harvest',
-  MINE:    'mine',
-  COMPOST: 'compost',
+  CLEAR:       'clear',
+  DIG:         'dig',
+  PLANT:       'plant',
+  PLANT_TREE:  'plant_tree',
+  WATER:       'water',
+  HARVEST:     'harvest',
+  MINE:        'mine',
+  COMPOST:     'compost',
 };
 
 export const RESOURCE = {
@@ -44,36 +45,39 @@ export const RESOURCE = {
 };
 
 export const ACTION_COSTS = {
-  [ACTION.CLEAR]:   {},
-  [ACTION.DIG]:     {},
-  [ACTION.PLANT]:   { [RESOURCE.FRUIT]: 1 },
-  [ACTION.WATER]:   {},
-  [ACTION.HARVEST]: {},
-  [ACTION.MINE]:    {},
-  [ACTION.COMPOST]: {},
+  [ACTION.CLEAR]:      {},
+  [ACTION.DIG]:        {},
+  [ACTION.PLANT]:      { [RESOURCE.FRUIT]: 1 },
+  [ACTION.PLANT_TREE]: {},
+  [ACTION.WATER]:      {},
+  [ACTION.HARVEST]:    {},
+  [ACTION.MINE]:       {},
+  [ACTION.COMPOST]:    {},
 };
 
 export const ACTION_YIELDS = {
-  [ACTION.CLEAR]:   { [RESOURCE.WOOD]: 1 },
-  [ACTION.DIG]:     { [RESOURCE.STONE]: 3 },
-  [ACTION.PLANT]:   {},
-  [ACTION.WATER]:   {},
-  [ACTION.HARVEST]: { [RESOURCE.FRUIT]: 3 },
-  [ACTION.MINE]:    {},   // stone awarded after MINE_SECS delay, not immediately
-  [ACTION.COMPOST]: {},   // rotted apple lost — no yield
+  [ACTION.CLEAR]:      { [RESOURCE.WOOD]: 1 },
+  [ACTION.DIG]:        { [RESOURCE.STONE]: 3 },
+  [ACTION.PLANT]:      {},
+  [ACTION.PLANT_TREE]: {},
+  [ACTION.WATER]:      {},
+  [ACTION.HARVEST]:    { [RESOURCE.FRUIT]: 3 },  // overridden in tiles.js for timber
+  [ACTION.MINE]:       {},   // stone awarded after MINE_SECS delay, not immediately
+  [ACTION.COMPOST]:    {},   // rotted apple lost — no yield
 };
 
 export const MINE_SECS   = 15;
 export const MINE_YIELD  = { [RESOURCE.STONE]: 2 };
 
 export const ACTION_VALID_STATES = {
-  [ACTION.CLEAR]:   [TILE_STATE.CLEARABLE, TILE_STATE.PLANTED, TILE_STATE.HARVESTABLE, TILE_STATE.ROTTED, TILE_STATE.MINE_SHAFT],
-  [ACTION.DIG]:     [TILE_STATE.CLEARABLE],
-  [ACTION.PLANT]:   [TILE_STATE.CLEARED],
-  [ACTION.WATER]:   [TILE_STATE.PLANTED],
-  [ACTION.HARVEST]: [TILE_STATE.HARVESTABLE],
-  [ACTION.MINE]:    [TILE_STATE.CLEARED, TILE_STATE.MINE_SHAFT],  // MINING excluded — in progress
-  [ACTION.COMPOST]: [TILE_STATE.ROTTED],
+  [ACTION.CLEAR]:      [TILE_STATE.CLEARABLE, TILE_STATE.PLANTED, TILE_STATE.HARVESTABLE, TILE_STATE.ROTTED, TILE_STATE.MINE_SHAFT],
+  [ACTION.DIG]:        [TILE_STATE.CLEARABLE],
+  [ACTION.PLANT]:      [TILE_STATE.CLEARED],
+  [ACTION.PLANT_TREE]: [TILE_STATE.CLEARED],
+  [ACTION.WATER]:      [TILE_STATE.PLANTED],
+  [ACTION.HARVEST]:    [TILE_STATE.HARVESTABLE],
+  [ACTION.MINE]:       [TILE_STATE.CLEARED, TILE_STATE.MINE_SHAFT],
+  [ACTION.COMPOST]:    [TILE_STATE.ROTTED],
 };
 
 export const TILE_VISUAL = {
@@ -91,8 +95,10 @@ export const TILE_VISUAL = {
   [TILE_STATE.MINING]:      { emoji: '⛏️', color: '#2a2030', label: 'Mining in progress…' },
 };
 
-export const GROW_TICKS_NEEDED = 7;
-export const WATER_GROW_BONUS  = 2;
-export const TICKS_PER_DAY    = 20;
-export const ROT_TICKS_NEEDED  = 14 * TICKS_PER_DAY;  // apples rot after 14 days unharvested
-export const GAME_TICK_MS      = 3000;
+export const GROW_TICKS_NEEDED   = 7;
+export const WATER_GROW_BONUS    = 2;
+export const TICKS_PER_DAY      = 20;
+export const ROT_TICKS_NEEDED    = 14 * TICKS_PER_DAY;  // apples rot after 14 days unharvested
+export const TIMBER_GROW_TICKS   = 15;  // timber trees grow slower than apple trees
+export const TIMBER_YIELD        = 4;   // wood per timber harvest
+export const GAME_TICK_MS        = 3000;
