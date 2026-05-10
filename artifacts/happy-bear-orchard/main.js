@@ -535,6 +535,9 @@ function initGame(saveData, slot) {
         bearSpeak(BearDialogue.harvestReaction());
         bearBounce();
         setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
+      } else if (action === 'plant_tree') {
+        bearSpeak('🌲 Timber tree planted! Grows slower than apples but yields renewable wood. 🪵');
+        setStatus('Timber tree planted — harvest in ~45 seconds for 4 🪵.');
       } else if (action === 'compost') {
         bearSpeak('🍂 Composted — starts fresh! Next time, harvest before they turn.');
         setStatus('🍂 Rotted apple composted. Growing again from scratch.');
