@@ -4,13 +4,14 @@
 import { ACTION, ACTION_COSTS, ACTION_VALID_STATES, TILE_STATE } from '../constants.js';
 
 const ACTION_INFO = {
-  [ACTION.CLEAR]:   { label: '🪓 Clear',    desc: 'Clear overgrowth  →  +1 🪵' },
-  [ACTION.DIG]:     { label: '⛏️ Dig',     desc: 'Prepare soil  →  +3 🪨' },
-  [ACTION.PLANT]:   { label: '🌱 Plant',   desc: 'Plant a crop  →  costs 1 🍎' },
-  [ACTION.WATER]:   { label: '💧 Water',   desc: 'Speed up growth (free)' },
-  [ACTION.HARVEST]: { label: '🍎 Harvest', desc: 'Pick fruit  →  +3 🍎  (auto-replants)' },
-  [ACTION.MINE]:    { label: '⛏️ Mine',    desc: 'Establish a mine  →  +2 🪨' },
-  [ACTION.COMPOST]: { label: '🍂 Compost', desc: 'Turn rotten apple back into a fresh planting (free)' },
+  [ACTION.CLEAR]:      { label: '🪓 Clear',       desc: 'Clear overgrowth  →  +1 🪵' },
+  [ACTION.DIG]:        { label: '⛏️ Dig',         desc: 'Prepare soil  →  +3 🪨' },
+  [ACTION.PLANT]:      { label: '🌱 Plant',        desc: 'Plant an apple tree  →  costs 1 🍎' },
+  [ACTION.PLANT_TREE]: { label: '🌲 Plant Timber', desc: 'Grow a timber tree  →  +4 🪵 when harvested (free, slow)' },
+  [ACTION.WATER]:      { label: '💧 Water',        desc: 'Speed up growth (free)' },
+  [ACTION.HARVEST]:    { label: '🍎 Harvest',      desc: 'Pick fruit  →  +3 🍎  (auto-replants)' },
+  [ACTION.MINE]:       { label: '⛏️ Mine',         desc: 'Establish a mine  →  +2 🪨' },
+  [ACTION.COMPOST]:    { label: '🍂 Compost',      desc: 'Turn rotten apple back into a fresh planting (free)' },
 };
 
 const ACTION_INFO_CONTEXT = {
@@ -72,6 +73,9 @@ export class ActionMenu {
       ACTION_VALID_STATES[a]?.includes(tile.state)
     );
 
+    // On a cleared tile, show only one planting option — two buttons is confusing
+    // (PLANT and PLANT_TREE are both valid on CLEARED; keep both but label clearly)
+
     if (available.length === 0) {
       const msg = document.createElement('p');
       msg.className = 'no-actions';
@@ -79,7 +83,12 @@ export class ActionMenu {
       this._btnsEl.appendChild(msg);
     } else {
       for (const action of available) {
-        const info      = ACTION_INFO_CONTEXT[action]?.[tile.state] ?? ACTION_INFO[action];
+        let info = ACTION_INFO_CONTEXT[action]?.[tile.state] ?? ACTION_INFO[action];
+        // Timber tiles get different harvest/uproot labels
+        if (tile.cropType === 'timber') {
+          if (action === ACTION.HARVEST) info = { label: '🪵 Harvest Timber', desc: 'Chop timber  →  +4 🪵  (tree regrows)' };
+          if (action === ACTION.CLEAR)   info = { label: '🌲 Remove Tree',    desc: 'Remove timber tree — tile returns to soil' };
+        }
         const costs     = ACTION_COSTS[action] ?? {};
         const canAfford = resources.canAfford(costs);
 
