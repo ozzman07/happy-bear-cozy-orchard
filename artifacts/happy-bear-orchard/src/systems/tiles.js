@@ -225,17 +225,17 @@ export class TileGrid {
 
   /** Harvest every ripe tile. Returns the number of tiles harvested. */
   autoHarvest(resources) {
-    let count = 0;
+    const harvested = [];
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
         const tile = this.tiles[y][x];
         if (tile.state === TILE_STATE.HARVESTABLE) {
           this.performAction(tile, ACTION.HARVEST, resources);
-          count++;
+          harvested.push({ x, y });
         }
       }
     }
-    return count;
+    return harvested;
   }
 
   /** Start mining on all idle mine shafts. Returns number started. */
