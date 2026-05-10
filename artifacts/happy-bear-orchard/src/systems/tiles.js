@@ -12,11 +12,12 @@ import {
 // Each zone is a rectangular region that unlocks as a group when a tier is reached.
 // Gap tiles between zones are permanently locked so adjacency can't bridge zones.
 export const ZONE_DEFS = {
-  start: { rowMin: 3, rowMax: 6, colMin: 3, colMax: 6 }, // always active
-  east:  { rowMin: 3, rowMax: 6, colMin: 8, colMax: 9 }, // Tier 1
-  north: { rowMin: 0, rowMax: 1, colMin: 0, colMax: 9 }, // Tier 2
-  west:  { rowMin: 3, rowMax: 6, colMin: 0, colMax: 1 }, // Tier 3
-  south: { rowMin: 8, rowMax: 9, colMin: 0, colMax: 9 }, // Tier 4
+  start:       { rowMin: 3, rowMax: 6, colMin: 3, colMax: 6 }, // always active
+  east:        { rowMin: 3, rowMax: 6, colMin: 8, colMax: 9 }, // Tier 1 (auto)
+  north:       { rowMin: 0, rowMax: 1, colMin: 0, colMax: 9 }, // Tier 2 (auto)
+  west:        { rowMin: 3, rowMax: 6, colMin: 0, colMax: 1 }, // Tier 3 (auto)
+  south_west:  { rowMin: 8, rowMax: 9, colMin: 0, colMax: 4 }, // Tier 4 (purchasable — Hop Fields)
+  south_east:  { rowMin: 8, rowMax: 9, colMin: 5, colMax: 9 }, // Tier 5 (purchasable — Coffee Grove)
 };
 
 function inZone(x, y, zone) {
