@@ -170,13 +170,14 @@ export class CabinScene {
       if (parts.length) needsHint = `<div class="tool-needs">Need ${parts.join(', ')}</div>`;
     }
 
+    const craftPct = busy ? this._craft.progressPct(toolId) : 0;
     return `<div class="tool-card tool-operational${busy?' tool-busy':''}">
       <div class="tool-card-badge">Operational</div>
       <div class="tool-card-icon">${def.icon}</div>
       <div class="tool-name">${def.name}</div>
       <div class="tool-recipe">${rl.cost ?? ''} → ${rl.yield ?? ''}</div>
       <div class="tool-desc">${busy ? `⏳ Working… ${secsLeft}s` : def.description}</div>
-      ${needsHint}
+      ${busy ? `<div class="tool-progress-bar"><div class="tool-progress-fill craft-fill" style="width:${craftPct}%"></div></div>` : needsHint}
       <button class="btn-use"${(canAfford && !busy) ? '' : ' disabled'}>
         ${busy ? `⏳ ${secsLeft}s` : (rl.label ?? 'Use')}
       </button>
