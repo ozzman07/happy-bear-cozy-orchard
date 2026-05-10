@@ -1,0 +1,151 @@
+{
+  "upgrades": [
+    {
+      "id": "press_speed_1",
+      "label": "Sharpened Blades",
+      "icon": "⚙️",
+      "station": "press",
+      "unlockTier": 1,
+      "coinCost": 35,
+      "speedMultiplier": 0.5,
+      "description": "Press juice 2× faster"
+    },
+    {
+      "id": "press_speed_2",
+      "label": "Steam-Powered Press",
+      "icon": "🔩",
+      "station": "press",
+      "unlockTier": 1,
+      "requires": "press_speed_1",
+      "coinCost": 90,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    },
+    {
+      "id": "ferment_speed_1",
+      "label": "Copper Coils",
+      "icon": "🌀",
+      "station": "fermenter",
+      "unlockTier": 1,
+      "coinCost": 60,
+      "speedMultiplier": 0.5,
+      "description": "Ferment cider 2× faster"
+    },
+    {
+      "id": "ferment_speed_2",
+      "label": "Premium Yeasts",
+      "icon": "🧫",
+      "station": "fermenter",
+      "unlockTier": 1,
+      "requires": "ferment_speed_1",
+      "coinCost": 160,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    },
+    {
+      "id": "bottle_speed_1",
+      "label": "Auto-Capper",
+      "icon": "🪛",
+      "station": "bottling",
+      "unlockTier": 1,
+      "coinCost": 45,
+      "speedMultiplier": 0.5,
+      "description": "Bottle cider 2× faster"
+    },
+    {
+      "id": "bottle_speed_2",
+      "label": "Assembly Line",
+      "icon": "🏭",
+      "station": "bottling",
+      "unlockTier": 1,
+      "requires": "bottle_speed_1",
+      "coinCost": 110,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    },
+    {
+      "id": "still_speed_1",
+      "label": "Better Heating",
+      "icon": "🔥",
+      "station": "still",
+      "unlockTier": 2,
+      "coinCost": 100,
+      "speedMultiplier": 0.5,
+      "description": "Distil applejack 2× faster"
+    },
+    {
+      "id": "still_speed_2",
+      "label": "Continuous Still",
+      "icon": "♾️",
+      "station": "still",
+      "unlockTier": 2,
+      "requires": "still_speed_1",
+      "coinCost": 250,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    },
+    {
+      "id": "barrel_speed_1",
+      "label": "Oak Treatment",
+      "icon": "🪵",
+      "station": "barrel",
+      "unlockTier": 3,
+      "coinCost": 140,
+      "speedMultiplier": 0.5,
+      "description": "Age whiskey 2× faster"
+    },
+    {
+      "id": "barrel_speed_2",
+      "label": "Accelerated Aging",
+      "icon": "⏩",
+      "station": "barrel",
+      "unlockTier": 3,
+      "requires": "barrel_speed_1",
+      "coinCost": 320,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    },
+    {
+      "id": "kettle_speed_1",
+      "label": "Hop Filter",
+      "icon": "🌾",
+      "station": "brew_kettle",
+      "unlockTier": 4,
+      "coinCost": 90,
+      "speedMultiplier": 0.5,
+      "description": "Brew beer 2× faster"
+    },
+    {
+      "id": "kettle_speed_2",
+      "label": "Automated Brewing",
+      "icon": "🤖",
+      "station": "brew_kettle",
+      "unlockTier": 4,
+      "requires": "kettle_speed_1",
+      "coinCost": 220,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    },
+    {
+      "id": "roaster_speed_1",
+      "label": "Air Circulation",
+      "icon": "💨",
+      "station": "roaster",
+      "unlockTier": 5,
+      "coinCost": 80,
+      "speedMultiplier": 0.5,
+      "description": "Roast coffee 2× faster"
+    },
+    {
+      "id": "roaster_speed_2",
+      "label": "Drum Roaster",
+      "icon": "🥁",
+      "station": "roaster",
+      "unlockTier": 5,
+      "requires": "roaster_speed_1",
+      "coinCost": 200,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    }
+  ]
+}
