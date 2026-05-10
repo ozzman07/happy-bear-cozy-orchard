@@ -199,6 +199,7 @@ body {
   border: 3px solid #1a2e0e;
   border-radius: 10px;
   box-shadow: 0 6px 24px var(--color-shadow);
+  position: relative;
 }
 
 /* ─── Tiles ──────────────────────────────────────────── */
@@ -989,6 +990,34 @@ body {
 #scene-roastery #cabin-bear   { background-image: var(--bear-coffee); }
 #store-bear                   { background-image: var(--bear-waving); }
 #welcome-bear                 { background-image: var(--bear-campfire); width: 160px; height: 160px; border-radius: 18px; }
+
+/* ── Bear bounce reaction ───────────────────────────────────────────────── */
+.bear-bounce { animation: bear-bounce 0.55s cubic-bezier(0.34,1.56,0.64,1) !important; }
+@keyframes bear-bounce {
+  0%   { transform: scale(1)    rotate(0deg); }
+  35%  { transform: scale(1.18) rotate(-6deg); }
+  65%  { transform: scale(0.96) rotate(3deg); }
+  100% { transform: scale(1)    rotate(0deg); }
+}
+
+/* ── Harvest pop floaters ───────────────────────────────────────────────── */
+.harvest-float {
+  position: absolute;
+  pointer-events: none;
+  font-size: 1.3rem;
+  transform: translateX(-50%);
+  animation: harvest-float 1.1s ease-out forwards;
+  z-index: 20;
+  line-height: 1;
+}
+@keyframes harvest-float {
+  0%   { opacity: 1;   transform: translateX(-50%) translateY(0)    scale(1); }
+  55%  { opacity: 1;   transform: translateX(-50%) translateY(-36px) scale(1.25); }
+  100% { opacity: 0;   transform: translateX(-50%) translateY(-64px) scale(0.7); }
+}
+
+/* ── Crafting progress fill colour ─────────────────────────────────────── */
+.craft-fill { background: linear-gradient(90deg, #c8863a, #e8b05a); }
 
 /* ═══════════════════════════════════════════
    STORY BEAR NOTIFICATION
