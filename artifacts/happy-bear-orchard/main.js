@@ -564,6 +564,11 @@ function initGame(saveData, slot) {
   storeSystem.onChange(evt => {
     if (evt.type === 'sell')    { gameStats.itemsSold += evt.amount; questSystem.increment('sell_coins', evt.coins); }
     if (evt.type === 'upgrade') gameStats.upgradesBought++;
+    if (evt.type === 'land') {
+      tileGrid.unlockZone(evt.zone);
+      bearSpeak(`🌿 New land opened! Head to the orchard to start clearing.`);
+      setStatus(`🌿 ${evt.zone === 'south_west' ? 'Hop Fields' : 'Coffee Grove'} unlocked — new tiles ready to clear!`);
+    }
   });
   crafting.setStore(storeSystem);
 
@@ -653,8 +658,8 @@ function initGame(saveData, slot) {
   const MARKET_BOTTLE_THRESHOLD = 3;
   let marketUnlocked = false;
 
-  // Which orchard zone opens with each tier (cumulative — applyUnlocks re-runs all)
-  const TIER_ZONE_MAP = { 1: 'east', 2: 'north', 3: 'west', 4: 'south' };
+  // Zones that auto-unlock with tiers 1–3; south_west/south_east are purchasable
+  const TIER_ZONE_MAP = { 1: 'east', 2: 'north', 3: 'west' };
 
   function applyUnlocks(tier) {
     // Run cumulatively for all tiers up to current (safe to re-run on restore)
@@ -669,10 +674,14 @@ function initGame(saveData, slot) {
         construction.buildInstant(u);
       }
     }
-    // Unlock orchard zones up to current tier
+    // Unlock auto zones up to current tier
     for (let t = 1; t <= tier; t++) {
       const zone = TIER_ZONE_MAP[t];
       if (zone) tileGrid.unlockZone(zone);
+    }
+    // Unlock any zones from purchased land expansions
+    for (const zone of storeSystem.getUnlockedZones()) {
+      tileGrid.unlockZone(zone);
     }
     const tierDef = progressionData.tiers[tier];
     if (!tierDef) return;
@@ -779,6 +788,7 @@ function initGame(saveData, slot) {
     if (tickCount % TICKS_PER_DAY === 0) {
       gameState.day++;
       hud.updateDay(gameState.day);
+      progression.checkDay();
       questSystem.onNewDay(gameState.tier);
       bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
       setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
