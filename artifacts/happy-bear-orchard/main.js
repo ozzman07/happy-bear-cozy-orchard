@@ -340,7 +340,7 @@ function renderSettings(onBack) {
   const howToBtn = document.createElement('button');
   howToBtn.className = 'menu-btn menu-btn-secondary';
   howToBtn.textContent = '📖 How to Play';
-  howToBtn.addEventListener('click', renderHowToPlay);
+  howToBtn.addEventListener('click', () => renderHowToPlay(onBack));
   wrapper.appendChild(howToBtn);
 
   const back = document.createElement('button');
@@ -434,7 +434,7 @@ const HOW_TO_PLAY_CHAPTERS = [
   },
 ];
 
-function renderHowToPlay() {
+function renderHowToPlay(onBack) {
   menuContainer.innerHTML = '';
 
   const wrapper = document.createElement('div');
@@ -481,7 +481,7 @@ function renderHowToPlay() {
   const back = document.createElement('button');
   back.className = 'menu-btn menu-btn-secondary';
   back.textContent = '← Back to Settings';
-  back.addEventListener('click', renderSettings);
+  back.addEventListener('click', () => renderSettings(onBack));
   wrapper.appendChild(back);
 
   menuContainer.appendChild(wrapper);
