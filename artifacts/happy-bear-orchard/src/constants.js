@@ -93,5 +93,6 @@ export const TILE_VISUAL = {
 
 export const GROW_TICKS_NEEDED = 7;
 export const WATER_GROW_BONUS  = 2;
-export const ROT_TICKS_NEEDED  = 4;   // ticks HARVESTABLE before apple rots
+export const TICKS_PER_DAY    = 20;
+export const ROT_TICKS_NEEDED  = 14 * TICKS_PER_DAY;  // apples rot after 14 days unharvested
 export const GAME_TICK_MS      = 3000;
