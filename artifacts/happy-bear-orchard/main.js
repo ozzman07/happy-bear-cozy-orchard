@@ -33,11 +33,16 @@ import { AudioSystem, MusicPlayer } from './src/systems/AudioSystem.js';
 import progressionData from './src/data/progression.json';
 
 // ── Audio (module-level so Settings can reach it before game init) ───────────
-const audio  = new AudioSystem();
-const music  = new MusicPlayer(import.meta.env.BASE_URL);
+const audio = new AudioSystem();
+let music;
+try {
+  music = new MusicPlayer(import.meta.env.BASE_URL ?? '/');
+} catch (e) {
+  music = { start() {}, setVolume() {}, nowPlaying() { return ''; } };
+}
 
 // Start music on first user interaction anywhere in the app
-document.addEventListener('click', () => music.start(), { once: true });
+document.addEventListener('click', () => { try { music.start(); } catch (_) {} }, { once: true });
 
 // ── DOM refs ────────────────────────────────────────────────────────────────
 
