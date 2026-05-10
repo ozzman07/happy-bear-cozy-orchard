@@ -322,10 +322,151 @@ function renderSettings() {
     toggle('Larger Text',   'accessibility', 'largeText')
   ));
 
+  const howToBtn = document.createElement('button');
+  howToBtn.className = 'menu-btn menu-btn-secondary';
+  howToBtn.textContent = '📖 How to Play';
+  howToBtn.addEventListener('click', renderHowToPlay);
+  wrapper.appendChild(howToBtn);
+
   const back = document.createElement('button');
   back.className = 'menu-btn menu-btn-secondary';
   back.textContent = '← Back';
   back.addEventListener('click', renderMainMenu);
+  wrapper.appendChild(back);
+
+  menuContainer.appendChild(wrapper);
+}
+
+// ── How to Play ──────────────────────────────────────────────────────────────
+
+const HOW_TO_PLAY_CHAPTERS = [
+  {
+    title: '🌿 Welcome, Friend!',
+    lines: [
+      "Hey there! I'm Happy Bear, and I'll be your guide around the orchard. Pull up a stump — let me show you how this all works.",
+      "This little patch of land is all yours. That 10×10 grid of tiles? That's where everything starts. Tap any tile to see what you can do with it.",
+    ],
+  },
+  {
+    title: '🪓 Clearing Land',
+    lines: [
+      "See those glowing tiles? Overgrown ones need clearing before you can plant anything. Grass gives you wood 🪵, rocky patches give you stone 🪨, and old stumps give wood too.",
+      "Once you clear a tile, it unlocks the tiles next to it — so the orchard slowly opens up as you work your way out from the middle.",
+    ],
+    tip: "Dig (⛏️) a rocky clearable tile instead of clearing it — you get 3 🪨 instead of 1 🪵. Worth it when you need stone!",
+  },
+  {
+    title: '🌱 Planting & Growing',
+    lines: [
+      "Cleared soil is ready for planting. Apple trees cost 1 🍎 to plant and grow into harvestable fruit in about 20 seconds. Timber trees 🌲 are free but take a little longer — they give 4 🪵 when harvested.",
+      "Both tree types auto-replant after each harvest, so once you've got a tile going, it just keeps producing. Nice and cozy.",
+    ],
+    tip: "Water 💧 your seedlings to cut grow time — it's free and takes no resources. Always worth a tap!",
+  },
+  {
+    title: '🍎 Harvesting (Don\'t Wait Too Long!)',
+    lines: [
+      "When an apple tile glows bright green, it's ready! Tap it and harvest. You'll get 3 🍎 each time.",
+      "Here's the thing though — apples left too long start to rot. The tile will flicker orange as a warning. Let them go fully rotten (🍂) and you get nothing. Compost a rotten tile to start fresh, or use Auto mode so I handle it for you!",
+    ],
+    tip: "Timber trees never rot — great for set-it-and-forget-it wood production.",
+  },
+  {
+    title: '⛏️ Mining Stone',
+    lines: [
+      "Need stone? Set up a mine on any cleared tile. It takes about 15 seconds to dig, then yields 2 🪨. When it's done the shaft stays — tap it again to keep mining.",
+      "Mine shafts are reusable indefinitely. Build a few and you'll have a steady stone supply without clearing new land.",
+    ],
+    tip: "Auto mode restarts mines automatically, so turn it on if you want stone without the tapping.",
+  },
+  {
+    title: '🏠 Building & Crafting',
+    lines: [
+      "Once you've harvested 10 🍎, the Cider Cabin unlocks. Head over there and you'll find blueprints waiting — build a Press, Fermenter, and Bottling Station to start making cider.",
+      "The crafting chain goes: Apples → Juice (Press) → Cider (Fermenter) → Bottles (Bottling). Each step adds value. Keep those stations busy!",
+    ],
+    tip: "Buy Equipment Upgrades in the Market to speed up your crafting stations — a big help once you're running full production.",
+  },
+  {
+    title: '🥃 Growing Your Operation',
+    lines: [
+      "As your orchard matures, new venues unlock. The Distillery lets you turn cider into Applejack and age it into Whiskey. The Brewery adds Fruit Beer. The Roastery tops it all off with Coffee.",
+      "Each tier takes time as well as resources — that's intentional. Enjoy the pace! The orchard will tell you when you're ready.",
+    ],
+  },
+  {
+    title: '🛒 The Market',
+    lines: [
+      "Once you've bottled a few ciders, the Market opens up. Sell your goods for coins 🪙 — coins unlock upgrades, land expansions, and better market deals.",
+      "Upgrade your market from a humble Farm Stand all the way to a Wholesale Partner. Better market levels mean higher sell prices and the ability to sign distribution deals with local businesses for guaranteed recurring income.",
+    ],
+    tip: "Missed a distribution deal shipment? You can settle the penalty with coins instead of waiting through the 14-day pause.",
+  },
+  {
+    title: '🤖 Auto Mode',
+    lines: [
+      "See that 🤖 Auto button in the orchard? Turn it on and I'll handle watering, harvesting, composting, and mining automatically. Perfect for when you're focused on crafting or just want a breather.",
+      "You can flip it on and off any time — manual mode is great for micro-managing, Auto is great for keeping things ticking over.",
+    ],
+  },
+  {
+    title: '🌾 Expanding the Land',
+    lines: [
+      "The starting zone is the center of the grid. As you clear tiles, adjacent locked tiles open up — and as you hit higher tiers, whole new zones unlock automatically.",
+      "Two special zones — the Hop Fields and Coffee Grove — can be purchased directly from the Market once you're far enough along. More land means more tiles, more crops, more coins.",
+    ],
+    tip: "You're doing great. The orchard grows at its own pace — just keep at it, and I'll be right here cheering you on. 🐻",
+  },
+];
+
+function renderHowToPlay() {
+  menuContainer.innerHTML = '';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu-screen howtoplay-screen';
+
+  wrapper.innerHTML = `
+    <div class="howtoplay-header">
+      <div class="howtoplay-bear">🐻</div>
+      <div>
+        <div class="howtoplay-title">Happy Bear's Guide</div>
+        <div class="howtoplay-subtitle">Everything you need to know</div>
+      </div>
+    </div>`;
+
+  for (const chapter of HOW_TO_PLAY_CHAPTERS) {
+    const chapterEl = document.createElement('div');
+    chapterEl.className = 'howtoplay-chapter';
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'howtoplay-chapter-title';
+    titleEl.textContent = chapter.title;
+    chapterEl.appendChild(titleEl);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'howtoplay-bubble';
+
+    for (const line of chapter.lines) {
+      const p = document.createElement('p');
+      p.textContent = line;
+      bubble.appendChild(p);
+    }
+
+    if (chapter.tip) {
+      const tipEl = document.createElement('div');
+      tipEl.className = 'howtoplay-tip';
+      tipEl.innerHTML = `<span class="howtoplay-tip-icon">💡</span> ${chapter.tip}`;
+      bubble.appendChild(tipEl);
+    }
+
+    chapterEl.appendChild(bubble);
+    wrapper.appendChild(chapterEl);
+  }
+
+  const back = document.createElement('button');
+  back.className = 'menu-btn menu-btn-secondary';
+  back.textContent = '← Back to Settings';
+  back.addEventListener('click', renderSettings);
   wrapper.appendChild(back);
 
   menuContainer.appendChild(wrapper);
