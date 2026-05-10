@@ -1115,6 +1115,16 @@ body {
 .nav-btn-store:hover { background: rgba(200,180,50,0.3) !important; }
 .nav-btn-store.nav-btn-active { background: #c8b430 !important; color: #2e1e08 !important; border-color: #c8b430 !important; }
 
+.nav-btn-settings {
+  margin-left: auto;
+  padding: 4px 10px;
+  font-size: 1rem;
+  opacity: 0.7;
+  border-color: transparent;
+  background: transparent;
+}
+.nav-btn-settings:hover { opacity: 1; background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.2) !important; }
+
 /* ── Upgrades section ──────────────────────────────────────────────────── */
 /* ─── Market level ──────────────────────────────────────── */
 #store-market-level {

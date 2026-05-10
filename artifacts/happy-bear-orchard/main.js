@@ -260,7 +260,7 @@ async function showSaveSelect(profile) {
   menuContainer.appendChild(wrapper);
 }
 
-function renderSettings() {
+function renderSettings(onBack) {
   menuContainer.innerHTML = '';
   const profile = ProfileSystem.getSelectedProfile();
   const s = profile?.settings ?? {
@@ -345,8 +345,8 @@ function renderSettings() {
 
   const back = document.createElement('button');
   back.className = 'menu-btn menu-btn-secondary';
-  back.textContent = '← Back';
-  back.addEventListener('click', renderMainMenu);
+  back.textContent = onBack ? '✕ Close' : '← Back';
+  back.addEventListener('click', onBack ?? renderMainMenu);
   wrapper.appendChild(back);
 
   menuContainer.appendChild(wrapper);
@@ -516,6 +516,18 @@ function initGame(saveData, slot) {
 
   const hud      = new HUD();
   const statusEl = document.getElementById('status-msg');
+
+  // In-game settings button in nav bar
+  const navSettingsBtn = document.getElementById('nav-settings');
+  if (navSettingsBtn) {
+    navSettingsBtn.addEventListener('click', () => {
+      menuOverlay.classList.remove('hidden');
+      renderSettings(() => {
+        menuOverlay.classList.add('hidden');
+        menuContainer.innerHTML = '';
+      });
+    });
+  }
 
   // Sync audio volumes from profile settings
   const _profileForAudio = ProfileSystem.getSelectedProfile();
