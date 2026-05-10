@@ -104,6 +104,168 @@ body {
 
 #day-counter { font-size: 0.78rem; color: var(--color-text-dim); white-space: nowrap; font-style: italic; }
 
+/* ── HUD icon buttons (quests + stats) ── */
+.hud-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 10px; height: 10px;
+  background: #e05c2a;
+  border-radius: 50%;
+  border: 2px solid var(--color-hud-bg);
+  animation: badge-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+#quests-btn {
+  position: relative;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  padding: 0;
+}
+#quests-btn:hover { background: rgba(200,134,58,0.25); border-color: var(--color-accent); }
+
+/* ═══════════════════════════════════════════
+   DAILY QUESTS MODAL
+═══════════════════════════════════════════ */
+#quests-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,6,2,0.75);
+  backdrop-filter: blur(3px);
+}
+
+#quests-card {
+  background: linear-gradient(160deg, #2a1c0e 0%, #1a1006 100%);
+  border: 2px solid #5c3d1a;
+  border-radius: 18px;
+  width: 92%;
+  max-width: 420px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  animation: ceremony-rise 0.3s cubic-bezier(0.34,1.4,0.64,1) forwards;
+}
+
+#quests-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 10px;
+}
+
+#quests-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+#quests-close {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  color: var(--color-text-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+#quests-close:hover { background: rgba(255,80,60,0.25); border-color: #ff5040; color: #fff; }
+
+#quests-subtitle {
+  padding: 0 20px 14px;
+  font-size: 0.74rem;
+  color: var(--color-text-dim);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+#quests-list {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quest-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 12px;
+  padding: 14px 14px 12px;
+  transition: border-color 0.2s;
+}
+.quest-card.quest-done   { border-color: rgba(200,134,58,0.4); background: rgba(200,134,58,0.07); }
+.quest-card.quest-claimed { border-color: rgba(80,160,80,0.35); background: rgba(80,160,80,0.06); opacity: 0.7; }
+
+.quest-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.quest-icon  { font-size: 1.4rem; flex-shrink: 0; }
+.quest-label { font-size: 0.88rem; font-weight: 600; color: var(--color-text); flex: 1; }
+.quest-reward {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #e8c07a;
+  white-space: nowrap;
+}
+
+.quest-bar-wrap {
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  height: 7px;
+  overflow: hidden;
+  margin-bottom: 7px;
+}
+.quest-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c8863a, #e8b05a);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+.quest-card.quest-done .quest-bar-fill,
+.quest-card.quest-claimed .quest-bar-fill { background: linear-gradient(90deg, #50a050, #70c870); }
+
+.quest-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.quest-count { font-size: 0.7rem; color: var(--color-text-dim); }
+
+.quest-claim-btn {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.quest-claim-btn:hover  { background: #e0a050; }
+.quest-claim-btn:active { transform: scale(0.95); }
+
+.quest-claimed-label {
+  font-size: 0.72rem;
+  color: #50a050;
+  font-weight: 600;
+}
+
 #stats-btn {
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.14);
