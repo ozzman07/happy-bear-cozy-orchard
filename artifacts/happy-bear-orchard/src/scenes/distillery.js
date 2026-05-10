@@ -121,12 +121,14 @@ export class DistilleryScene {
     const secsLeft  = this._craft.secsRemaining(toolId);
     const recipe    = this._craft.getRecipe(def.recipeId);
     const canAfford = recipe ? this._res.canAfford(recipe.inputs) : false;
+    const craftPct = busy ? this._craft.progressPct(toolId) : 0;
     return `<div class="tool-card tool-operational${busy?' tool-busy':''}">
       <div class="tool-card-badge">Operational</div>
       <div class="tool-card-icon">${def.icon}</div>
       <div class="tool-name">${def.name}</div>
       <div class="tool-recipe">${rl.cost ?? ''} → ${rl.yield ?? ''}</div>
       <div class="tool-desc">${busy ? `⏳ ${secsLeft}s` : def.description}</div>
+      ${busy ? `<div class="tool-progress-bar"><div class="tool-progress-fill craft-fill" style="width:${craftPct}%"></div></div>` : ''}
       <button class="btn-use"${(canAfford && !busy) ? '' : ' disabled'}>
         ${busy ? `⏳ ${secsLeft}s` : (rl.label ?? 'Use')}
       </button>
