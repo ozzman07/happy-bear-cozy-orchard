@@ -14,6 +14,7 @@
       "icon": "🍎",
       "description": "Press fruit into juice, ferment it, and bottle your first ciders.",
       "unlockCondition": { "fruit": 10 },
+      "minDay": 5,
       "unlocks": ["cabin", "press", "fermenter", "bottling"]
     },
     {
@@ -22,6 +23,7 @@
       "icon": "🥃",
       "description": "Build a copper still and distil your cider into Applejack.",
       "unlockCondition": { "bottles": 15 },
+      "minDay": 30,
       "unlocks": ["distillery", "still"]
     },
     {
@@ -30,6 +32,7 @@
       "icon": "🪣",
       "description": "Age your Applejack in barrels to create smooth Apple Whiskey.",
       "unlockCondition": { "applejack": 5 },
+      "minDay": 80,
       "unlocks": ["barrel"]
     },
     {
@@ -38,6 +41,7 @@
       "icon": "🌾",
       "description": "Grow hops and brew crisp fruit ales in your new brewery.",
       "unlockCondition": { "whiskey": 3 },
+      "minDay": 175,
       "unlocks": ["brewery", "brew_kettle", "hops_crop"]
     },
     {
@@ -46,6 +50,7 @@
       "icon": "☕",
       "description": "Roast coffee beans and brew rich coffee stouts.",
       "unlockCondition": { "fruit_beer": 5 },
+      "minDay": 350,
       "unlocks": ["roastery", "roaster", "coffee_crop"]
     }
   ]
