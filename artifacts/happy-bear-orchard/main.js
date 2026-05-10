@@ -394,11 +394,21 @@ function initGame(saveData, slot) {
 
   const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
 
+  const bearBounce = () => {
+    document.querySelectorAll('.bear-img').forEach(el => {
+      el.classList.remove('bear-bounce');
+      void el.offsetWidth;
+      el.classList.add('bear-bounce');
+      el.addEventListener('animationend', () => el.classList.remove('bear-bounce'), { once: true });
+    });
+  };
+
   const actionMenu = new ActionMenu((tile, action) => {
     const result = tileGrid.performAction(tile, action, resources);
     if (result.success) {
       if (action === 'harvest') {
         bearSpeak(BearDialogue.harvestReaction());
+        bearBounce();
         setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
       } else {
         setStatus('Action complete! Keep going 🌿');
@@ -493,6 +503,7 @@ function initGame(saveData, slot) {
       if (evt.recipeId === 'bottle_cider') setTimeout(() => showStoryBear('first_cider'), 4000);
     }
     bearSpeak(BearDialogue.craftComplete(evt.recipeId, isFirst));
+    bearBounce();
     setStatus('Crafting complete!');
     const craftScene = STATION_SCENE[evt.stationId];
     if (craftScene) scenes.setBadge(craftScene, '✓');
@@ -503,6 +514,7 @@ function initGame(saveData, slot) {
     gameState.tier = tier;
     const lines = BearDialogue.tierUnlock(tier);
     bearSpeak(lines.bear);
+    bearBounce();
     setStatus(lines.status);
     setTimeout(() => showStoryBear(`tier${tier}_unlock`), 5000);
   });
@@ -540,8 +552,11 @@ function initGame(saveData, slot) {
       setTimeout(() => tileGrid.autoMine(resources), 600);
       // Delay harvest so HARVESTABLE tiles (🍎) are visible before auto-collecting
       setTimeout(() => {
-        const harvested = tileGrid.autoHarvest(resources);
+        const harvestedTiles = tileGrid.autoHarvest(resources);
+        const harvested = harvestedTiles.length;
         if (harvested > 0) {
+          harvestedTiles.forEach(({ x, y }) => orchard.popFloat(x, y, '🍎'));
+          bearBounce();
           bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
           setStatus(`Auto-harvest: ${harvested} crop${harvested > 1 ? 's' : ''} collected. 🌳`);
         }
