@@ -5,7 +5,7 @@
 import {
   GRID_SIZE, TILE_STATE, TILE_TYPE, ACTION,
   ACTION_COSTS, ACTION_YIELDS, ACTION_VALID_STATES,
-  GROW_TICKS_NEEDED, WATER_GROW_BONUS, MINE_SECS, MINE_YIELD,
+  GROW_TICKS_NEEDED, WATER_GROW_BONUS, MINE_SECS, MINE_YIELD, ROT_TICKS_NEEDED,
 } from '../constants.js';
 
 // ── Zone definitions ──────────────────────────────────────────────────────────
@@ -42,6 +42,7 @@ export class Tile {
     this.permanent       = false; // true → never unlocks via adjacency
     this.miningEnd       = null;  // timestamp when current mine completes
     this.miningStart     = null;  // timestamp when mine started (for progress %)
+    this.rotTicks        = 0;     // ticks spent in HARVESTABLE state without harvest
   }
 }
 
@@ -135,6 +136,15 @@ export class TileGrid {
         tile.growTicks       = 0;
         tile.growTicksNeeded = GROW_TICKS_NEEDED;
         tile.watered         = false;
+        tile.rotTicks        = 0;
+        break;
+      case ACTION.COMPOST:
+        // Rotted apple — compost back into a fresh planting at no cost
+        tile.state           = TILE_STATE.PLANTED;
+        tile.growTicks       = 0;
+        tile.growTicksNeeded = GROW_TICKS_NEEDED;
+        tile.watered         = false;
+        tile.rotTicks        = 0;
         break;
       case ACTION.MINE:
         tile.state        = TILE_STATE.MINING;
@@ -147,23 +157,32 @@ export class TileGrid {
     return { success: true };
   }
 
-  /** Advance crop growth; returns true if any tile became harvestable. */
+  /** Advance crop growth and rot. Returns {anyRipe, rotted:[{x,y}]}. */
   tick() {
     let anyRipe = false;
+    const rotted = [];
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
         const t = this.tiles[y][x];
         if (t.state === TILE_STATE.PLANTED) {
           t.growTicks++;
           if (t.growTicks >= t.growTicksNeeded) {
-            t.state = TILE_STATE.HARVESTABLE;
-            anyRipe = true;
+            t.state    = TILE_STATE.HARVESTABLE;
+            t.rotTicks = 0;
+            anyRipe    = true;
+          }
+        } else if (t.state === TILE_STATE.HARVESTABLE) {
+          t.rotTicks++;
+          if (t.rotTicks >= ROT_TICKS_NEEDED) {
+            t.state    = TILE_STATE.ROTTED;
+            t.rotTicks = 0;
+            rotted.push({ x, y });
           }
         }
       }
     }
-    if (anyRipe) this._notify();
-    return anyRipe;
+    if (anyRipe || rotted.length) this._notify();
+    return { anyRipe, rotted };
   }
 
   /** Check for completed mine timers; award stone and flip to MINE_SHAFT. Returns count. */
@@ -200,6 +219,7 @@ export class TileGrid {
       growTicksNeeded: t.growTicksNeeded,
       watered:         t.watered,
       permanent:       t.permanent,
+      rotTicks:        t.rotTicks,
     })));
   }
 
@@ -217,13 +237,14 @@ export class TileGrid {
         tile.growTicksNeeded = saved.growTicksNeeded ?? GROW_TICKS_NEEDED;
         tile.watered         = saved.watered         ?? false;
         tile.permanent       = saved.permanent       ?? false;
+        tile.rotTicks        = saved.rotTicks        ?? 0;
         tile.miningEnd       = null; // don't restore timers; mine completes fresh
       }
     }
     this._notify();
   }
 
-  /** Harvest every ripe tile. Returns the number of tiles harvested. */
+  /** Harvest every ripe tile; silently compost any rotted tiles. Returns harvested [{x,y}]. */
   autoHarvest(resources) {
     const harvested = [];
     for (let y = 0; y < GRID_SIZE; y++) {
@@ -232,6 +253,8 @@ export class TileGrid {
         if (tile.state === TILE_STATE.HARVESTABLE) {
           this.performAction(tile, ACTION.HARVEST, resources);
           harvested.push({ x, y });
+        } else if (tile.state === TILE_STATE.ROTTED) {
+          this.performAction(tile, ACTION.COMPOST, resources);
         }
       }
     }
