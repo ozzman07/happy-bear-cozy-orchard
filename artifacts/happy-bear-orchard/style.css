@@ -76,6 +76,14 @@ body {
   transition: opacity 0.3s;
 }
 .resource-item.res-zero { opacity: 0.32; }
+.resource-item.res-bump, #hud-coin-display.res-bump {
+  animation: res-bump 0.45s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes res-bump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
 
 .res-icon  { font-size: 0.95rem; }
 .res-label { color: var(--color-text-dim); font-size: 0.68rem; }
@@ -125,17 +133,45 @@ body {
 .nav-btn.nav-btn-active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
 .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* ── Nav badge ── */
+.nav-btn { position: relative; }
+.nav-badge {
+  position: absolute;
+  top: -5px; right: -5px;
+  min-width: 18px; height: 18px;
+  padding: 0 4px;
+  background: #e05c2a;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  animation: badge-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+  line-height: 1;
+}
+@keyframes badge-pop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
 /* ═══════════════════════════════════════════
    GAME AREA & SCENES
 ═══════════════════════════════════════════ */
 #game-area { flex: 1; display: flex; position: relative; overflow: hidden; }
 
-.scene { display: none; flex: 1; width: 100%; animation: scene-fade 0.22s ease; }
+.scene { display: none; flex: 1; width: 100%; animation: scene-fade-in 0.22s ease; }
 .scene-active { display: flex; }
+.scene-leaving { display: flex !important; animation: scene-fade-out 0.22s ease forwards; pointer-events: none; }
 
-@keyframes scene-fade {
-  from { opacity: 0; transform: translateY(5px); }
+@keyframes scene-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scene-fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
 }
 
 /* ─── Orchard Scene ──────────────────────────────────── */
