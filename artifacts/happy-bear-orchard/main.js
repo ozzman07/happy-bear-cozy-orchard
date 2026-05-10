@@ -478,16 +478,24 @@ function initGame(saveData, slot) {
   }
 
   // Central craft-complete handler — fires for all production scenes
+  const STATION_SCENE = {
+    press: 'cabin', fermenter: 'cabin', bottling: 'cabin', harvest_bell: 'cabin',
+    still: 'distillery', barrel: 'distillery',
+    brew_kettle: 'brewery',
+    roaster: 'roastery', coffee_brewer: 'roastery',
+  };
+
   crafting.onChange(evt => {
     if (evt.type !== 'done') return;
     const isFirst = !gameState.firstCrafts.has(evt.recipeId);
     if (isFirst) {
       gameState.firstCrafts.add(evt.recipeId);
-      // Story Bear appears on the first cider bottled
       if (evt.recipeId === 'bottle_cider') setTimeout(() => showStoryBear('first_cider'), 4000);
     }
     bearSpeak(BearDialogue.craftComplete(evt.recipeId, isFirst));
     setStatus('Crafting complete!');
+    const craftScene = STATION_SCENE[evt.stationId];
+    if (craftScene) scenes.setBadge(craftScene, '✓');
   });
 
   progression.onChange(({ tier }) => {
@@ -541,6 +549,7 @@ function initGame(saveData, slot) {
     } else if (ripened) {
       bearSpeak(BearDialogue.cropsRipened());
       setStatus('Crops are ready — head to the orchard!');
+      scenes.setBadge('orchard', '🍎');
     }
     scenes.onTick(ripened);
 
