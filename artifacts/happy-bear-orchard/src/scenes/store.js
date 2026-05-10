@@ -27,6 +27,7 @@ export class StoreScene {
 
   _render() {
     this._renderSell();
+    this._renderLand();
     this._renderUpgrades();
 
     const coinsEl = document.getElementById('store-coins-total');
@@ -61,6 +62,50 @@ export class StoreScene {
 
     container.querySelectorAll('.btn-sell').forEach(btn => {
       btn.addEventListener('click', () => this._doSell(btn.dataset.key, btn.dataset.qty));
+    });
+  }
+
+  _renderLand() {
+    const section = document.getElementById('store-land-section');
+    const container = document.getElementById('store-land-grid');
+    if (!container) return;
+
+    const tier   = this._getTier();
+    const lands  = this._store.getLandUpgrades(tier);
+    const coins  = this._res.get('coins');
+
+    if (lands.length === 0) {
+      section?.classList.add('hidden');
+      return;
+    }
+    section?.classList.remove('hidden');
+
+    container.innerHTML = '';
+    for (const upg of lands) {
+      const bought    = this._store.isPurchased(upg.id);
+      const canAfford = coins >= upg.coinCost;
+
+      const card = document.createElement('div');
+      card.className = `upgrade-card land-expansion-card${bought ? ' upgrade-card-owned' : ''}`;
+      card.innerHTML = `
+        <div class="upgrade-card-icon">${upg.icon}</div>
+        <div class="upgrade-card-info">
+          <div class="upgrade-card-name">${upg.label}</div>
+          <div class="upgrade-card-desc">${upg.description}</div>
+          ${bought ? '' : `<div class="upgrade-card-cost">${upg.coinCost} 🪙</div>`}
+        </div>
+        <div class="upgrade-card-action">
+          ${bought
+            ? '<span class="upgrade-owned-badge">✓ Opened</span>'
+            : `<button class="btn-upgrade btn-land" data-id="${upg.id}" ${canAfford ? '' : 'disabled'}>
+                ${canAfford ? 'Open Land' : `Need ${upg.coinCost - coins} more 🪙`}
+              </button>`}
+        </div>`;
+      container.appendChild(card);
+    }
+
+    container.querySelectorAll('.btn-land').forEach(btn => {
+      btn.addEventListener('click', () => this._doBuy(btn.dataset.id));
     });
   }
 
