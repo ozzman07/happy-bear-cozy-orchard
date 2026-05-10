@@ -339,6 +339,8 @@ function launchGame(saveData, slot) {
 // ── Game init (runs after menu flow) ────────────────────────────────────────
 
 function initGame(saveData, slot) {
+  document.documentElement.style.setProperty('--bear-url', `url('${import.meta.env.BASE_URL}HappyBearAvatars.PNG')`);
+
   const savedTier    = saveData?.systems?.tier ?? 0;
   const resources    = new ResourceManager();
   const tileGrid     = new TileGrid();
