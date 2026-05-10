@@ -928,22 +928,41 @@ body {
 /* ═══════════════════════════════════════════
    BEAR SPRITE (SVG)
 ═══════════════════════════════════════════ */
+/* ── Bear sprite sheet (HappyBearAvatars.PNG, 1024×1024) ───────────────── */
 .bear-img {
   display: block;
-  width: 72px;
-  height: auto;
+  width: 110px;
+  height: 110px;
+  object-fit: none;
+  object-position: -405px -430px; /* default: waving bear (mid-center) */
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   margin: 0 auto;
   animation: bear-idle 3s ease-in-out infinite;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
   user-select: none;
+  flex-shrink: 0;
 }
 
-.bear-img-welcome {
-  width: 140px;
-}
+/* Orchard — apple-harvest bear (top-left) */
+#bear-sprite.bear-img         { object-position: -190px -165px; }
 
-#cabin-bear.bear-img { width: clamp(52px, 7vw, 72px); }
-#store-bear.bear-img  { width: 64px; }
+/* Cabin — sleeping/cozy bear (mid-right) */
+#scene-cabin #cabin-bear      { object-position: -740px -470px; }
+
+/* Distillery — barrel bear (top-right) */
+#scene-distillery #cabin-bear { object-position: -685px -165px; }
+
+/* Brewery — hiking/adventurous bear (bottom-center) */
+#scene-brewery #cabin-bear    { object-position: -335px -765px; }
+
+/* Roastery — coffee-cup bear (mid-left) */
+#scene-roastery #cabin-bear   { object-position: -95px -455px; }
+
+/* Store — waving/welcoming bear (mid-center) */
+#store-bear.bear-img          { object-position: -405px -430px; width: 110px; height: 110px; }
+
+/* Welcome modal — campfire bear (bottom-right), larger */
+#welcome-bear.bear-img        { object-position: -725px -745px; width: 150px; height: 150px; border-radius: 18px; }
 
 /* ═══════════════════════════════════════════
    STORY BEAR NOTIFICATION
