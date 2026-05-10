@@ -26,10 +26,14 @@ import { StoreScene }           from './src/scenes/store.js';
 import { StoreSystem }          from './src/systems/StoreSystem.js';
 import { MarketSystem }         from './src/systems/MarketSystem.js';
 
-import { HUD }        from './src/ui/hud.js';
-import { ActionMenu } from './src/ui/menus.js';
+import { HUD }         from './src/ui/hud.js';
+import { ActionMenu }  from './src/ui/menus.js';
+import { AudioSystem } from './src/systems/AudioSystem.js';
 
 import progressionData from './src/data/progression.json';
+
+// ── Audio (module-level so Settings can reach it before game init) ───────────
+const audio = new AudioSystem();
 
 // ── DOM refs ────────────────────────────────────────────────────────────────
 
@@ -281,7 +285,7 @@ function renderSettings() {
     return row(label, cb);
   }
 
-  function slider(label, cat, key, min, max) {
+  function slider(label, cat, key, min, max, onLive) {
     const wrap = document.createElement('div');
     wrap.style.display = 'flex'; wrap.style.gap = '8px'; wrap.style.alignItems = 'center';
     const sl = document.createElement('input');
@@ -290,8 +294,10 @@ function renderSettings() {
     const val = document.createElement('span');
     val.textContent = Math.round(s[cat][key] * 100) + '%';
     sl.addEventListener('input', () => {
-      ProfileSystem.updateSetting(cat, key, parseFloat(sl.value));
-      val.textContent = Math.round(sl.value * 100) + '%';
+      const v = parseFloat(sl.value);
+      ProfileSystem.updateSetting(cat, key, v);
+      val.textContent = Math.round(v * 100) + '%';
+      if (onLive) onLive(v);
     });
     wrap.appendChild(sl); wrap.appendChild(val);
     return row(label, wrap);
@@ -308,9 +314,9 @@ function renderSettings() {
   };
 
   wrapper.appendChild(section('Audio',
-    slider('Music', 'audio', 'musicVolume', 0, 1),
-    slider('SFX',   'audio', 'sfxVolume',   0, 1),
-    slider('Ambient','audio','ambientVolume',0, 1)
+    slider('Music',   'audio', 'musicVolume',   0, 1),
+    slider('SFX',     'audio', 'sfxVolume',     0, 1, v => audio.setSfxVolume(v)),
+    slider('Ambient', 'audio', 'ambientVolume', 0, 1)
   ));
   wrapper.appendChild(section('Gameplay',
     toggle('Autosave',     'gameplay', 'autosave'),
@@ -502,6 +508,10 @@ function initGame(saveData, slot) {
   const hud      = new HUD();
   const statusEl = document.getElementById('status-msg');
 
+  // Sync audio volume from profile settings
+  const _profileForAudio = ProfileSystem.getSelectedProfile();
+  audio.setSfxVolume(_profileForAudio?.settings?.audio?.sfxVolume ?? 0.7);
+
   let _lastBearMsg = '';
   let _bearHideTimers = {};
 
@@ -671,19 +681,40 @@ function initGame(saveData, slot) {
     const result = tileGrid.performAction(tile, action, resources);
     if (result.success) {
       if (action === 'harvest') {
+        audio.harvest();
         gameStats.harvests++;
         questSystem.increment('harvest');
         bearSpeak(BearDialogue.harvestReaction());
         bearBounce();
         setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
+      } else if (action === 'plant') {
+        audio.plant();
+        setStatus('Apple tree planted! Water it to speed things up. 💧');
       } else if (action === 'plant_tree') {
+        audio.plantTree();
         bearSpeak('🌲 Timber tree planted! Grows slower than apples but yields renewable wood. 🪵');
         setStatus('Timber tree planted — harvest in ~45 seconds for 4 🪵.');
+      } else if (action === 'water') {
+        audio.water();
+        setStatus('Watered! Crops will grow faster. 💧');
+      } else if (action === 'clear') {
+        audio.clear();
+        questSystem.increment('clear');
+        setStatus('Cleared! New tiles unlocked nearby. 🌿');
+      } else if (action === 'dig') {
+        audio.dig();
+        setStatus('Dug up — +3 🪨 stone!');
+      } else if (action === 'mine') {
+        audio.mineStart();
+        setStatus('Mining started — check back in 15 seconds. ⛏️');
       } else if (action === 'compost') {
+        audio.compost();
         bearSpeak('🍂 Composted — starts fresh! Next time, harvest before they turn.');
         setStatus('🍂 Rotted apple composted. Growing again from scratch.');
+      } else if (action === 'clear' && (tile.state === 'planted' || tile.state === 'harvestable' || tile.state === 'mine_shaft')) {
+        audio.uproot();
+        setStatus('Removed — tile returned to soil.');
       } else {
-        if (action === 'clear') questSystem.increment('clear');
         setStatus('Action complete! Keep going 🌿');
       }
     } else {
@@ -709,7 +740,7 @@ function initGame(saveData, slot) {
   const marketSystem = new MarketSystem(resources);
 
   storeSystem.onChange(evt => {
-    if (evt.type === 'sell')    { gameStats.itemsSold += evt.amount; questSystem.increment('sell_coins', evt.coins); }
+    if (evt.type === 'sell')    { audio.sell(); gameStats.itemsSold += evt.amount; questSystem.increment('sell_coins', evt.coins); }
     if (evt.type === 'upgrade') gameStats.upgradesBought++;
     if (evt.type === 'land') {
       tileGrid.unlockZone(evt.zone);
@@ -720,6 +751,7 @@ function initGame(saveData, slot) {
 
   marketSystem.onChange(evt => {
     if (evt.type === 'market_upgrade') {
+      audio.marketUpgrade();
       storeSystem.setPriceMultiplier(marketSystem.priceMultiplier);
       bearSpeak(`${evt.def.icon} ${evt.def.name} unlocked! Your market is growing. 🎉`);
       setStatus(`Market upgraded to ${evt.def.name}!`);
@@ -787,6 +819,7 @@ function initGame(saveData, slot) {
       btn.addEventListener('click', () => {
         const result = questSystem.claimReward(btn.dataset.questId);
         if (result.success) {
+          audio.questClaim();
           bearSpeak(`+${result.reward} 🪙 Quest reward claimed!`);
           bearBounce();
           renderQuestModal();
@@ -884,6 +917,7 @@ function initGame(saveData, slot) {
 
   crafting.onChange(evt => {
     if (evt.type !== 'done') return;
+    audio.craftComplete();
     const isFirst = !gameState.firstCrafts.has(evt.recipeId);
     if (isFirst) {
       gameState.firstCrafts.add(evt.recipeId);
@@ -900,6 +934,7 @@ function initGame(saveData, slot) {
   });
 
   progression.onChange(({ tier }) => {
+    audio.tierUnlock();
     applyUnlocks(tier);
     gameState.tier = tier;
     const lines   = BearDialogue.tierUnlock(tier);
@@ -932,13 +967,15 @@ function initGame(saveData, slot) {
 
     // Always notify when a mine completes (even without auto)
     if (mined > 0) {
-      const stone = mined * 2; // matches MINE_YIELD stone per mine
+      audio.mineComplete();
+      const stone = mined * 2;
       bearSpeak(`⛏️ Mine complete! +${stone} 🪨`);
       setStatus(`Mine yielded ${stone} stone. 🪨`);
     }
 
     // Warn when apples rot (manual mode — auto mode handles silently)
     if (!orchard.autoEnabled && rotted.length > 0) {
+      audio.rot();
       bearSpeak(`🍂 ${rotted.length} apple${rotted.length > 1 ? 's' : ''} rotted! Harvest sooner next time.`);
       setStatus(`🍂 Apples rotted on ${rotted.length} tile${rotted.length > 1 ? 's' : ''} — tap to compost and replant.`);
     }
@@ -952,6 +989,7 @@ function initGame(saveData, slot) {
         const harvestedTiles = tileGrid.autoHarvest(resources);
         const harvested = harvestedTiles.length;
         if (harvested > 0) {
+          audio.harvest();
           gameStats.harvests += harvested;
           questSystem.increment('harvest', harvested);
           harvestedTiles.forEach(({ x, y }) => orchard.popFloat(x, y, '🍎'));
@@ -968,6 +1006,7 @@ function initGame(saveData, slot) {
     scenes.onTick(ripened);
 
     if (tickCount % TICKS_PER_DAY === 0) {
+      audio.newDay();
       gameState.day++;
       hud.updateDay(gameState.day);
       progression.checkDay();
