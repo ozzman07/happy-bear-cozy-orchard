@@ -127,6 +127,19 @@ export class OrchardScene {
     el.textContent   = v.emoji;
     el.title         = v.label;
 
+    // Timber trees use different visuals
+    if (tile.cropType === 'timber') {
+      if (tile.state === TILE_STATE.PLANTED) {
+        v = { emoji: '🌲', color: '#1e4d18', label: 'Timber tree growing — harvest for 🪵' };
+      } else if (tile.state === TILE_STATE.HARVESTABLE) {
+        v = { emoji: '🪵', color: '#3a6e24', label: 'Timber ready — harvest for +4 🪵!' };
+      }
+      el.className     = `tile tile-${tile.state}${tile.state === TILE_STATE.HARVESTABLE ? ' tile-timber-ready' : ''}`;
+      el.style.background = v.color;
+      el.textContent   = v.emoji;
+      el.title         = v.label;
+    }
+
     if (tile.state === TILE_STATE.PLANTED) {
       const pct = Math.min(100, Math.round((tile.growTicks / tile.growTicksNeeded) * 100));
       el.style.setProperty('--grow-pct', pct + '%');
