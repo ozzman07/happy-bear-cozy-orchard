@@ -402,23 +402,51 @@ function initGame(saveData, slot) {
     brew_kettle: '🍺 Brew Kettle', roaster: '🔥 Roaster', coffee_crop: '🫘 Coffee Crop',
     hops_crop: '🌾 Hops Crop',
   };
+  const RESOURCE_ICONS = {
+    fruit: '🍎', juice: '🧃', cider: '🫗', bottles: '🍾', hops: '🌾',
+    applejack: '🥃', whiskey: '🪣', fruit_beer: '🍺',
+    coffee_bean: '🫘', roasted_coffee: '🤎', cups: '☕',
+  };
+  const RESOURCE_NAMES = {
+    fruit: 'Apples', juice: 'Juice', cider: 'Cider', bottles: 'Bottles', hops: 'Hops',
+    applejack: 'Applejack', whiskey: 'Whiskey', fruit_beer: 'Fruit Beer',
+    coffee_bean: 'Coffee Beans', roasted_coffee: 'Roasted Coffee', cups: 'Cups',
+  };
 
   const showTierCeremony = (tier, tierDef) => {
-    const el      = document.getElementById('tier-ceremony');
-    const iconEl  = document.getElementById('tier-ceremony-icon');
-    const nameEl  = document.getElementById('tier-ceremony-name');
-    const descEl  = document.getElementById('tier-ceremony-desc');
-    const unlocksEl = document.getElementById('tier-ceremony-unlocks');
+    const el         = document.getElementById('tier-ceremony');
+    const iconEl     = document.getElementById('tier-ceremony-icon');
+    const nameEl     = document.getElementById('tier-ceremony-name');
+    const descEl     = document.getElementById('tier-ceremony-desc');
+    const unlocksEl  = document.getElementById('tier-ceremony-unlocks');
     const confettiEl = document.getElementById('tier-ceremony-confetti');
     if (!el) return;
 
-    iconEl.textContent  = tierDef.icon;
-    nameEl.textContent  = tierDef.name;
-    descEl.textContent  = tierDef.description;
-    unlocksEl.innerHTML = tierDef.unlocks
+    iconEl.textContent = tierDef.icon;
+    nameEl.textContent = tierDef.name;
+
+    descEl.innerHTML = `
+      <div class="ceremony-section-label">🎯 Your Goal</div>
+      <div class="ceremony-section-text">${tierDef.description}</div>`;
+
+    const chips = tierDef.unlocks
       .filter(u => UNLOCK_LABELS[u])
       .map(u => `<span class="ceremony-unlock-chip">${UNLOCK_LABELS[u]}</span>`)
       .join('');
+
+    const nextTier = progressionData.tiers[tier + 1];
+    const nextGoalHtml = nextTier
+      ? `<div class="ceremony-next-goal">Next milestone — ${
+          Object.entries(nextTier.unlockCondition)
+            .map(([r, n]) => `${n} ${RESOURCE_ICONS[r] ?? ''} ${RESOURCE_NAMES[r] ?? r}`)
+            .join(' & ')
+        }</div>`
+      : '';
+
+    unlocksEl.innerHTML = `
+      <div class="ceremony-section-label">📦 New Equipment</div>
+      <div class="ceremony-chips">${chips || '<span style="color:#6a5040">All stations already built</span>'}</div>
+      ${nextGoalHtml}`;
 
     // Burst confetti from center
     confettiEl.innerHTML = '';
