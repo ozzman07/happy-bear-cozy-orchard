@@ -24,6 +24,7 @@ import { BreweryScene }         from './src/scenes/brewery.js';
 import { RoasteryScene }        from './src/scenes/roastery.js';
 import { StoreScene }           from './src/scenes/store.js';
 import { StoreSystem }          from './src/systems/StoreSystem.js';
+import { MarketSystem }         from './src/systems/MarketSystem.js';
 
 import { HUD }        from './src/ui/hud.js';
 import { ActionMenu } from './src/ui/menus.js';
@@ -560,7 +561,9 @@ function initGame(saveData, slot) {
   const brewery    = new BreweryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
   const roastery   = new RoasteryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
 
-  const storeSystem = new StoreSystem(resources);
+  const storeSystem  = new StoreSystem(resources);
+  const marketSystem = new MarketSystem(resources);
+
   storeSystem.onChange(evt => {
     if (evt.type === 'sell')    { gameStats.itemsSold += evt.amount; questSystem.increment('sell_coins', evt.coins); }
     if (evt.type === 'upgrade') gameStats.upgradesBought++;
@@ -570,6 +573,40 @@ function initGame(saveData, slot) {
       setStatus(`🌿 ${evt.zone === 'south_west' ? 'Hop Fields' : 'Coffee Grove'} unlocked — new tiles ready to clear!`);
     }
   });
+
+  marketSystem.onChange(evt => {
+    if (evt.type === 'market_upgrade') {
+      storeSystem.setPriceMultiplier(marketSystem.priceMultiplier);
+      bearSpeak(`${evt.def.icon} ${evt.def.name} unlocked! Your market is growing. 🎉`);
+      setStatus(`Market upgraded to ${evt.def.name}!`);
+    }
+    if (evt.type === 'deal_warning') {
+      bearSpeak(`📦 Heads up — ${evt.def.name} expects ${evt.def.quantity} ${evt.def.productIcon} tomorrow. Make sure you're stocked!`);
+      setStatus(`⚠ Deal reminder: ${evt.def.name} shipment due tomorrow.`);
+    }
+    if (evt.type === 'deal_fulfilled') {
+      bearSpeak(`✅ Shipped ${evt.def.quantity} ${evt.def.productIcon} to ${evt.def.name} — +${evt.coins} 🪙!`);
+      setStatus(`Deal fulfilled: ${evt.def.name} paid ${evt.coins} 🪙.`);
+    }
+    if (evt.type === 'deal_missed') {
+      bearSpeak(`😬 Missed the ${evt.def.name} shipment. Deal paused 14 days — or settle for ${evt.buyoutCost} 🪙 to keep it going.`);
+      setStatus(`⚠ Missed shipment to ${evt.def.name}. Deal paused — check the Market.`);
+      scenes.setBadge('store', '⚠');
+    }
+    if (evt.type === 'deal_cancelled_permanent') {
+      bearSpeak(`💔 ${evt.def.name} cancelled the deal after two missed shipments.`);
+      setStatus(`Deal with ${evt.def.name} permanently cancelled.`);
+    }
+    if (evt.type === 'deal_reactivated') {
+      bearSpeak(`📋 Deal with ${evt.def.name} is back on — next shipment coming up.`);
+      setStatus(`Deal with ${evt.def.name} reactivated.`);
+    }
+    if (evt.type === 'deal_buyout') {
+      bearSpeak(`💰 Settled with ${evt.def.name} for ${evt.cost} 🪙 — deal reinstated!`);
+      setStatus(`Deal with ${evt.def.name} reinstated.`);
+    }
+  });
+
   crafting.setStore(storeSystem);
 
   const questSystem = new QuestSystem(resources);
@@ -636,9 +673,10 @@ function initGame(saveData, slot) {
     if (evt.type === 'progress' || evt.type === 'rolled') syncQuestsBadge();
   });
   const store       = new StoreScene({
-    store: storeSystem, resources, statusEl,
+    store: storeSystem, market: marketSystem, resources, statusEl,
     bearSpeakFn: bearSpeak,
     getTier: () => gameState.tier,
+    getDay:  () => gameState.day,
   });
 
   scenes.register(SCENES.ORCHARD,    orchard);
@@ -789,6 +827,7 @@ function initGame(saveData, slot) {
       gameState.day++;
       hud.updateDay(gameState.day);
       progression.checkDay();
+      marketSystem.onNewDay(gameState.day);
       questSystem.onNewDay(gameState.tier);
       bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
       setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
@@ -835,6 +874,10 @@ function initGame(saveData, slot) {
     if (sys.stats)  Object.assign(gameStats, sys.stats);
     if (sys.quests) questSystem.restore(sys.quests);
     else            questSystem.rollQuests(gameState.tier);
+    if (sys.market) {
+      marketSystem.restore(sys.market);
+      storeSystem.setPriceMultiplier(marketSystem.priceMultiplier);
+    }
   }
 
   applyUnlocks(gameState.tier);
@@ -859,6 +902,7 @@ function initGame(saveData, slot) {
         upgrades:       storeSystem.snapshot(),
         stats:          { ...gameStats },
         quests:         questSystem.snapshot(),
+        market:         marketSystem.snapshot(),
       },
     };
   }
