@@ -353,6 +353,7 @@ function initGame(saveData, slot) {
   const progression  = new ProgressionSystem({ tier: savedTier, day: 1, unlocks: new Set(['orchard']) }, resources);
 
   const gameState = { tier: 0, day: saveData?.day ?? 1, unlocks: new Set(['orchard']), firstCrafts: new Set() };
+  const gameStats = { harvests: 0, crafts: 0, itemsSold: 0, upgradesBought: 0 };
 
   const hud      = new HUD();
   const statusEl = document.getElementById('status-msg');
@@ -393,6 +394,37 @@ function initGame(saveData, slot) {
   };
 
   const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
+
+  // ── Statistics modal ────────────────────────────────────────────────────────
+  const STAT_DEFS = [
+    { icon: '📅', label: 'Days Played',       getValue: () => gameState.day },
+    { icon: '🍎', label: 'Total Harvests',     getValue: () => gameStats.harvests },
+    { icon: '🍺', label: 'Crafts Completed',   getValue: () => gameStats.crafts },
+    { icon: '🛒', label: 'Items Sold',         getValue: () => gameStats.itemsSold },
+    { icon: '🪙', label: 'Coins Earned',       getValue: () => storeSystem.totalEarned },
+    { icon: '🔧', label: 'Upgrades Bought',    getValue: () => gameStats.upgradesBought },
+  ];
+
+  const showStats = () => {
+    const modal   = document.getElementById('stats-modal');
+    const gridEl  = document.getElementById('stats-grid');
+    if (!modal || !gridEl) return;
+    gridEl.innerHTML = STAT_DEFS.map(s => `
+      <div class="stat-card">
+        <div class="stat-icon">${s.icon}</div>
+        <div class="stat-value">${s.getValue().toLocaleString()}</div>
+        <div class="stat-label">${s.label}</div>
+      </div>`).join('');
+    modal.classList.remove('hidden');
+  };
+
+  const hideStats = () => document.getElementById('stats-modal')?.classList.add('hidden');
+
+  document.getElementById('stats-btn')?.addEventListener('click', showStats);
+  document.getElementById('stats-close')?.addEventListener('click', e => { e.stopPropagation(); hideStats(); });
+  document.getElementById('stats-modal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('stats-modal')) hideStats();
+  });
 
   const CEREMONY_EMOJIS = ['🍎','🌟','✨','🎉','🌿','🍃','⭐','🥂'];
   const UNLOCK_LABELS = {
@@ -495,6 +527,7 @@ function initGame(saveData, slot) {
     const result = tileGrid.performAction(tile, action, resources);
     if (result.success) {
       if (action === 'harvest') {
+        gameStats.harvests++;
         bearSpeak(BearDialogue.harvestReaction());
         bearBounce();
         setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
@@ -521,6 +554,10 @@ function initGame(saveData, slot) {
   const roastery   = new RoasteryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
 
   const storeSystem = new StoreSystem(resources);
+  storeSystem.onChange(evt => {
+    if (evt.type === 'sell')    gameStats.itemsSold    += evt.amount;
+    if (evt.type === 'upgrade') gameStats.upgradesBought++;
+  });
   crafting.setStore(storeSystem);
   const store       = new StoreScene({
     store: storeSystem, resources, statusEl,
@@ -590,6 +627,7 @@ function initGame(saveData, slot) {
       gameState.firstCrafts.add(evt.recipeId);
       if (evt.recipeId === 'bottle_cider') setTimeout(() => showStoryBear('first_cider'), 4000);
     }
+    gameStats.crafts++;
     bearSpeak(BearDialogue.craftComplete(evt.recipeId, isFirst));
     bearBounce();
     setStatus('Crafting complete!');
@@ -646,6 +684,7 @@ function initGame(saveData, slot) {
         const harvestedTiles = tileGrid.autoHarvest(resources);
         const harvested = harvestedTiles.length;
         if (harvested > 0) {
+          gameStats.harvests += harvested;
           harvestedTiles.forEach(({ x, y }) => orchard.popFloat(x, y, '🍎'));
           bearBounce();
           bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
@@ -704,6 +743,9 @@ function initGame(saveData, slot) {
     if (sys.upgrades) {
       storeSystem.restore(sys.upgrades);
     }
+    if (sys.stats) {
+      Object.assign(gameStats, sys.stats);
+    }
   }
 
   applyUnlocks(gameState.tier);
@@ -725,6 +767,7 @@ function initGame(saveData, slot) {
         marketUnlocked,
         autoEnabled:    orchard.autoEnabled,
         upgrades:       storeSystem.snapshot(),
+        stats:          { ...gameStats },
       },
     };
   }
