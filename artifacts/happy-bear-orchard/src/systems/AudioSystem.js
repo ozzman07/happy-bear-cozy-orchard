@@ -199,3 +199,75 @@ export class AudioSystem {
     this._seq([[523, 0.18], [659, 0.18], [784, 0.18], [880, 0.18], [1047, 0.38]], 85);
   }
 }
+
+// ── Music player ──────────────────────────────────────────────────────────────
+
+const TRACKS = [
+  'Blueberry Morning.mp3',
+  'The Happy Pour.mp3',
+  'Sunshine Sip.mp3',
+  'Hand in Mine (From the creek to the porch) - A duet for lifelong partners.mp3',
+  'Two Mugs, One Fire.mp3',
+  'Campfire Pour.mp3',
+  'Blueberry Moonlight.mp3',
+  'Autumn Hug.mp3',
+  'Wanderin\' Cider Creek.mp3',
+  'Sip Slow.mp3',
+];
+
+export class MusicPlayer {
+  constructor(baseUrl) {
+    this._base    = baseUrl.replace(/\/$/, '');
+    this._audio   = null;
+    this._vol     = 0.5;
+    this._started = false;
+    this._order   = this._shuffle([...Array(TRACKS.length).keys()]);
+    this._idx     = 0;
+  }
+
+  _shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Called on first user gesture — browsers block autoplay before interaction.
+  start() {
+    if (this._started) return;
+    this._started = true;
+    this._play(this._order[this._idx]);
+  }
+
+  _play(trackIdx) {
+    if (this._audio) {
+      this._audio.pause();
+      this._audio.src = '';
+    }
+    const name = TRACKS[trackIdx];
+    const src  = `${this._base}/music/${encodeURIComponent(name)}`;
+    const el   = new Audio(src);
+    el.volume  = this._vol;
+    el.addEventListener('ended', () => this._next());
+    el.addEventListener('error', () => this._next());   // skip bad track
+    el.play().catch(() => {});
+    this._audio = el;
+  }
+
+  _next() {
+    this._idx = (this._idx + 1) % this._order.length;
+    // Re-shuffle when we've gone through all tracks
+    if (this._idx === 0) this._order = this._shuffle([...Array(TRACKS.length).keys()]);
+    this._play(this._order[this._idx]);
+  }
+
+  setVolume(v) {
+    this._vol = Math.max(0, Math.min(1, v));
+    if (this._audio) this._audio.volume = this._vol;
+  }
+
+  nowPlaying() {
+    return TRACKS[this._order[this._idx]]?.replace('.mp3', '') ?? '';
+  }
+}
