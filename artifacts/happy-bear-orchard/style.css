@@ -1024,6 +1024,106 @@ body {
 .nav-btn-store.nav-btn-active { background: #c8b430 !important; color: #2e1e08 !important; border-color: #c8b430 !important; }
 
 /* ── Upgrades section ──────────────────────────────────────────────────── */
+/* ─── Market level ──────────────────────────────────────── */
+#store-market-level {
+  background: rgba(255,224,102,0.07);
+  border: 1px solid rgba(255,224,102,0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+.market-level-current { display: flex; align-items: flex-start; gap: 0.75rem; }
+.market-level-icon    { font-size: 2rem; line-height: 1; }
+.market-level-name    { font-weight: 700; color: #ffe066; font-size: 1rem; }
+.market-level-desc    { font-size: 0.78rem; color: #c8b87a; margin-top: 0.1rem; }
+.market-price-boost   { font-size: 0.75rem; color: #a0e87a; margin-top: 0.2rem; }
+.market-upgrade-row   {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 0.65rem; padding-top: 0.65rem;
+  border-top: 1px solid rgba(255,224,102,0.15);
+  gap: 0.5rem;
+}
+.market-upgrade-locked { opacity: 0.55; }
+.market-upgrade-next   { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: #e8d87a; flex: 1; flex-wrap: wrap; }
+.market-upgrade-cost   { color: #ffe066; font-weight: 700; }
+.market-upgrade-tier   { color: #888; font-size: 0.75rem; }
+.market-level-max      { font-size: 0.8rem; color: #a0e87a; margin-top: 0.5rem; text-align: center; }
+.btn-market-upgrade {
+  background: linear-gradient(135deg, #ffe066, #f5a623);
+  color: #2a1a00; font-weight: 700; border: none;
+  border-radius: 6px; padding: 0.35rem 0.8rem; cursor: pointer;
+  font-size: 0.8rem; white-space: nowrap;
+}
+.btn-market-upgrade:disabled { opacity: 0.45; cursor: default; }
+.store-price-boosted { color: #a0e87a; font-size: 0.72rem; }
+
+/* ─── Distribution deals ────────────────────────────────── */
+#store-deals-section {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(100,180,255,0.2);
+  padding-top: 0.75rem;
+}
+#store-deals-heading {
+  font-size: 0.82rem; font-weight: 700; color: #7ac8ff;
+  letter-spacing: 0.04em; margin-bottom: 0.5rem; text-transform: uppercase;
+}
+#store-deals-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+.deal-slots-info { font-size: 0.75rem; color: #888; margin-bottom: 0.25rem; }
+
+.deal-card {
+  border: 1px solid rgba(100,180,255,0.2);
+  border-radius: 10px; padding: 0.65rem 0.8rem;
+  background: rgba(20,40,70,0.4);
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.deal-card-active   { border-color: rgba(100,200,100,0.3); background: rgba(20,50,20,0.4); }
+.deal-card-warning  { border-color: rgba(255,180,0,0.4);   background: rgba(50,35,0,0.4); }
+.deal-card-urgent   { border-color: rgba(255,80,80,0.5);   background: rgba(50,10,10,0.4); }
+.deal-card-paused   { border-color: rgba(150,150,150,0.3); background: rgba(30,30,30,0.4); opacity: 0.9; }
+.deal-card-slotsfull { opacity: 0.5; }
+
+.deal-card-header   { display: flex; align-items: flex-start; gap: 0.6rem; }
+.deal-icon          { font-size: 1.5rem; line-height: 1; }
+.deal-info          { flex: 1; }
+.deal-name          { font-weight: 700; color: #c8e8ff; font-size: 0.9rem; }
+.deal-terms         { font-size: 0.75rem; color: #7ac8ff; margin-top: 0.1rem; }
+.deal-desc          { font-size: 0.75rem; color: #8a9aaa; margin-top: 0.15rem; }
+.deal-status-badge  { flex-shrink: 0; }
+
+.deal-badge         { font-size: 0.7rem; font-weight: 700; border-radius: 4px; padding: 0.15rem 0.4rem; }
+.deal-badge-ok      { background: rgba(100,200,100,0.2); color: #a0e87a; }
+.deal-badge-urgent  { background: rgba(255,80,80,0.2);   color: #ff9090; }
+.deal-badge-paused  { background: rgba(150,150,150,0.2); color: #aaa; }
+
+.deal-stock-row     { display: flex; justify-content: space-between; font-size: 0.78rem; gap: 0.5rem; flex-wrap: wrap; }
+.deal-stock-ok      { color: #a0e87a; }
+.deal-stock-low     { color: #ffaa44; }
+.deal-days-left     { color: #8a9aaa; }
+.deal-paused-msg    { color: #aaa; font-size: 0.76rem; font-style: italic; }
+
+.deal-sign-row      { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.deal-sign-fee      { font-size: 0.76rem; color: #8a9aaa; }
+.deal-actions       { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+.btn-deal-sign {
+  background: linear-gradient(135deg,#4a9fff,#2060cc);
+  color: #fff; border: none; border-radius: 6px;
+  padding: 0.3rem 0.7rem; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+}
+.btn-deal-sign:disabled { opacity: 0.4; cursor: default; }
+.btn-deal-buyout {
+  background: linear-gradient(135deg,#ffe066,#f5a623);
+  color: #2a1a00; border: none; border-radius: 6px;
+  padding: 0.3rem 0.7rem; font-size: 0.76rem; font-weight: 700; cursor: pointer;
+}
+.btn-deal-buyout:disabled { opacity: 0.4; cursor: default; }
+.btn-deal-cancel {
+  background: rgba(255,80,80,0.15); color: #ff9090;
+  border: 1px solid rgba(255,80,80,0.3); border-radius: 6px;
+  padding: 0.3rem 0.7rem; font-size: 0.76rem; cursor: pointer;
+}
+.btn-deal-cancel:hover { background: rgba(255,80,80,0.25); }
+
 #store-land-section {
   margin-top: 1rem;
   border-top: 1px solid rgba(100,200,100,0.25);
