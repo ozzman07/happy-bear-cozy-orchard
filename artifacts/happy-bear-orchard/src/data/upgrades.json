@@ -1,6 +1,26 @@
 {
   "upgrades": [
     {
+      "id": "land_south_west",
+      "type": "land",
+      "zone": "south_west",
+      "label": "Hop Fields",
+      "icon": "🌾",
+      "description": "Open the south-west fields — perfect for growing hops for the brewery",
+      "unlockTier": 4,
+      "coinCost": 175
+    },
+    {
+      "id": "land_south_east",
+      "type": "land",
+      "zone": "south_east",
+      "label": "Coffee Grove",
+      "icon": "☕",
+      "description": "Open the south-east grove — ideal for growing coffee beans",
+      "unlockTier": 5,
+      "coinCost": 350
+    },
+    {
       "id": "press_speed_1",
       "label": "Sharpened Blades",
       "icon": "⚙️",
