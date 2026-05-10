@@ -1,0 +1,15 @@
+{
+  "pool": [
+    { "id": "harvest_10",  "icon": "🍎", "label": "Harvest 10 apples",       "type": "harvest",    "target": 10, "reward": 8,  "minTier": 0 },
+    { "id": "harvest_20",  "icon": "🍎", "label": "Harvest 20 apples",       "type": "harvest",    "target": 20, "reward": 15, "minTier": 0 },
+    { "id": "harvest_35",  "icon": "🍎", "label": "Harvest 35 apples",       "type": "harvest",    "target": 35, "reward": 24, "minTier": 1 },
+    { "id": "clear_2",     "icon": "🌿", "label": "Clear 2 new tiles",       "type": "clear",      "target": 2,  "reward": 6,  "minTier": 0 },
+    { "id": "clear_4",     "icon": "🌿", "label": "Clear 4 new tiles",       "type": "clear",      "target": 4,  "reward": 10, "minTier": 1 },
+    { "id": "craft_2",     "icon": "🍺", "label": "Complete 2 crafts",       "type": "craft",      "target": 2,  "reward": 10, "minTier": 1 },
+    { "id": "craft_5",     "icon": "🍺", "label": "Complete 5 crafts",       "type": "craft",      "target": 5,  "reward": 18, "minTier": 1 },
+    { "id": "craft_8",     "icon": "🍺", "label": "Complete 8 crafts",       "type": "craft",      "target": 8,  "reward": 28, "minTier": 2 },
+    { "id": "earn_10",     "icon": "🪙", "label": "Earn 10 coins at market", "type": "sell_coins", "target": 10, "reward": 8,  "minTier": 1 },
+    { "id": "earn_25",     "icon": "🪙", "label": "Earn 25 coins at market", "type": "sell_coins", "target": 25, "reward": 15, "minTier": 2 },
+    { "id": "earn_50",     "icon": "🪙", "label": "Earn 50 coins at market", "type": "sell_coins", "target": 50, "reward": 25, "minTier": 3 }
+  ]
+}
