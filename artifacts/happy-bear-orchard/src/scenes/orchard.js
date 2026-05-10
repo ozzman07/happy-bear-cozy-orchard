@@ -1,7 +1,7 @@
 /**
  * OrchardScene — renders and manages the 10×10 tile grid.
  */
-import { GRID_SIZE, TILE_STATE, TILE_TYPE, TILE_VISUAL } from '../constants.js';
+import { GRID_SIZE, TILE_STATE, TILE_TYPE, TILE_VISUAL, ROT_TICKS_NEEDED } from '../constants.js';
 import { BearDialogue } from '../systems/BearDialogue.js';
 
 
@@ -133,6 +133,11 @@ export class OrchardScene {
       el.classList.add('growing');
     } else {
       el.style.removeProperty('--grow-pct');
+    }
+
+    // Warn when apples are at risk of rotting (≥50% through their rot window)
+    if (tile.state === TILE_STATE.HARVESTABLE && tile.rotTicks >= Math.floor(ROT_TICKS_NEEDED / 2)) {
+      el.classList.add('tile-rotting');
     }
 
     if (tile.state === TILE_STATE.MINING && tile.miningEnd) {
