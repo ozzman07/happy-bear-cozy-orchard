@@ -418,6 +418,7 @@ function initGame(saveData, slot) {
   const roastery   = new RoasteryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
 
   const storeSystem = new StoreSystem(resources);
+  crafting.setStore(storeSystem);
   const store       = new StoreScene({
     store: storeSystem, resources, statusEl,
     bearSpeakFn: bearSpeak,
@@ -580,6 +581,9 @@ function initGame(saveData, slot) {
       const autoBtn = document.getElementById('orchard-auto-btn');
       if (autoBtn) orchard._syncAutoBtn(autoBtn);
     }
+    if (sys.upgrades) {
+      storeSystem.restore(sys.upgrades);
+    }
   }
 
   applyUnlocks(gameState.tier);
@@ -600,6 +604,7 @@ function initGame(saveData, slot) {
         firstCrafts:    [...gameState.firstCrafts],
         marketUnlocked,
         autoEnabled:    orchard.autoEnabled,
+        upgrades:       storeSystem.snapshot(),
       },
     };
   }
