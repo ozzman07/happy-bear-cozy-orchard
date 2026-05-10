@@ -29,9 +29,22 @@
       <div id="hud-coin-display">🪙 <span id="hud-coins">0</span></div>
       <div id="tier-badge"></div>
       <div id="day-counter">Day <span id="day-num">1</span></div>
+      <button id="quests-btn" title="Daily Quests">📋<span id="quests-badge" class="hud-badge hidden"></span></button>
       <button id="stats-btn" title="Statistics">📊</button>
     </div>
   </header>
+
+  <!-- ══ Daily quests modal ══════════════════════════════════════════════ -->
+  <div id="quests-modal" class="hidden">
+    <div id="quests-card">
+      <div id="quests-header">
+        <span id="quests-title">📋 Daily Quests</span>
+        <button id="quests-close">✕</button>
+      </div>
+      <div id="quests-subtitle">3 new quests every day — earn bonus coins!</div>
+      <div id="quests-list"></div>
+    </div>
+  </div>
 
   <!-- ══ Statistics modal ════════════════════════════════════════════════ -->
   <div id="stats-modal" class="hidden">
