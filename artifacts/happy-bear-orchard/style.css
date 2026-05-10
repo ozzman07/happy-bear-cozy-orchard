@@ -650,7 +650,7 @@ body {
   z-index: 1000;
   background: radial-gradient(ellipse at 50% 60%, #2d5a1e 0%, #1a3510 60%, #0f1f08 100%);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 16px;
   overflow-y: auto;
