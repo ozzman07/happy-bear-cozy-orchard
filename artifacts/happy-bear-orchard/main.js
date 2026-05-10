@@ -533,6 +533,9 @@ function initGame(saveData, slot) {
         bearSpeak(BearDialogue.harvestReaction());
         bearBounce();
         setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
+      } else if (action === 'compost') {
+        bearSpeak('🍂 Composted — starts fresh! Next time, harvest before they turn.');
+        setStatus('🍂 Rotted apple composted. Growing again from scratch.');
       } else {
         if (action === 'clear') questSystem.increment('clear');
         setStatus('Action complete! Keep going 🌿');
@@ -730,11 +733,11 @@ function initGame(saveData, slot) {
 
   let tickCount = 0;
   const TICK_MS       = 3000;
-  const TICKS_PER_DAY = 10;
+  const TICKS_PER_DAY = 20;
 
   setInterval(() => {
     tickCount++;
-    const ripened = cropSystem.tick();
+    const { anyRipe: ripened, rotted } = cropSystem.tick();
     const mined   = tileGrid.completeMines(resources);
 
     // Always notify when a mine completes (even without auto)
@@ -742,6 +745,12 @@ function initGame(saveData, slot) {
       const stone = mined * 2; // matches MINE_YIELD stone per mine
       bearSpeak(`⛏️ Mine complete! +${stone} 🪨`);
       setStatus(`Mine yielded ${stone} stone. 🪨`);
+    }
+
+    // Warn when apples rot (manual mode — auto mode handles silently)
+    if (!orchard.autoEnabled && rotted.length > 0) {
+      bearSpeak(`🍂 ${rotted.length} apple${rotted.length > 1 ? 's' : ''} rotted! Harvest sooner next time.`);
+      setStatus(`🍂 Apples rotted on ${rotted.length} tile${rotted.length > 1 ? 's' : ''} — tap to compost and replant.`);
     }
 
     if (orchard.autoEnabled) {
@@ -763,7 +772,7 @@ function initGame(saveData, slot) {
       }, 800);
     } else if (ripened) {
       bearSpeak(BearDialogue.cropsRipened());
-      setStatus('Crops are ready — head to the orchard!');
+      setStatus('Crops are ready — tap them to harvest! 🍎');
       scenes.setBadge('orchard', '🍎');
     }
     scenes.onTick(ripened);
