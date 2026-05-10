@@ -394,6 +394,66 @@ function initGame(saveData, slot) {
 
   const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg; };
 
+  const CEREMONY_EMOJIS = ['🍎','🌟','✨','🎉','🌿','🍃','⭐','🥂'];
+  const UNLOCK_LABELS = {
+    cabin: '🏠 Cider Cabin', distillery: '🫧 Distillery', brewery: '🍻 Brewery',
+    roastery: '☕ Roastery', press: '🍎 Cider Press', fermenter: '🪣 Fermenter',
+    bottling: '🍶 Bottling Station', still: '🫧 Copper Still', barrel: '🛢️ Aging Barrel',
+    brew_kettle: '🍺 Brew Kettle', roaster: '🔥 Roaster', coffee_crop: '🫘 Coffee Crop',
+    hops_crop: '🌾 Hops Crop',
+  };
+
+  const showTierCeremony = (tier, tierDef) => {
+    const el      = document.getElementById('tier-ceremony');
+    const iconEl  = document.getElementById('tier-ceremony-icon');
+    const nameEl  = document.getElementById('tier-ceremony-name');
+    const descEl  = document.getElementById('tier-ceremony-desc');
+    const unlocksEl = document.getElementById('tier-ceremony-unlocks');
+    const confettiEl = document.getElementById('tier-ceremony-confetti');
+    if (!el) return;
+
+    iconEl.textContent  = tierDef.icon;
+    nameEl.textContent  = tierDef.name;
+    descEl.textContent  = tierDef.description;
+    unlocksEl.innerHTML = tierDef.unlocks
+      .filter(u => UNLOCK_LABELS[u])
+      .map(u => `<span class="ceremony-unlock-chip">${UNLOCK_LABELS[u]}</span>`)
+      .join('');
+
+    // Burst confetti from center
+    confettiEl.innerHTML = '';
+    const cx = window.innerWidth  / 2;
+    const cy = window.innerHeight / 2;
+    for (let i = 0; i < 28; i++) {
+      const p     = document.createElement('div');
+      const angle = (Math.random() * Math.PI * 2);
+      const dist  = 160 + Math.random() * 260;
+      const tx    = Math.cos(angle) * dist;
+      const ty    = Math.sin(angle) * dist - 80;
+      p.className = 'ceremony-particle';
+      p.textContent = CEREMONY_EMOJIS[i % CEREMONY_EMOJIS.length];
+      p.style.left  = cx + 'px';
+      p.style.top   = cy + 'px';
+      p.style.setProperty('--tx',    tx + 'px');
+      p.style.setProperty('--ty',    ty + 'px');
+      p.style.setProperty('--rot',   (Math.random() * 720 - 360) + 'deg');
+      p.style.setProperty('--dur',   (1.1 + Math.random() * 0.7) + 's');
+      p.style.setProperty('--delay', (Math.random() * 0.25) + 's');
+      confettiEl.appendChild(p);
+    }
+
+    el.classList.remove('hidden');
+    bearBounce();
+
+    const dismiss = () => {
+      el.classList.add('hidden');
+      confettiEl.innerHTML = '';
+      el.removeEventListener('click', dismiss);
+    };
+    el.addEventListener('click', dismiss);
+    setTimeout(dismiss, 5000);
+  };
+
   const bearBounce = () => {
     document.querySelectorAll('.bear-img').forEach(el => {
       el.classList.remove('bear-bounce');
@@ -512,11 +572,14 @@ function initGame(saveData, slot) {
   progression.onChange(({ tier }) => {
     applyUnlocks(tier);
     gameState.tier = tier;
-    const lines = BearDialogue.tierUnlock(tier);
-    bearSpeak(lines.bear);
-    bearBounce();
+    const lines   = BearDialogue.tierUnlock(tier);
+    const tierDef = progressionData.tiers[tier];
     setStatus(lines.status);
-    setTimeout(() => showStoryBear(`tier${tier}_unlock`), 5000);
+    setTimeout(() => {
+      showTierCeremony(tier, tierDef);
+      bearSpeak(lines.bear);
+      showStoryBear(`tier${tier}_unlock`);
+    }, 600);
   });
 
   resources.onChange(amounts => {
