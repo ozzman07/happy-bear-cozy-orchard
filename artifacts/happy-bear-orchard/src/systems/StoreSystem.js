@@ -70,8 +70,28 @@ export class StoreSystem {
 
     this._res.spend({ coins: upgrade.coinCost });
     this._purchased.add(id);
-    this._notify({ type: 'upgrade', id });
+    const evt = upgrade.type === 'land'
+      ? { type: 'land', id, zone: upgrade.zone }
+      : { type: 'upgrade', id };
+    this._notify(evt);
     return { success: true, message: `${upgrade.icon} ${upgrade.label} purchased!` };
+  }
+
+  /** Return zone ids for all purchased land expansions (for restore). */
+  getUnlockedZones() {
+    return upgradesData.upgrades
+      .filter(u => u.type === 'land' && this._purchased.has(u.id))
+      .map(u => u.zone);
+  }
+
+  /** Return all land upgrades visible at the given tier. */
+  getLandUpgrades(tier = 0) {
+    return upgradesData.upgrades.filter(u => u.type === 'land' && u.unlockTier <= tier);
+  }
+
+  /** Return all equipment upgrades visible at the given tier. */
+  getUpgrades(tier = 0) {
+    return upgradesData.upgrades.filter(u => !u.type && u.unlockTier <= tier);
   }
 
   /**
@@ -81,7 +101,7 @@ export class StoreSystem {
   getSpeedMultiplier(station) {
     let mult = 1;
     for (const u of upgradesData.upgrades) {
-      if (u.station === station && this._purchased.has(u.id)) {
+      if (!u.type && u.station === station && this._purchased.has(u.id)) {
         mult *= u.speedMultiplier;
       }
     }
