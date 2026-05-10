@@ -886,6 +886,93 @@ body {
 .settings-slider { accent-color: var(--color-accent); cursor: pointer; flex: 1; }
 
 /* ═══════════════════════════════════════════
+   HOW TO PLAY
+═══════════════════════════════════════════ */
+.howtoplay-screen {
+  max-width: 520px;
+  align-items: stretch;
+  gap: 0;
+  padding: 24px 20px 24px;
+}
+
+.howtoplay-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-hud-border);
+  margin-bottom: 20px;
+}
+.howtoplay-bear {
+  font-size: 2.8rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  flex-shrink: 0;
+}
+.howtoplay-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+.howtoplay-subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+  margin-top: 2px;
+}
+
+.howtoplay-chapter {
+  margin-bottom: 22px;
+}
+.howtoplay-chapter-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(92,61,26,0.5);
+  margin-bottom: 10px;
+}
+
+.howtoplay-bubble {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(200,134,58,0.2);
+  border-radius: 4px 14px 14px 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+.howtoplay-bubble::before {
+  content: '🐻';
+  position: absolute;
+  top: -10px;
+  left: -4px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.howtoplay-bubble p {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+.howtoplay-tip {
+  background: rgba(200,134,58,0.15);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 12px;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: #e8c87a;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.howtoplay-tip-icon { flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════
    HUD COIN DISPLAY
 ═══════════════════════════════════════════ */
 #hud-coin-display {
