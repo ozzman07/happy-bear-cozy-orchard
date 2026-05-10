@@ -3,6 +3,7 @@
  * Entry point. Shows main menu first, then boots all systems on save selection.
  */
 
+import { TICKS_PER_DAY, GAME_TICK_MS } from './src/constants.js';
 import { ResourceManager }   from './src/systems/resources.js';
 import { QuestSystem }       from './src/systems/QuestSystem.js';
 import { TileGrid }          from './src/systems/tiles.js';
@@ -732,8 +733,6 @@ function initGame(saveData, slot) {
   });
 
   let tickCount = 0;
-  const TICK_MS       = 3000;
-  const TICKS_PER_DAY = 20;
 
   setInterval(() => {
     tickCount++;
@@ -786,7 +785,7 @@ function initGame(saveData, slot) {
       scenes.onNewDay(gameState.day);
       autoSave();
     }
-  }, TICK_MS);
+  }, GAME_TICK_MS);
 
   hud.updateResources(resources.amounts);
   hud.updateDay(gameState.day);
