@@ -28,12 +28,16 @@ import { MarketSystem }         from './src/systems/MarketSystem.js';
 
 import { HUD }         from './src/ui/hud.js';
 import { ActionMenu }  from './src/ui/menus.js';
-import { AudioSystem } from './src/systems/AudioSystem.js';
+import { AudioSystem, MusicPlayer } from './src/systems/AudioSystem.js';
 
 import progressionData from './src/data/progression.json';
 
 // ── Audio (module-level so Settings can reach it before game init) ───────────
-const audio = new AudioSystem();
+const audio  = new AudioSystem();
+const music  = new MusicPlayer(import.meta.env.BASE_URL);
+
+// Start music on first user interaction anywhere in the app
+document.addEventListener('click', () => music.start(), { once: true });
 
 // ── DOM refs ────────────────────────────────────────────────────────────────
 
@@ -314,7 +318,7 @@ function renderSettings() {
   };
 
   wrapper.appendChild(section('Audio',
-    slider('Music',   'audio', 'musicVolume',   0, 1),
+    slider('Music',   'audio', 'musicVolume',   0, 1, v => music.setVolume(v)),
     slider('SFX',     'audio', 'sfxVolume',     0, 1, v => audio.setSfxVolume(v)),
     slider('Ambient', 'audio', 'ambientVolume', 0, 1)
   ));
@@ -508,9 +512,10 @@ function initGame(saveData, slot) {
   const hud      = new HUD();
   const statusEl = document.getElementById('status-msg');
 
-  // Sync audio volume from profile settings
+  // Sync audio volumes from profile settings
   const _profileForAudio = ProfileSystem.getSelectedProfile();
   audio.setSfxVolume(_profileForAudio?.settings?.audio?.sfxVolume ?? 0.7);
+  music.setVolume(_profileForAudio?.settings?.audio?.musicVolume ?? 0.5);
 
   let _lastBearMsg = '';
   let _bearHideTimers = {};
