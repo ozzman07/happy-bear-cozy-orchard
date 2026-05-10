@@ -701,6 +701,7 @@ function initGame(saveData, slot) {
     setStatus('Crafting complete!');
     const craftScene = STATION_SCENE[evt.stationId];
     if (craftScene) scenes.setBadge(craftScene, '✓');
+    scenes.setBadge('store', '🛒');
   });
 
   progression.onChange(({ tier }) => {
