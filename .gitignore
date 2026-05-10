@@ -48,3 +48,6 @@ Thumbs.db
 .cache/
 .local/
 git-sync.log
+
+# Claude Code worktrees
+.claude/worktrees/
