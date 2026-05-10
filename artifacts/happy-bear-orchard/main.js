@@ -1143,4 +1143,6 @@ async function boot() {
   }
 }
 
-boot();
+boot().catch(err => {
+  document.body.innerHTML = `<div style="color:#fff;background:#1a1a1a;padding:24px;font-family:monospace;white-space:pre-wrap">🐻 Happy Bear hit an error:\n\n${err?.stack ?? err}</div>`;
+});
