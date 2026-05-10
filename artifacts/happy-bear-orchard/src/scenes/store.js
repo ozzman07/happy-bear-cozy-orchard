@@ -1,5 +1,5 @@
 /**
- * StoreScene — sell resources for coins.
+ * StoreScene — sell resources for coins, buy equipment upgrades.
  */
 import { BearDialogue } from '../systems/BearDialogue.js';
 
@@ -18,7 +18,7 @@ export class StoreScene {
   }
 
   onEnter() {
-    this._setStatus('Market — sell your goods for 🪙 coins!');
+    this._setStatus('Market — sell your goods or buy upgrades with 🪙 coins!');
     this._bearSpeak?.(BearDialogue.sceneGreeting('store'));
     this._render();
   }
@@ -26,6 +26,14 @@ export class StoreScene {
   // ── Rendering ──────────────────────────────────────────────────────────────
 
   _render() {
+    this._renderSell();
+    this._renderUpgrades();
+
+    const coinsEl = document.getElementById('store-coins-total');
+    if (coinsEl) coinsEl.textContent = `Total earned: ${this._store.totalEarned} 🪙`;
+  }
+
+  _renderSell() {
     const container = document.getElementById('store-grid');
     if (!container) return;
 
@@ -54,10 +62,59 @@ export class StoreScene {
     container.querySelectorAll('.btn-sell').forEach(btn => {
       btn.addEventListener('click', () => this._doSell(btn.dataset.key, btn.dataset.qty));
     });
-
-    const coinsEl = document.getElementById('store-coins-total');
-    if (coinsEl) coinsEl.textContent = `Total earned: ${this._store.totalEarned} 🪙`;
   }
+
+  _renderUpgrades() {
+    const container = document.getElementById('store-upgrades-grid');
+    if (!container) return;
+
+    const tier     = this._getTier();
+    const upgrades = this._store.getUpgrades(tier);
+    const coins    = this._res.get('coins');
+
+    if (upgrades.length === 0) {
+      container.innerHTML = '<p class="no-upgrades">Upgrades unlock as you progress. 🌱</p>';
+      return;
+    }
+
+    container.innerHTML = '';
+    for (const upg of upgrades) {
+      const bought   = this._store.isPurchased(upg.id);
+      const prereqOk = !upg.requires || this._store.isPurchased(upg.requires);
+      const canAfford = coins >= upg.coinCost;
+
+      const card = document.createElement('div');
+      card.className = `upgrade-card${bought ? ' upgrade-card-owned' : ''}`;
+
+      const speedMult  = this._store.getSpeedMultiplier(upg.station);
+      const stationLabel = _stationLabel(upg.station);
+
+      card.innerHTML = `
+        <div class="upgrade-card-icon">${upg.icon}</div>
+        <div class="upgrade-card-info">
+          <div class="upgrade-card-name">${upg.label}</div>
+          <div class="upgrade-card-desc">${upg.description} · ${stationLabel}</div>
+          ${bought
+            ? `<div class="upgrade-card-speed">⚡ ${_speedLabel(speedMult)} total</div>`
+            : `<div class="upgrade-card-cost">${upg.coinCost} 🪙</div>`}
+        </div>
+        <div class="upgrade-card-action">
+          ${bought
+            ? '<span class="upgrade-owned-badge">✓ Owned</span>'
+            : `<button class="btn-upgrade" data-id="${upg.id}"
+                ${!prereqOk || !canAfford ? 'disabled' : ''}>
+                ${!prereqOk ? 'Locked' : !canAfford ? `Need ${upg.coinCost - coins} more 🪙` : 'Buy'}
+              </button>`}
+        </div>`;
+      container.appendChild(card);
+    }
+
+    container.querySelectorAll('.btn-upgrade').forEach(btn => {
+      btn.addEventListener('click', () => this._doBuy(btn.dataset.id));
+    });
+  }
+
+  // ── Actions ────────────────────────────────────────────────────────────────
 
   _doSell(key, qty) {
     const result = this._store.sell(key, qty);
@@ -70,5 +127,36 @@ export class StoreScene {
     }
   }
 
+  _doBuy(id) {
+    const result = this._store.buyUpgrade(id);
+    if (result.success) {
+      this._bearSpeak?.(`${result.message} 🎉`);
+      this._setStatus(result.message);
+    } else {
+      this._setStatus('⚠ ' + result.message);
+    }
+  }
+
   _setStatus(msg) { if (this._statusEl) this._statusEl.textContent = msg; }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function _stationLabel(station) {
+  const labels = {
+    press:       'Press',
+    fermenter:   'Fermenter',
+    bottling:    'Bottling',
+    still:       'Still',
+    barrel:      'Barrel',
+    brew_kettle: 'Brew Kettle',
+    roaster:     'Roaster',
+  };
+  return labels[station] ?? station;
+}
+
+function _speedLabel(mult) {
+  if (mult >= 1) return '1× speed';
+  const x = Math.round(1 / mult);
+  return `${x}× speed`;
 }
