@@ -24,16 +24,20 @@ export class ProgressionSystem {
     const def  = this._tiers[next];
     if (!def) return;
 
-    const cond = def.unlockCondition;
-    const met  = Object.entries(cond).every(
+    const cond       = def.unlockCondition;
+    const resourcesMet = Object.entries(cond).every(
       ([res, amt]) => this._resources.get(res) >= amt
     );
-    if (!met) return;
+    const dayMet = !def.minDay || (this._gameState.day ?? 1) >= def.minDay;
+    if (!resourcesMet || !dayMet) return;
 
     this._gameState.tier = next;
     for (const u of def.unlocks) this._gameState.unlocks.add(u);
     this._notify({ tier: next, def });
   }
+
+  /** Call each new day so day-gated tiers can unlock once the day condition is met. */
+  checkDay() { this._check(); }
 
   onChange(fn) { this._listeners.push(fn); }
   _notify(evt) { this._listeners.forEach(fn => fn(evt)); }
