@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Happy Bear Cozy Orchard 🐻🍎</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#3b2a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cozy Orchard" />
+  <link rel="apple-touch-icon" href="/icon-512.png" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
@@ -28,12 +34,12 @@
 
   <!-- ══ Scene Nav Bar ═════════════════════════════════════════════════════ -->
   <nav id="scene-nav">
-    <button class="nav-btn nav-btn-active" data-scene-target="orchard">🌳 Orchard</button>
-    <button class="nav-btn" data-scene-target="cabin"      id="nav-cabin"      disabled>🏠 Cabin</button>
-    <button class="nav-btn" data-scene-target="distillery" id="nav-distillery" disabled>🫧 Distillery</button>
-    <button class="nav-btn" data-scene-target="brewery"    id="nav-brewery"    disabled>🍻 Brewery</button>
-    <button class="nav-btn" data-scene-target="roastery"   id="nav-roastery"   disabled>☕ Roastery</button>
-    <button class="nav-btn nav-btn-store"  data-scene-target="store" id="nav-store" disabled>🛒 Market</button>
+    <button class="nav-btn nav-btn-active" data-scene-target="orchard">🌳 Orchard<span class="nav-badge hidden"></span></button>
+    <button class="nav-btn" data-scene-target="cabin"      id="nav-cabin"      disabled>🏠 Cabin<span class="nav-badge hidden"></span></button>
+    <button class="nav-btn" data-scene-target="distillery" id="nav-distillery" disabled>🫧 Distillery<span class="nav-badge hidden"></span></button>
+    <button class="nav-btn" data-scene-target="brewery"    id="nav-brewery"    disabled>🍻 Brewery<span class="nav-badge hidden"></span></button>
+    <button class="nav-btn" data-scene-target="roastery"   id="nav-roastery"   disabled>☕ Roastery<span class="nav-badge hidden"></span></button>
+    <button class="nav-btn nav-btn-store"  data-scene-target="store" id="nav-store" disabled>🛒 Market<span class="nav-badge hidden"></span></button>
   </nav>
 
   <!-- ══ Scenes ════════════════════════════════════════════════════════════ -->
