@@ -1024,6 +1024,29 @@ body {
 .nav-btn-store.nav-btn-active { background: #c8b430 !important; color: #2e1e08 !important; border-color: #c8b430 !important; }
 
 /* ── Upgrades section ──────────────────────────────────────────────────── */
+#store-land-section {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(100,200,100,0.25);
+  padding-top: 0.75rem;
+}
+#store-land-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #a0e87a;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+#store-land-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.land-expansion-card {
+  border-color: rgba(100,200,100,0.3);
+  background: rgba(30,70,20,0.4);
+}
+.land-expansion-card .upgrade-card-name { color: #a0e87a; }
 #store-upgrades-section {
   margin-top: 1rem;
   border-top: 1px solid rgba(255,224,102,0.2);
