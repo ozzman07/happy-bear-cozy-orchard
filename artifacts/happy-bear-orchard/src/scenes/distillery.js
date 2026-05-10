@@ -22,7 +22,7 @@ const TOOL_DEFS = {
 
 const RECIPE_LABELS = {
   distill_applejack: { label: 'Distil',       cost: '2🫗', yield: '1🥃' },
-  distill_whiskey:   { label: 'Age Whiskey',  cost: '2🥃', yield: '1🪣' },
+  distill_whiskey:   { label: 'Age Whiskey',  cost: 2} cider', yield: '1🪣' },
 };
 
 export class DistilleryScene {
@@ -121,14 +121,27 @@ export class DistilleryScene {
     const secsLeft  = this._craft.secsRemaining(toolId);
     const recipe    = this._craft.getRecipe(def.recipeId);
     const canAfford = recipe ? this._res.canAfford(recipe.inputs) : false;
-    const craftPct = busy ? this._craft.progressPct(toolId) : 0;
+    const craftPct  = busy ? this._craft.progressPct(toolId) : 0;
+
+    let needsHint = '';
+    if (!busy && !canAfford && recipe) {
+      const ICONS = { cider: '🫗', applejack: '🥃', whiskey: '🪣' };
+      const parts = Object.entries(recipe.inputs)
+        .map(([res, needed]) => {
+          const short = needed - (this._res.amounts[res] ?? 0);
+          return short > 0 ? `${short} more ${ICONS[res] ?? res}` : null;
+        })
+        .filter(Boolean);
+      if (parts.length) needsHint = `<div class="tool-needs">Need ${parts.join(', ')}</div>`;
+    }
+
     return `<div class="tool-card tool-operational${busy?' tool-busy':''}">
       <div class="tool-card-badge">Operational</div>
       <div class="tool-card-icon">${def.icon}</div>
       <div class="tool-name">${def.name}</div>
       <div class="tool-recipe">${rl.cost ?? ''} → ${rl.yield ?? ''}</div>
       <div class="tool-desc">${busy ? `⏳ ${secsLeft}s` : def.description}</div>
-      ${busy ? `<div class="tool-progress-bar"><div class="tool-progress-fill craft-fill" style="width:${craftPct}%"></div></div>` : ''}
+      ${busy ? `<div class="tool-progress-bar"><div class="tool-progress-fill craft-fill" style="width:${craftPct}%"></div></div>` : needsHint}
       <button class="btn-use"${(canAfford && !busy) ? '' : ' disabled'}>
         ${busy ? `⏳ ${secsLeft}s` : (rl.label ?? 'Use')}
       </button>
