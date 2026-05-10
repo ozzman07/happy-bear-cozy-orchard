@@ -928,16 +928,16 @@ body {
 /* ═══════════════════════════════════════════
    BEAR SPRITE (SVG)
 ═══════════════════════════════════════════ */
-/* ── Bear sprite sheet (HappyBearAvatars.PNG, 1024×1024) ───────────────── */
-/* URL set via JS: document.documentElement.style.setProperty('--bear-url', ...) */
+/* ── Bear character images — individual files per scene ────────────────── */
+/* URLs set via JS CSS vars: --bear-orchard, --bear-distillery, etc.       */
 .bear-img {
   display: block;
   width: 120px;
   height: 120px;
-  background-image: var(--bear-url);
-  background-size: 480px 480px;   /* scale sheet to 480px (≈47% of 1024) */
+  background-image: var(--bear-waving);  /* default */
+  background-size: contain;
   background-repeat: no-repeat;
-  background-position: -163px -170px; /* default: waving bear */
+  background-position: center;
   border-radius: 14px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   margin: 0 auto;
@@ -946,26 +946,13 @@ body {
   flex-shrink: 0;
 }
 
-/* Orchard — apple-harvest bear (top-left of sheet) */
-#bear-sprite      { background-position: -55px -8px; }
-
-/* Cabin — sleeping/cozy bear (mid-right of sheet) */
-#scene-cabin #cabin-bear      { background-position: -322px -189px; }
-
-/* Distillery — barrel bear (top-right of sheet) */
-#scene-distillery #cabin-bear { background-position: -294px -46px; }
-
-/* Brewery — hiking/adventurous bear (bottom-center of sheet) */
-#scene-brewery #cabin-bear    { background-position: -128px -330px; }
-
-/* Roastery — coffee-cup bear (mid-left of sheet) */
-#scene-roastery #cabin-bear   { background-position: -15px -184px; }
-
-/* Store — waving/welcoming bear (mid-center of sheet) */
-#store-bear       { background-position: -163px -170px; }
-
-/* Welcome modal — campfire bear (bottom-right of sheet), larger display */
-#welcome-bear     { width: 160px; height: 160px; background-position: -300px -314px; border-radius: 18px; }
+#bear-sprite                  { background-image: var(--bear-orchard); }
+#scene-cabin #cabin-bear      { background-image: var(--bear-sleeping); }
+#scene-distillery #cabin-bear { background-image: var(--bear-distillery); }
+#scene-brewery #cabin-bear    { background-image: var(--bear-hiking); }
+#scene-roastery #cabin-bear   { background-image: var(--bear-coffee); }
+#store-bear                   { background-image: var(--bear-waving); }
+#welcome-bear                 { background-image: var(--bear-campfire); width: 160px; height: 160px; border-radius: 18px; }
 
 /* ═══════════════════════════════════════════
    STORY BEAR NOTIFICATION
@@ -1018,14 +1005,8 @@ body {
 @media (max-width: 680px) {
   #game-title { font-size: 0.88rem; }
   #bear-corner, #cabin-bear-corner { display: flex; }
-  .bear-img { width: 80px; height: 80px; background-size: 320px 320px; }
-  #bear-sprite      { background-position: -37px -5px; }
-  #scene-cabin #cabin-bear      { background-position: -215px -126px; }
-  #scene-distillery #cabin-bear { background-position: -196px -31px; }
-  #scene-brewery #cabin-bear    { background-position: -85px -220px; }
-  #scene-roastery #cabin-bear   { background-position: -10px -123px; }
-  #store-bear       { background-position: -109px -113px; }
-  #welcome-bear     { width: 120px; height: 120px; background-size: 320px 320px; background-position: -200px -209px; }
+  .bear-img { width: 80px; height: 80px; }
+  #welcome-bear { width: 120px; height: 120px; }
   #scene-orchard { padding: 8px; }
   .tool-slot { min-width: 140px; }
   #cabin-subtitle { display: none; }
