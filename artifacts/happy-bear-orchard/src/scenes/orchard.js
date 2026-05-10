@@ -146,6 +146,23 @@ export class OrchardScene {
     }
   }
 
+  // ── Harvest pop floaters ──────────────────────────────────────────────────
+
+  popFloat(x, y, emoji = '🍎') {
+    const gridEl = document.getElementById('grid');
+    const tileEl = this._tileEls[y]?.[x];
+    if (!gridEl || !tileEl) return;
+    const gr = gridEl.getBoundingClientRect();
+    const tr = tileEl.getBoundingClientRect();
+    const el = document.createElement('div');
+    el.className   = 'harvest-float';
+    el.textContent = emoji;
+    el.style.left  = (tr.left - gr.left + tr.width / 2) + 'px';
+    el.style.top   = (tr.top  - gr.top) + 'px';
+    gridEl.appendChild(el);
+    el.addEventListener('animationend', () => el.remove(), { once: true });
+  }
+
   // ── Bear speech ────────────────────────────────────────────────────────────
 
   bearSpeak(msg) {
