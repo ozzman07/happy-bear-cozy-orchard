@@ -10,8 +10,12 @@ export class CraftingSystem {
     this._gameState  = gameState;
     this._recipes    = recipesRaw;
     this._busySlots  = {};   // stationId → bool
+    this._store      = null; // set via setStore() after StoreSystem is created
     this._listeners  = [];
   }
+
+  /** Wire in StoreSystem so crafting can apply purchased speed upgrades. */
+  setStore(storeSystem) { this._store = storeSystem; }
 
   /** Return all recipes available on a given station at current tier. */
   recipesFor(stationId) {
@@ -49,10 +53,13 @@ export class CraftingSystem {
     };
 
     if (recipe.timerSecs > 0) {
+      const speedMult = this._store?.getSpeedMultiplier(recipe.station) ?? 1;
+      const timerMs   = recipe.timerSecs * 1000 * speedMult;
+
       this._busySlots[stationId] = true;
-      this._busySlots[stationId + '_end'] = Date.now() + recipe.timerSecs * 1000;
+      this._busySlots[stationId + '_end'] = Date.now() + timerMs;
       this._notify({ type: 'started', recipeId, stationId });
-      setTimeout(finish, recipe.timerSecs * 1000);
+      setTimeout(finish, timerMs);
     } else {
       finish();
     }
