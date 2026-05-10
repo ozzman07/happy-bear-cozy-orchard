@@ -88,12 +88,14 @@ export class RoasteryScene {
         <div class="tool-progress-bar"><div class="tool-progress-fill" style="width:${pct}%"></div></div>
       </div>`;
     } else {
+      const craftPct = busy ? this._craft.progressPct(toolId) : 0;
       html = `<div class="tool-card tool-operational${busy?' tool-busy':''}">
         <div class="tool-card-badge">Operational</div>
         <div class="tool-card-icon">${def.icon}</div>
         <div class="tool-name">${def.name}</div>
         <div class="tool-recipe">${def.recipeId === 'roast_coffee' ? '2🫘 → 1🤎' : '1🤎 → 1☕'}</div>
         <div class="tool-desc">${busy ? `⏳ ${csecs}s` : def.description}</div>
+        ${busy ? `<div class="tool-progress-bar"><div class="tool-progress-fill craft-fill" style="width:${craftPct}%"></div></div>` : ''}
         <button class="btn-use"${(canAfford&&!busy)?'':' disabled'}>${busy?`⏳ ${csecs}s`:def.recipeId === 'roast_coffee' ? 'Roast' : 'Brew'}</button>
       </div>`;
     }
