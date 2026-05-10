@@ -947,7 +947,7 @@ body {
 }
 
 /* Orchard — apple-harvest bear (top-left of sheet) */
-#bear-sprite      { background-position: -60px -46px; }
+#bear-sprite      { background-position: -55px -8px; }
 
 /* Cabin — sleeping/cozy bear (mid-right of sheet) */
 #scene-cabin #cabin-bear      { background-position: -322px -189px; }
@@ -1019,7 +1019,7 @@ body {
   #game-title { font-size: 0.88rem; }
   #bear-corner, #cabin-bear-corner { display: flex; }
   .bear-img { width: 80px; height: 80px; background-size: 320px 320px; }
-  #bear-sprite      { background-position: -40px -31px; }
+  #bear-sprite      { background-position: -37px -5px; }
   #scene-cabin #cabin-bear      { background-position: -215px -126px; }
   #scene-distillery #cabin-bear { background-position: -196px -31px; }
   #scene-brewery #cabin-bear    { background-position: -85px -220px; }
