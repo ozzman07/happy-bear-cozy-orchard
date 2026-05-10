@@ -1,0 +1,48 @@
+{
+  "levels": [
+    {
+      "id": "farm_stand",
+      "level": 1,
+      "name": "Farm Stand",
+      "icon": "🍎",
+      "description": "Sell your goods at the farm gate — simple, local, honest",
+      "priceMultiplier": 1.0,
+      "dealSlots": 0,
+      "cost": 0,
+      "unlockTier": 0
+    },
+    {
+      "id": "orchard_store",
+      "level": 2,
+      "name": "Orchard Store",
+      "icon": "🏪",
+      "description": "A proper storefront with regular customers and better prices",
+      "priceMultiplier": 1.2,
+      "dealSlots": 0,
+      "cost": 200,
+      "unlockTier": 2
+    },
+    {
+      "id": "regional_distributor",
+      "level": 3,
+      "name": "Regional Distributor",
+      "icon": "🚚",
+      "description": "Sign deals with local businesses — reliable income, higher stakes",
+      "priceMultiplier": 1.2,
+      "dealSlots": 1,
+      "cost": 500,
+      "unlockTier": 4
+    },
+    {
+      "id": "wholesale_partner",
+      "level": 4,
+      "name": "Wholesale Partner",
+      "icon": "🏭",
+      "description": "Premium pricing and two active distribution deals",
+      "priceMultiplier": 1.4,
+      "dealSlots": 2,
+      "cost": 1200,
+      "unlockTier": 5
+    }
+  ]
+}
