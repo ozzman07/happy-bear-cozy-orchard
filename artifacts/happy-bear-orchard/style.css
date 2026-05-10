@@ -799,6 +799,68 @@ body {
 }
 .nav-btn-store:hover { background: rgba(200,180,50,0.3) !important; }
 .nav-btn-store.nav-btn-active { background: #c8b430 !important; color: #2e1e08 !important; border-color: #c8b430 !important; }
+
+/* ── Upgrades section ──────────────────────────────────────────────────── */
+#store-upgrades-section {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255,224,102,0.2);
+  padding-top: 0.75rem;
+}
+#store-upgrades-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffe066;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+#store-upgrades-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.upgrade-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,224,102,0.18);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  transition: border-color 0.15s;
+}
+.upgrade-card:hover { border-color: rgba(255,224,102,0.4); }
+.upgrade-card.upgrade-card-owned {
+  background: rgba(100,200,100,0.08);
+  border-color: rgba(100,200,100,0.35);
+}
+.upgrade-card-icon { font-size: 1.4rem; flex-shrink: 0; }
+.upgrade-card-info { flex: 1; }
+.upgrade-card-name { font-size: 0.78rem; font-weight: 700; color: #f5e6c8; }
+.upgrade-card-desc { font-size: 0.68rem; color: #a89070; }
+.upgrade-card-cost { font-size: 0.72rem; color: #ffe066; font-weight: 600; margin-top: 0.1rem; }
+.upgrade-card-speed { font-size: 0.72rem; color: #80d080; font-weight: 600; margin-top: 0.1rem; }
+.upgrade-card-action { flex-shrink: 0; }
+.upgrade-owned-badge {
+  font-size: 0.72rem;
+  color: #80d080;
+  font-weight: 700;
+}
+.btn-upgrade {
+  background: rgba(255,224,102,0.15);
+  border: 1px solid rgba(255,224,102,0.5);
+  color: #ffe066;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btn-upgrade:hover:not(:disabled) { background: rgba(255,224,102,0.3); }
+.btn-upgrade:disabled { opacity: 0.35; cursor: not-allowed; }
+.no-upgrades { font-size: 0.75rem; color: #a89070; font-style: italic; margin: 0; }
    WELCOME MODAL
 ═══════════════════════════════════════════ */
 .modal {
