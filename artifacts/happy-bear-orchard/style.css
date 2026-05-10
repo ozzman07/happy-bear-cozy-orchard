@@ -1282,6 +1282,23 @@ body {
   background: rgba(100,200,100,0.08);
   border-color: rgba(100,200,100,0.35);
 }
+.upgrade-card.upgrade-card-locked {
+  opacity: 0.45;
+  border-color: rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.1);
+}
+.upgrade-card.upgrade-card-locked:hover { border-color: rgba(255,255,255,0.15); opacity: 0.6; }
+.upgrade-card-unlock-tier {
+  font-size: 0.68rem;
+  color: #c8a060;
+  margin-top: 0.1rem;
+  font-style: italic;
+}
+.upgrade-locked-badge {
+  font-size: 0.68rem;
+  color: #a08060;
+  white-space: nowrap;
+}
 .upgrade-card-icon { font-size: 1.4rem; flex-shrink: 0; }
 .upgrade-card-info { flex: 1; }
 .upgrade-card-name { font-size: 0.78rem; font-weight: 700; color: #f5e6c8; }

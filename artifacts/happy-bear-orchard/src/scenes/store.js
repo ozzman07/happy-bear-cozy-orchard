@@ -283,16 +283,18 @@ export class StoreScene {
     const container = document.getElementById('store-upgrades-grid');
     if (!container) return;
 
-    const tier     = this._getTier();
-    const upgrades = this._store.getUpgrades(tier);
-    const coins    = this._res.get('coins');
+    const tier         = this._getTier();
+    const upgrades     = this._store.getUpgrades(tier);
+    const lockedUpgrades = this._store.getLockedUpgrades(tier);
+    const coins        = this._res.get('coins');
 
-    if (upgrades.length === 0) {
+    container.innerHTML = '';
+
+    if (upgrades.length === 0 && lockedUpgrades.length === 0) {
       container.innerHTML = '<p class="no-upgrades">Upgrades unlock as you progress. 🌱</p>';
       return;
     }
 
-    container.innerHTML = '';
     for (const upg of upgrades) {
       const bought    = this._store.isPurchased(upg.id);
       const prereqOk  = !upg.requires || this._store.isPurchased(upg.requires);
@@ -315,6 +317,22 @@ export class StoreScene {
             : `<button class="btn-upgrade" data-id="${upg.id}" ${!prereqOk || !canAfford ? 'disabled' : ''}>
                 ${!prereqOk ? 'Locked' : !canAfford ? `Need ${upg.coinCost - coins} more 🪙` : 'Buy'}
               </button>`}
+        </div>`;
+      container.appendChild(card);
+    }
+
+    for (const upg of lockedUpgrades) {
+      const card = document.createElement('div');
+      card.className = 'upgrade-card upgrade-card-locked';
+      card.innerHTML = `
+        <div class="upgrade-card-icon upgrade-card-icon-locked">🔒</div>
+        <div class="upgrade-card-info">
+          <div class="upgrade-card-name">${upg.label}</div>
+          <div class="upgrade-card-desc">${upg.description} · ${_stationLabel(upg.station)}</div>
+          <div class="upgrade-card-unlock-tier">Unlocks at Tier ${upg.unlockTier}</div>
+        </div>
+        <div class="upgrade-card-action">
+          <span class="upgrade-locked-badge">🔒 Tier ${upg.unlockTier}</span>
         </div>`;
       container.appendChild(card);
     }

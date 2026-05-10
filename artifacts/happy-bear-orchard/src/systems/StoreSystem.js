@@ -98,6 +98,11 @@ export class StoreSystem {
     return upgradesData.upgrades.filter(u => !u.type && u.unlockTier <= tier);
   }
 
+  /** Return all equipment upgrades that are locked (unlockTier > current tier). */
+  getLockedUpgrades(tier = 0) {
+    return upgradesData.upgrades.filter(u => !u.type && u.unlockTier > tier);
+  }
+
   /**
    * Combined speed multiplier for a station (product of all purchased multipliers).
    * Returns 1.0 if no upgrades purchased.
