@@ -1,0 +1,69 @@
+{
+  "deals": [
+    {
+      "id": "bear_pub",
+      "name": "The Bear & Barrel",
+      "icon": "🍺",
+      "product": "cider",
+      "productIcon": "🫗",
+      "quantity": 12,
+      "cycleDays": 14,
+      "contractPrice": 13,
+      "signOnFee": 50,
+      "unlockTier": 4,
+      "description": "Local pub running a standing cider order every two weeks"
+    },
+    {
+      "id": "valley_hotel",
+      "name": "Valley Hotel",
+      "icon": "🏨",
+      "product": "bottles",
+      "productIcon": "🍾",
+      "quantity": 10,
+      "cycleDays": 14,
+      "contractPrice": 20,
+      "signOnFee": 60,
+      "unlockTier": 4,
+      "description": "Upscale hotel stocking bottled cider for their minibar"
+    },
+    {
+      "id": "copper_still_bar",
+      "name": "The Copper Still",
+      "icon": "🥃",
+      "product": "applejack",
+      "productIcon": "🥃",
+      "quantity": 6,
+      "cycleDays": 14,
+      "contractPrice": 32,
+      "signOnFee": 80,
+      "unlockTier": 4,
+      "description": "A cocktail bar specialising in apple spirits"
+    },
+    {
+      "id": "riverside_inn",
+      "name": "Riverside Inn",
+      "icon": "🏩",
+      "product": "whiskey",
+      "productIcon": "🪣",
+      "quantity": 5,
+      "cycleDays": 14,
+      "contractPrice": 55,
+      "signOnFee": 75,
+      "unlockTier": 4,
+      "description": "A cozy inn that stocks apple whiskey for their guests"
+    },
+    {
+      "id": "orchard_cafe",
+      "name": "Orchard Café",
+      "icon": "☕",
+      "product": "cups",
+      "productIcon": "☕",
+      "quantity": 8,
+      "cycleDays": 14,
+      "contractPrice": 42,
+      "signOnFee": 100,
+      "unlockTier": 5,
+      "description": "A trendy café serving your premium coffee cups exclusively"
+    }
+  ]
+}
