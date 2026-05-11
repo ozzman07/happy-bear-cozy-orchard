@@ -436,7 +436,8 @@ export class StoreScene {
 function _stationLabel(station) {
   const labels = {
     press: 'Press', fermenter: 'Fermenter', bottling: 'Bottling',
-    still: 'Still', barrel: 'Barrel', brew_kettle: 'Brew Kettle', roaster: 'Roaster',
+    still: 'Still', barrel: 'Barrel', brew_kettle: 'Brew Kettle',
+    roaster: 'Roaster', coffee_brewer: 'Coffee Brewer',
   };
   return labels[station] ?? station;
 }
