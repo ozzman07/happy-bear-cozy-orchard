@@ -17,6 +17,9 @@ export class CraftingSystem {
   /** Wire in StoreSystem so crafting can apply purchased speed upgrades. */
   setStore(storeSystem) { this._store = storeSystem; }
 
+  /** Update the current tier so recipesFor() returns newly unlocked recipes. */
+  setTier(tier) { this._gameState.tier = tier; }
+
   /** Return all recipes available on a given station at current tier. */
   recipesFor(stationId) {
     return Object.values(this._recipes).filter(r =>
@@ -81,6 +84,45 @@ export class CraftingSystem {
     const end   = this._busySlots[stationId + '_end'];
     if (!start || !end) return 0;
     return Math.min(100, Math.round((Date.now() - start) / (end - start) * 100));
+  }
+
+  snapshot() {
+    // Save any stations that are currently mid-craft
+    const active = {};
+    for (const [k, v] of Object.entries(this._busySlots)) {
+      if (v !== false) active[k] = v;
+    }
+    return Object.keys(active).length ? active : null;
+  }
+
+  restore(data) {
+    if (!data) return;
+    const now = Date.now();
+    for (const [k, v] of Object.entries(data)) {
+      this._busySlots[k] = v;
+    }
+    // Re-arm any timers that haven't expired yet; fire immediately if already past
+    const stations = new Set(
+      Object.keys(data).filter(k => !k.endsWith('_start') && !k.endsWith('_end') && data[k] === true)
+    );
+    for (const stationId of stations) {
+      const end = data[stationId + '_end'];
+      if (!end) continue;
+      const remaining = end - now;
+      const finish = () => {
+        // Find which recipe was running by matching station to available recipes
+        const recipe = Object.values(this._recipes).find(r => r.station === stationId);
+        if (recipe) {
+          for (const [res, amt] of Object.entries(recipe.outputs)) {
+            this._resources.add(res, amt);
+          }
+        }
+        this._busySlots[stationId] = false;
+        this._notify({ type: 'done', recipeId: recipe?.id ?? stationId, stationId });
+      };
+      if (remaining <= 0) finish();
+      else setTimeout(finish, remaining);
+    }
   }
 
   onChange(fn)  { this._listeners.push(fn); }

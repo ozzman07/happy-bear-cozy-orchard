@@ -51,7 +51,7 @@
       "description": "Roast coffee beans and brew rich coffee stouts.",
       "unlockCondition": { "fruit_beer": 5 },
       "minDay": 350,
-      "unlocks": ["roastery", "roaster", "coffee_crop"]
+      "unlocks": ["roastery", "roaster", "coffee_brewer", "coffee_crop"]
     }
   ]
 }

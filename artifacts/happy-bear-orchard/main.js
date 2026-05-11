@@ -967,6 +967,7 @@ function initGame(saveData, slot) {
     audio.tierUnlock();
     applyUnlocks(tier);
     gameState.tier = tier;
+    crafting.setTier(tier);
     const lines   = BearDialogue.tierUnlock(tier);
     const tierDef = progressionData.tiers[tier];
     setStatus(lines.status);
@@ -1065,6 +1066,7 @@ function initGame(saveData, slot) {
     resources.restore(sys.resources);
     tileGrid.restore(sys.tiles);
     construction.restore(sys.construction);
+    crafting.restore(sys.crafting ?? null);
     if (sys.tier !== undefined) {
       gameState.tier = sys.tier;
     }
@@ -1108,6 +1110,7 @@ function initGame(saveData, slot) {
         resources:      resources.snapshot(),
         tiles:          tileGrid.snapshot(),
         construction:   construction.snapshot(),
+        crafting:       crafting.snapshot(),
         tier:           gameState.tier,
         firstCrafts:    [...gameState.firstCrafts],
         marketUnlocked,
