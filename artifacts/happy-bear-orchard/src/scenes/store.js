@@ -302,6 +302,7 @@ export class StoreScene {
       const speedMult = this._store.getSpeedMultiplier(upg.station);
       const card      = document.createElement('div');
       card.className  = `upgrade-card${bought ? ' upgrade-card-owned' : ''}`;
+      if (!prereqOk) card.title = `Buy "${this._store.getUpgradeLabel(upg.requires)}" first to unlock this.`;
       card.innerHTML  = `
         <div class="upgrade-card-icon">${upg.icon}</div>
         <div class="upgrade-card-info">
@@ -315,7 +316,7 @@ export class StoreScene {
           ${bought
             ? '<span class="upgrade-owned-badge">✓ Owned</span>'
             : `<button class="btn-upgrade" data-id="${upg.id}" ${!prereqOk || !canAfford ? 'disabled' : ''}>
-                ${!prereqOk ? 'Locked' : !canAfford ? `Need ${upg.coinCost - coins} more 🪙` : 'Buy'}
+                ${!prereqOk ? `Requires: ${this._store.getUpgradeLabel(upg.requires)}` : !canAfford ? `Need ${upg.coinCost - coins} more 🪙` : 'Buy'}
               </button>`}
         </div>`;
       container.appendChild(card);

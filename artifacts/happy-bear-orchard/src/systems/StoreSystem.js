@@ -103,6 +103,11 @@ export class StoreSystem {
     return upgradesData.upgrades.filter(u => !u.type && u.unlockTier > tier);
   }
 
+  /** Look up an upgrade's label by id. */
+  getUpgradeLabel(id) {
+    return upgradesData.upgrades.find(u => u.id === id)?.label ?? id;
+  }
+
   /**
    * Combined speed multiplier for a station (product of all purchased multipliers).
    * Returns 1.0 if no upgrades purchased.
