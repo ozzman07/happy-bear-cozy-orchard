@@ -34,6 +34,7 @@ export class StoreScene {
     this._renderDeals();
     this._renderLand();
     this._renderUpgrades();
+    this._renderAutomation();
 
     const coinsEl = document.getElementById('store-coins-total');
     if (coinsEl) coinsEl.textContent = `Total earned: ${this._store.totalEarned} 🪙`;
@@ -339,6 +340,67 @@ export class StoreScene {
     }
 
     container.querySelectorAll('.btn-upgrade').forEach(btn => {
+      btn.addEventListener('click', () => this._doBuy(btn.dataset.id));
+    });
+  }
+
+  _renderAutomation() {
+    const section   = document.getElementById('store-automation-section');
+    const container = document.getElementById('store-automation-grid');
+    if (!section || !container) return;
+
+    const tier      = this._getTier();
+    const available = this._store.getAutomationUpgrades(tier);
+    const locked    = this._store.getLockedAutomationUpgrades(tier);
+
+    if (available.length === 0 && locked.length === 0) {
+      section.classList.add('hidden');
+      return;
+    }
+    section.classList.remove('hidden');
+
+    const coins = this._res.get('coins');
+    container.innerHTML = '';
+
+    for (const upg of available) {
+      const bought    = this._store.isPurchased(upg.id);
+      const canAfford = coins >= upg.coinCost;
+      const card      = document.createElement('div');
+      card.className  = `upgrade-card${bought ? ' upgrade-card-owned' : ''}`;
+      card.innerHTML  = `
+        <div class="upgrade-card-icon">${bought ? '✅' : upg.icon}</div>
+        <div class="upgrade-card-info">
+          <div class="upgrade-card-name">${upg.label}</div>
+          <div class="upgrade-card-desc">${upg.description}</div>
+          ${bought ? '' : `<div class="upgrade-card-cost">${upg.coinCost} 🪙</div>`}
+        </div>
+        <div class="upgrade-card-action">
+          ${bought
+            ? '<span class="upgrade-owned-badge">✓ Active</span>'
+            : `<button class="btn-automation" data-id="${upg.id}" ${!canAfford ? 'disabled' : ''}>
+                ${!canAfford ? `Need ${upg.coinCost - coins} more 🪙` : 'Buy'}
+              </button>`}
+        </div>`;
+      container.appendChild(card);
+    }
+
+    for (const upg of locked) {
+      const card = document.createElement('div');
+      card.className = 'upgrade-card upgrade-card-locked';
+      card.innerHTML = `
+        <div class="upgrade-card-icon">🔒</div>
+        <div class="upgrade-card-info">
+          <div class="upgrade-card-name">${upg.label}</div>
+          <div class="upgrade-card-desc">${upg.description}</div>
+          <div class="upgrade-card-unlock-tier">Unlocks at Tier ${upg.unlockTier}</div>
+        </div>
+        <div class="upgrade-card-action">
+          <span class="upgrade-locked-badge">🔒 Tier ${upg.unlockTier}</span>
+        </div>`;
+      container.appendChild(card);
+    }
+
+    container.querySelectorAll('.btn-automation').forEach(btn => {
       btn.addEventListener('click', () => this._doBuy(btn.dataset.id));
     });
   }

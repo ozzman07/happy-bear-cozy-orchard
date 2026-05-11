@@ -166,6 +166,86 @@
       "coinCost": 200,
       "speedMultiplier": 0.5,
       "description": "Another 2× speed boost"
+    },
+    {
+      "id": "auto_press",
+      "type": "automation",
+      "label": "Self-Loading Press",
+      "icon": "🤖",
+      "station": "press",
+      "unlockTier": 2,
+      "coinCost": 180,
+      "description": "Automatically starts one pressing cycle whenever the press is idle and apples are ready"
+    },
+    {
+      "id": "auto_fermenter",
+      "type": "automation",
+      "label": "Timed Fermentation",
+      "icon": "⏱️",
+      "station": "fermenter",
+      "unlockTier": 2,
+      "coinCost": 220,
+      "description": "Automatically starts one fermentation cycle whenever the fermenter is idle and juice is ready"
+    },
+    {
+      "id": "auto_bottling",
+      "type": "automation",
+      "label": "Bottling Robot",
+      "icon": "🍾",
+      "station": "bottling",
+      "unlockTier": 2,
+      "coinCost": 160,
+      "description": "Automatically starts one bottling cycle whenever the station is idle and juice is ready"
+    },
+    {
+      "id": "auto_still",
+      "type": "automation",
+      "label": "Regulated Still",
+      "icon": "🔁",
+      "station": "still",
+      "unlockTier": 3,
+      "coinCost": 280,
+      "description": "Automatically starts one distillation cycle whenever the still is idle and cider is ready"
+    },
+    {
+      "id": "auto_barrel",
+      "type": "automation",
+      "label": "Barrel Queue",
+      "icon": "🪣",
+      "station": "barrel",
+      "unlockTier": 4,
+      "coinCost": 340,
+      "description": "Automatically starts one aging cycle whenever the barrel is idle and applejack is ready"
+    },
+    {
+      "id": "auto_kettle",
+      "type": "automation",
+      "label": "Brew Timer",
+      "icon": "⏲️",
+      "station": "brew_kettle",
+      "unlockTier": 4,
+      "coinCost": 300,
+      "description": "Automatically starts one brew cycle whenever the kettle is idle and ingredients are ready"
+    },
+    {
+      "id": "auto_roaster",
+      "type": "automation",
+      "label": "Auto-Roaster",
+      "icon": "☕",
+      "station": "roaster",
+      "unlockTier": 5,
+      "coinCost": 360,
+      "description": "Automatically starts one roasting cycle whenever the roaster is idle and beans are ready"
+    },
+    {
+      "id": "auto_brewer",
+      "type": "automation",
+      "label": "Pour-Over Bot",
+      "icon": "🫗",
+      "station": "coffee_brewer",
+      "unlockTier": 5,
+      "coinCost": 320,
+      "description": "Automatically starts one brew cycle whenever the brewer is idle and roasted coffee is ready"
     }
   ]
 }

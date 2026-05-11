@@ -1267,6 +1267,38 @@ body {
   flex-direction: column;
   gap: 0.4rem;
 }
+#store-automation-section {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(100,200,255,0.2);
+  padding-top: 0.75rem;
+}
+#store-automation-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #80d0ff;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+#store-automation-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.btn-automation {
+  background: rgba(100,200,255,0.15);
+  border: 1px solid rgba(100,200,255,0.4);
+  color: #80d0ff;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btn-automation:hover:not(:disabled) { background: rgba(100,200,255,0.3); }
+.btn-automation:disabled { opacity: 0.45; cursor: not-allowed; }
 .upgrade-card {
   display: flex;
   align-items: center;

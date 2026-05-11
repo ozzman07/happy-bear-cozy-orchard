@@ -953,6 +953,13 @@ function initGame(saveData, slot) {
     const craftScene = STATION_SCENE[evt.stationId];
     if (craftScene) scenes.setBadge(craftScene, '✓');
     scenes.setBadge('store', '🛒');
+
+    // Auto-restart: if this station is automated, immediately queue one more cycle
+    if (storeSystem.isAutomated(evt.stationId)) {
+      const recipes = crafting.recipesFor(evt.stationId);
+      const next = recipes.find(r => resources.canAfford(r.inputs));
+      if (next) crafting.craft(next.id, evt.stationId);
+    }
   });
 
   progression.onChange(({ tier }) => {

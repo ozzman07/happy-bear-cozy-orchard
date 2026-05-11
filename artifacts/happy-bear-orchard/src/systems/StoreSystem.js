@@ -49,11 +49,6 @@ export class StoreSystem {
 
   // ── Upgrades ───────────────────────────────────────────────────────────────
 
-  /** Return all upgrades visible at the given tier. */
-  getUpgrades(tier = 0) {
-    return upgradesData.upgrades.filter(u => u.unlockTier <= tier);
-  }
-
   isPurchased(id) { return this._purchased.has(id); }
 
   /**
@@ -101,6 +96,21 @@ export class StoreSystem {
   /** Return all equipment upgrades that are locked (unlockTier > current tier). */
   getLockedUpgrades(tier = 0) {
     return upgradesData.upgrades.filter(u => !u.type && u.unlockTier > tier);
+  }
+
+  /** Return automation upgrades available at current tier. */
+  getAutomationUpgrades(tier = 0) {
+    return upgradesData.upgrades.filter(u => u.type === 'automation' && u.unlockTier <= tier);
+  }
+
+  /** Return automation upgrades not yet unlocked. */
+  getLockedAutomationUpgrades(tier = 0) {
+    return upgradesData.upgrades.filter(u => u.type === 'automation' && u.unlockTier > tier);
+  }
+
+  /** True if the automation upgrade for a station has been purchased. */
+  isAutomated(stationId) {
+    return this._purchased.has(`auto_${stationId}`);
   }
 
   /** Look up an upgrade's label by id. */
