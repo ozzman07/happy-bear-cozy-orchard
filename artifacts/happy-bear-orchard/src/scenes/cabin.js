@@ -38,13 +38,14 @@ const RECIPE_LABELS = {
 };
 
 export class CabinScene {
-  constructor({ construction, crafting, resources, statusEl, bearSpeakFn }) {
-    this._cs         = construction;
-    this._craft      = crafting;
-    this._res        = resources;
-    this._statusEl   = statusEl;
-    this._bearSpeak  = bearSpeakFn;
-    this._pollTimer  = null;
+  constructor({ construction, crafting, resources, statusEl, bearSpeakFn, isAutomatedFn }) {
+    this._cs          = construction;
+    this._craft       = crafting;
+    this._res         = resources;
+    this._statusEl    = statusEl;
+    this._bearSpeak   = bearSpeakFn;
+    this._isAutomated = isAutomatedFn ?? (() => false);
+    this._pollTimer   = null;
   }
 
   init() {
@@ -170,9 +171,10 @@ export class CabinScene {
       if (parts.length) needsHint = `<div class="tool-needs">Need ${parts.join(', ')}</div>`;
     }
 
+    const automated = this._isAutomated(toolId);
     const craftPct = busy ? this._craft.progressPct(toolId) : 0;
     return `<div class="tool-card tool-operational${busy?' tool-busy':''}">
-      <div class="tool-card-badge">Operational</div>
+      <div class="tool-card-badge">Operational${automated ? ' 🤖' : ''}</div>
       <div class="tool-card-icon">${def.icon}</div>
       <div class="tool-name">${def.name}</div>
       <div class="tool-recipe">${rl.cost ?? ''} → ${rl.yield ?? ''}</div>

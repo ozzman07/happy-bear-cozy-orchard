@@ -65,7 +65,7 @@
   "brew_coffee": {
     "id": "brew_coffee",
     "name": "Brew Coffee Stout",
-    "station": "brew_kettle",
+    "station": "coffee_brewer",
     "inputs": { "roasted_coffee": 1, "hops": 1 },
     "outputs": { "cups": 1 },
     "timerSecs": 140,

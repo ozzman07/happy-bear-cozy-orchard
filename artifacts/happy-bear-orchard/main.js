@@ -86,7 +86,7 @@ function renderMainMenu() {
     btns.push({ label: '📂 Load Game',  primary: false, onClick: () => showSaveSelect(profile) });
   }
   btns.push({ label: '👤 Profiles',   primary: false, onClick: renderProfileSelect });
-  btns.push({ label: '⚙️ Settings',   primary: false, onClick: renderSettings });
+  btns.push({ label: '⚙️ Settings',   primary: false, onClick: () => renderSettings() });
 
   btns.forEach(({ label, primary, onClick }) => {
     const btn = document.createElement('button');
@@ -753,13 +753,14 @@ function initGame(saveData, slot) {
     speechEl: document.getElementById('bear-speech'),
   });
 
-  const cabin      = new CabinScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
-  const distillery = new DistilleryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
-  const brewery    = new BreweryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
-  const roastery   = new RoasteryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak });
-
   const storeSystem  = new StoreSystem(resources);
   const marketSystem = new MarketSystem(resources);
+
+  const isAutomatedFn = id => storeSystem.isAutomated(id);
+  const cabin      = new CabinScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak, isAutomatedFn });
+  const distillery = new DistilleryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak, isAutomatedFn });
+  const brewery    = new BreweryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak, isAutomatedFn });
+  const roastery   = new RoasteryScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak, isAutomatedFn });
 
   storeSystem.onChange(evt => {
     if (evt.type === 'sell')    { audio.sell(); gameStats.itemsSold += evt.amount; questSystem.increment('sell_coins', evt.coins); }
@@ -1150,6 +1151,4 @@ async function boot() {
   }
 }
 
-boot().catch(err => {
-  document.body.innerHTML = `<div style="color:#fff;background:#1a1a1a;padding:24px;font-family:monospace;white-space:pre-wrap">🐻 Happy Bear hit an error:\n\n${err?.stack ?? err}</div>`;
-});
+boot();

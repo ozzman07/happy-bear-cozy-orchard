@@ -273,14 +273,6 @@
   </footer>
 
 </div>
-<script>
-  window.addEventListener('error', e => {
-    document.body.innerHTML = '<div style="color:#fff;background:#111;padding:24px;font-family:monospace;white-space:pre-wrap">🐻 Load error:\n\n' + (e.message || e) + '\n' + (e.filename ? e.filename + ':' + e.lineno : '') + '</div>';
-  });
-  window.addEventListener('unhandledrejection', e => {
-    document.body.innerHTML = '<div style="color:#fff;background:#111;padding:24px;font-family:monospace;white-space:pre-wrap">🐻 Async error:\n\n' + (e.reason?.stack || e.reason) + '</div>';
-  });
-</script>
 <script type="module" src="./main.js"></script>
 
 </body>

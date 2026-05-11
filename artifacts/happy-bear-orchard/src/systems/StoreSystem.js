@@ -110,7 +110,8 @@ export class StoreSystem {
 
   /** True if the automation upgrade for a station has been purchased. */
   isAutomated(stationId) {
-    return this._purchased.has(`auto_${stationId}`);
+    const upg = upgradesData.upgrades.find(u => u.type === 'automation' && u.station === stationId);
+    return upg ? this._purchased.has(upg.id) : false;
   }
 
   /** Look up an upgrade's label by id. */
@@ -134,11 +135,14 @@ export class StoreSystem {
 
   // ── Persistence ────────────────────────────────────────────────────────────
 
-  snapshot() { return [...this._purchased]; }
+  snapshot() { return { purchased: [...this._purchased], totalEarned: this._totalEarned }; }
 
   restore(data) {
-    if (!Array.isArray(data)) return;
-    this._purchased = new Set(data);
+    if (!data) return;
+    // support old saves that stored a plain array
+    const arr = Array.isArray(data) ? data : (data.purchased ?? []);
+    this._purchased   = new Set(arr);
+    this._totalEarned = data.totalEarned ?? 0;
   }
 
   onChange(fn) { this._listeners.push(fn); }
