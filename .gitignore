@@ -51,3 +51,4 @@ git-sync.log
 
 # Claude Code worktrees
 .claude/worktrees/
+LLAMA.md
