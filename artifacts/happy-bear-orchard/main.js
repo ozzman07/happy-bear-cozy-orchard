@@ -151,7 +151,7 @@ function renderProfileSelect() {
   const profiles = ProfileSystem.getAllProfiles();
   const wrapper = document.createElement('div');
   wrapper.className = 'menu-screen profile-screen';
-  wrapper.innerHTML = `<div class="menu-bear">👤</div><h2 class="menu-title">Your Profiles</h2>`;
+  wrapper.innerHTML = `<div class="menu-bear">👤</div><h2 class="menu-title">Profiles / Saved Games</h2>`;
 
   if (profiles.length > 0) {
     const list = document.createElement('ul');
