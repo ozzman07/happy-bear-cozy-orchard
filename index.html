@@ -18,27 +18,5 @@
       mountRoot();
       BootRouter.start();
     </script>
-
-    <!--
-      Runtime fix: replace any occurrence of "Your Profiles"
-      with "Profiles / Saved Games" so the UI label is updated
-      even if the underlying component code lives elsewhere.
-    -->
-    <script>
-      window.addEventListener('load', () => {
-        const walker = document.createTreeWalker(
-          document.body,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
-        let node;
-        while ((node = walker.nextNode())) {
-          if (node.nodeValue.includes('Your Profiles')) {
-            node.nodeValue = node.nodeValue.replace(/Your Profiles/g, 'Profiles / Saved Games');
-          }
-        }
-      });
-    </script>
   </body>
 </html>
