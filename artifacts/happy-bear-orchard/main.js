@@ -541,6 +541,18 @@ function initGame(saveData, slot) {
     });
   }
 
+  // In-game help button in nav bar
+  const navHelpBtn = document.getElementById('nav-help');
+  if (navHelpBtn) {
+    navHelpBtn.addEventListener('click', () => {
+      menuOverlay.classList.remove('hidden');
+      renderHowToPlay(() => {
+        menuOverlay.classList.add('hidden');
+        menuContainer.innerHTML = '';
+      });
+    });
+  }
+
   // Sync audio volumes from profile settings
   const _profileForAudio = ProfileSystem.getSelectedProfile();
   audio.setSfxVolume(_profileForAudio?.settings?.audio?.sfxVolume ?? 0.7);
