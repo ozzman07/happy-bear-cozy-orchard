@@ -67,8 +67,10 @@ export class OrchardScene {
         }
     }, 1000);
 
-    // Show welcome modal
-    this._showWelcomeModal();
+    // Show welcome modal on first visit
+    if (!localStorage.getItem('hbco_welcome_seen')) {
+      this._showWelcomeModal();
+    }
   }
 
   _showWelcomeModal() {
@@ -77,6 +79,7 @@ export class OrchardScene {
     const closeBtn = document.getElementById('close-welcome');
     closeBtn.addEventListener('click', () => {
       modal.classList.add('hidden');
+      localStorage.setItem('hbco_welcome_seen', 'true');
     });
   }
 
