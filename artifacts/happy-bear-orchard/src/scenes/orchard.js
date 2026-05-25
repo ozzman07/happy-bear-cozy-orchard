@@ -81,6 +81,15 @@ export class OrchardScene {
       modal.classList.add('hidden');
       localStorage.setItem('hbco_welcome_seen', 'true');
     });
+    const guideLink = document.getElementById('guide-link');
+    if (guideLink) {
+      guideLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        modal.classList.add('hidden');
+        localStorage.setItem('hbco_welcome_seen', 'true');
+        document.getElementById('nav-help')?.click();
+      });
+    }
   }
 
   onEnter() {
