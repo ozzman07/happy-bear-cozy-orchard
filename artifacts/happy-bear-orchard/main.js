@@ -747,10 +747,19 @@ function initGame(saveData, slot) {
 
   const scenes = new SceneManager();
 
+  const showHowToPlayModal = () => {
+    menuOverlay.classList.remove('hidden');
+    renderHowToPlay(() => {
+      menuOverlay.classList.add('hidden');
+      menuContainer.innerHTML = '';
+    });
+  };
+
   const orchard = new OrchardScene({
     tileGrid, resources, actionMenu, statusEl,
     bearEl:   document.getElementById('bear-sprite'),
     speechEl: document.getElementById('bear-speech'),
+    showHowToPlay: showHowToPlayModal,
   });
 
   const storeSystem  = new StoreSystem(resources);
