@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore the world of Cider Creek — three distinct regions, each with its own terrain, character, and cider. Orchard Ridge, Barrel Hill, and Berry Patch Bluff.">
+  <meta property="og:title" content="Explore Cider Creek — Happy Bear Cider">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#1B4332">
+  <title>Explore Cider Creek — Happy Bear Cider</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐻</text></svg>">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="age-gate" id="age-gate">
+    <div class="age-gate-box">
+      <span class="age-gate-bear">🐻</span>
+      <h2>Welcome to Cider Creek</h2>
+      <p>Happy Bear Cider is brewed for adults 21 and older.<br>Are you of legal drinking age?</p>
+      <div class="age-gate-btns">
+        <button class="btn btn-primary" id="age-yes">Yes, I'm 21+</button>
+        <button class="btn btn-outline" id="age-no">Not yet</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">🐻 Happy Bear Cider</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="ciders.html">Our Ciders</a></li>
+        <li><a href="story.html">Our Story</a></li>
+        <li><a href="cider-creek.html">Cider Creek</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html#creek-mail" class="nav-cta">Creek Mail</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <span class="section-label">The World</span>
+      <h1>Explore Cider Creek</h1>
+      <p>Three regions. Three flavors. One creek that ties it all together.</p>
+    </div>
+  </header>
+
+  <!-- Three Regions -->
+  <section class="section" aria-labelledby="regions-heading">
+    <div class="container">
+      <span class="section-label fade-in">The Regions</span>
+      <h2 class="section-title fade-in" id="regions-heading">The Lay of the Land</h2>
+      <p class="section-intro fade-in">Cider Creek isn't just a name — it's a place. Each region has its own terrain, its own character, and its own cider that couldn't have come from anywhere else.</p>
+      <div class="regions-grid">
+
+        <article class="region-card fade-in d1">
+          <div class="region-head" style="background:linear-gradient(135deg,#2d6a4f,#1b4332);">
+            <span class="region-icon">🍎</span>
+            <h3>Orchard Ridge</h3>
+            <span class="region-subtitle">The high ground · Where it all begins</span>
+          </div>
+          <div class="region-body">
+            <p>Where the apple trees grow oldest and tallest. On clear mornings, you can see three counties from the top of the ridge. The air is crisp and bright, and the apples up here take longer to ripen — which is exactly why they're worth waiting for.</p>
+            <p>Heritage varieties mingle with newer plantings. Each fall, the harvest from Orchard Ridge becomes the backbone of the whole lineup.</p>
+            <span class="region-cider">Home of: The Happy Pour</span>
+          </div>
+        </article>
+
+        <article class="region-card fade-in d2">
+          <div class="region-head" style="background:linear-gradient(135deg,#8b4513,#3d1a00);">
+            <span class="region-icon">🛢️</span>
+            <h3>Barrel Hill</h3>
+            <span class="region-subtitle">The hollow · Where patience lives</span>
+          </div>
+          <div class="region-body">
+            <p>Half a mile down from the ridge, the trail curves into a hollow where the air smells of oak and time. The barrel house sits here — low, wide, and always slightly warm, no matter the season outside.</p>
+            <p>This is where Autumn Hug ages, slowly taking on the character of the wood. Nobody rushes anything on Barrel Hill. That would be missing the whole point.</p>
+            <span class="region-cider">Home of: Autumn Hug</span>
+          </div>
+        </article>
+
+        <article class="region-card fade-in d3">
+          <div class="region-head" style="background:linear-gradient(135deg,#3a78b5,#1b3a6b);">
+            <span class="region-icon">🫐</span>
+            <h3>Berry Patch Bluff</h3>
+            <span class="region-subtitle">The wild side · Where the fun is</span>
+          </div>
+          <div class="region-body">
+            <p>Follow the creek east until the trail goes purple. Berry Patch Bluff is wild in the best way — overgrown with blueberry brambles, blackberries, and wildflowers that nobody planted and nobody minds.</p>
+            <p>Cider Creek Blue starts here, with buckets of hand-picked berries and a bear who comes back every year with very stained paws and a very satisfied expression.</p>
+            <span class="region-cider">Home of: Cider Creek Blue</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section class="section section-alt" aria-labelledby="map-heading">
+    <div class="container">
+      <span class="section-label fade-in">The Territory</span>
+      <h2 class="section-title fade-in" id="map-heading">The Cider Creek Map</h2>
+      <p class="section-intro fade-in">Every good creek deserves a good map. Ours is coming soon — hand-illustrated and full of hidden details, just like the real thing.</p>
+      <div class="map-placeholder fade-in">
+        <span class="map-icon">🗺️</span>
+        <h3>Map Coming Soon</h3>
+        <p>A hand-illustrated map of Cider Creek — all three regions, the trails between them, and a few secrets the bear asked us to leave unlabeled.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Flavor Trail -->
+  <section class="section" aria-labelledby="trail-heading">
+    <div class="container">
+      <span class="section-label fade-in">The Experience</span>
+      <h2 class="section-title fade-in" id="trail-heading">The Flavor Trail</h2>
+      <p class="section-intro fade-in">Three stops. Three ciders. One creek. The Flavor Trail is the best way to taste Cider Creek from end to end — and the bear's personal recommendation.</p>
+      <div class="flavor-trail fade-in">
+        <div class="trail-stop">
+          <span class="trail-num">01</span>
+          <h4>Orchard Ridge</h4>
+          <p>Start with The Happy Pour. Crisp, dry, and grounding — this is the taste of where everything begins.</p>
+        </div>
+        <div class="trail-arrow" aria-hidden="true">&rarr;</div>
+        <div class="trail-stop">
+          <span class="trail-num">02</span>
+          <h4>Barrel Hill</h4>
+          <p>Move to Autumn Hug. Let the oak and spice warm you as the trail dips into the hollow.</p>
+        </div>
+        <div class="trail-arrow" aria-hidden="true">&rarr;</div>
+        <div class="trail-stop">
+          <span class="trail-num">03</span>
+          <h4>Berry Patch Bluff</h4>
+          <p>Finish with Cider Creek Blue as the sun drops. Wild, bright, and worth the walk.</p>
+        </div>
+      </div>
+      <p class="fade-in" style="text-align:center; margin-top:2.5rem;">
+        <a href="ciders.html" class="btn btn-forest">See the Full Lineup &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer" aria-label="Site footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <span class="footer-brand-name">🐻 Happy Bear Cider</span>
+          <p class="footer-tagline">&ldquo;Sip slow. Always refill.&rdquo;</p>
+          <div class="footer-email"><a href="mailto:sipslow@happybearcider.com">sipslow@happybearcider.com</a></div>
+        </div>
+        <div><h4>Explore</h4><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="ciders.html">Our Ciders</a></li><li><a href="story.html">Our Story</a></li><li><a href="cider-creek.html">Cider Creek</a></li></ul></div>
+        <div><h4>Connect</h4><ul class="footer-links"><li><a href="contact.html">Contact</a></li><li><a href="contact.html#creek-mail">Creek Mail</a></li><li><a href="contact.html#merch">Merch Store</a></li><li><a href="contact.html#jukebox">The Jukebox</a></li></ul></div>
+        <div><h4>Follow Along</h4><ul class="footer-links"><li><a href="#">Instagram</a></li><li><a href="#">Facebook</a></li><li><a href="#">YouTube</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Happy Bear Cider. All rights reserved.</span>
+        <span>Must be 21+ to purchase. Please drink responsibly.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

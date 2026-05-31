@@ -1,22 +1,184 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Happy Bear Cozy Orchard</title>
-    <link rel="stylesheet" href="src/ui/styles.css" />
-    <link rel="stylesheet" href="src/ui/intro.css" />
-    <!-- Updated favicon to use the bear head SVG -->
-    <link rel="icon" href="artifacts/happy-bear-orchard/public/bear.svg" />
-  </head>
-  <body>
-    <div id="app"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Happy Bear Cider — Pennsylvania craft cider rooted in the cozy world of Cider Creek. Handcrafted with heart, patience, and the warmth of the orchard.">
+  <meta property="og:title" content="Happy Bear Cider — Welcome to Cider Creek">
+  <meta property="og:description" content="Pennsylvania craft cider. Handcrafted with heart in Cider Creek.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#1B4332">
+  <title>Happy Bear Cider — Welcome to Cider Creek</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐻</text></svg>">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
 
-    <script type="module">
-      import { BootRouter } from "./src/boot/BootRouter.js";
-      import { mountRoot } from "./src/ui/initUI.js";
+  <div class="age-gate" id="age-gate">
+    <div class="age-gate-box">
+      <span class="age-gate-bear">🐻</span>
+      <h2>Welcome to Cider Creek</h2>
+      <p>Happy Bear Cider is brewed for adults 21 and older.<br>Are you of legal drinking age?</p>
+      <div class="age-gate-btns">
+        <button class="btn btn-primary" id="age-yes">Yes, I'm 21+</button>
+        <button class="btn btn-outline" id="age-no">Not yet</button>
+      </div>
+    </div>
+  </div>
 
-      mountRoot();
-      BootRouter.start();
-    </script>
-  </body>
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">🐻 Happy Bear Cider</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="ciders.html">Our Ciders</a></li>
+        <li><a href="story.html">Our Story</a></li>
+        <li><a href="cider-creek.html">Cider Creek</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html#creek-mail" class="nav-cta">Creek Mail</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Pennsylvania Craft Cider</span>
+      <h1 id="hero-heading">Welcome to<br><em>Cider Creek</em></h1>
+      <p class="hero-desc">Deep in the orchard hills of Pennsylvania, where the apples grow slow and the bears know best, Happy Bear Cider is brewed with heart, patience, and the kind of warmth you can taste.</p>
+      <div class="hero-actions">
+        <a href="ciders.html" class="btn btn-primary">Explore Our Ciders</a>
+        <a href="story.html" class="btn btn-outline">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-art-scene">
+        <span class="hero-bear">🐻</span>
+        <span class="hero-trees">🌲🌳🌲</span>
+      </div>
+      <span class="hero-art-label">Happy Bear · Cider Creek, PA</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div style="max-width:700px;">
+        <span class="section-label fade-in">Our Promise</span>
+        <h2 class="section-title fade-in">Handcrafted in the heart of the orchard</h2>
+        <p class="fade-in" style="font-size:1.07rem; color:var(--text-lt); margin-bottom:1rem;">Happy Bear Cider began as one man's homebrew obsession and grew into something the whole creek could celebrate. Every bottle carries the flavor of a specific place — the ridge, the barrel house, the berry bluff — and the spirit of a bear who never rushes a good thing.</p>
+        <p class="fade-in" style="font-size:1.07rem; color:var(--text-lt); margin-bottom:2rem;">We press in Pennsylvania. We ferment slow. We don't cut corners and we don't apologize for being exactly what we are: a cozy, handcrafted cider for people who like their drinks the way they like their Saturdays — unhurried.</p>
+        <div class="fade-in" style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <a href="story.html" class="btn btn-forest">Read Our Story</a>
+          <a href="cider-creek.html" class="btn btn-outline-dark">Explore the Creek</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="featured-heading">
+    <div class="container">
+      <span class="section-label fade-in">Core Ciders</span>
+      <h2 class="section-title fade-in" id="featured-heading">The Classics of Cider Creek</h2>
+      <p class="section-intro fade-in">Three ciders. Three corners of the creek. All made to be sipped slow.</p>
+      <div class="cards-grid">
+
+        <article class="cider-card fade-in d1">
+          <div class="card-art" style="background:linear-gradient(135deg,#eedfa0,#c9a84c);">🍎</div>
+          <div class="card-body">
+            <span class="badge badge-core">Core Cider</span>
+            <h3>The Happy Pour</h3>
+            <p class="flavor-note">Classic dry apple · Orchard Ridge</p>
+            <p>Crisp, clean, and confidently dry. The one that started it all — pressed from a blend of heritage orchard apples and fermented slow. Happy Bear at its most essential.</p>
+            <div class="card-footer">Fresh apple · dry finish · light floral</div>
+          </div>
+        </article>
+
+        <article class="cider-card fade-in d2">
+          <div class="card-art" style="background:linear-gradient(135deg,#c17f3c,#5c3317);">🍂</div>
+          <div class="card-body">
+            <span class="badge badge-core">Core Cider</span>
+            <h3>Autumn Hug</h3>
+            <p class="flavor-note">Spiced apple · Barrel Hill</p>
+            <p>Aged in oak barrels on Barrel Hill until it finds that perfect warmth. Cinnamon-kissed, full-bodied, and comforting — like the first cold morning of fall in a glass.</p>
+            <div class="card-footer">Cinnamon · toasted oak · warm apple</div>
+          </div>
+        </article>
+
+        <article class="cider-card fade-in d3">
+          <div class="card-art" style="background:linear-gradient(135deg,#3a78b5,#1b4332);">🫐</div>
+          <div class="card-body">
+            <span class="badge badge-core">Core Cider</span>
+            <h3>Cider Creek Blue</h3>
+            <p class="flavor-note">Wild blueberry · Berry Patch Bluff</p>
+            <p>From the blueberry brambles of Berry Patch Bluff — bright, berry-forward, lightly tart. Cider Creek Blue is summer in a bottle, wild and unapologetically fun.</p>
+            <div class="card-footer">Fresh blueberry · bright tartness · clean finish</div>
+          </div>
+        </article>
+
+      </div>
+      <p class="fade-in" style="text-align:center; margin-top:2.5rem;">
+        <a href="ciders.html" class="btn btn-forest">See All Ciders &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="creek-mail" id="creek-mail" aria-labelledby="creek-mail-heading">
+    <div class="container">
+      <span class="section-label">Stay in the Loop</span>
+      <h2 id="creek-mail-heading">Join Creek Mail</h2>
+      <p>Be the first to hear about seasonal releases, creek events, and letters from the bear. No spam — just good cider news.</p>
+      <!-- Replace action URL with your Mailchimp embed URL -->
+      <form class="creek-form" action="#" method="post" aria-label="Creek Mail signup">
+        <input type="email" name="EMAIL" placeholder="your@email.com" required aria-label="Email address">
+        <button type="submit" class="btn btn-primary">Sign Me Up</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer" aria-label="Site footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <span class="footer-brand-name">🐻 Happy Bear Cider</span>
+          <p class="footer-tagline">&ldquo;Sip slow. Always refill.&rdquo;</p>
+          <div class="footer-email"><a href="mailto:sipslow@happybearcider.com">sipslow@happybearcider.com</a></div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="ciders.html">Our Ciders</a></li>
+            <li><a href="story.html">Our Story</a></li>
+            <li><a href="cider-creek.html">Cider Creek</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul class="footer-links">
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="contact.html#creek-mail">Creek Mail</a></li>
+            <li><a href="contact.html#merch">Merch Store</a></li>
+            <li><a href="contact.html#jukebox">The Jukebox</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Follow Along</h4>
+          <ul class="footer-links">
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Facebook</a></li>
+            <li><a href="#">YouTube</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Happy Bear Cider. All rights reserved.</span>
+        <span>Must be 21+ to purchase. Please drink responsibly.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
 </html>

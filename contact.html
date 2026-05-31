@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Get in touch with Happy Bear Cider — email us, sign up for Creek Mail, shop merch at the Cider Creek Mall, or tune into the Jukebox.">
+  <meta property="og:title" content="Contact — Happy Bear Cider">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#1B4332">
+  <title>Contact — Happy Bear Cider</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐻</text></svg>">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="age-gate" id="age-gate">
+    <div class="age-gate-box">
+      <span class="age-gate-bear">🐻</span>
+      <h2>Welcome to Cider Creek</h2>
+      <p>Happy Bear Cider is brewed for adults 21 and older.<br>Are you of legal drinking age?</p>
+      <div class="age-gate-btns">
+        <button class="btn btn-primary" id="age-yes">Yes, I'm 21+</button>
+        <button class="btn btn-outline" id="age-no">Not yet</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">🐻 Happy Bear Cider</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="ciders.html">Our Ciders</a></li>
+        <li><a href="story.html">Our Story</a></li>
+        <li><a href="cider-creek.html">Cider Creek</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html#creek-mail" class="nav-cta">Creek Mail</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <span class="section-label">Say Hello</span>
+      <h1>Contact</h1>
+      <p>Drop us a line, grab some merch, or just hang out by the jukebox for a while.</p>
+    </div>
+  </header>
+
+  <!-- Contact Cards -->
+  <section class="section" aria-labelledby="contact-heading">
+    <div class="container">
+      <h2 class="section-title fade-in" id="contact-heading" style="margin-bottom:2rem;">Get in Touch</h2>
+      <div class="contact-grid">
+
+        <div class="contact-card fade-in d1">
+          <span class="contact-icon">✉️</span>
+          <h3>Send Us a Note</h3>
+          <p>Questions about our ciders, wholesale inquiries, event bookings, or just want to tell the bear he's doing a great job? We read every email.</p>
+          <a href="mailto:sipslow@happybearcider.com" class="email-link">sipslow@happybearcider.com</a>
+        </div>
+
+        <div class="contact-card fade-in d2">
+          <span class="contact-icon">📦</span>
+          <h3 id="merch">The Cider Creek Mall</h3>
+          <p>Hats, shirts, stickers, and all the cozy Happy Bear gear you didn't know you needed until right now. The bear's got good taste in merch, too.</p>
+          <!-- Replace href with your actual merch store URL -->
+          <a href="#" class="merch-link btn btn-forest" style="display:inline-block; margin-top:.5rem;">Visit the Mall &rarr;</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Creek Mail -->
+  <section class="creek-mail" id="creek-mail" aria-labelledby="creek-mail-contact-heading">
+    <div class="container">
+      <span class="section-label">Stay Connected</span>
+      <h2 id="creek-mail-contact-heading">Creek Mail</h2>
+      <p>The bear's personal newsletter. Seasonal release alerts, creek dispatches, and the occasional recipe from Mama Bear. Never more than you want, never less than you need.</p>
+      <!-- Replace action URL with your Mailchimp embed URL -->
+      <form class="creek-form" action="#" method="post" aria-label="Creek Mail signup">
+        <input type="email" name="EMAIL" placeholder="your@email.com" required aria-label="Email address">
+        <button type="submit" class="btn btn-primary">Sign Me Up</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Jukebox -->
+  <section class="section section-alt" aria-labelledby="jukebox-heading">
+    <div class="container">
+      <span class="section-label fade-in">Now Playing</span>
+      <h2 class="section-title fade-in" id="jukebox">The Jukebox</h2>
+      <p class="section-intro fade-in">Pull up a stool. The Jukebox plays the creek's soundtrack — cider how-tos, behind-the-scenes from the barrel house, and whatever the bear felt like filming that week.</p>
+      <div class="jukebox-grid">
+        <!-- Replace these placeholders with real YouTube iframes:
+             <iframe src="https://www.youtube.com/embed/VIDEO_ID" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        -->
+        <div class="jukebox-slot fade-in d1">
+          <span>▶️</span>
+          <p>YouTube embed — replace with your video URL</p>
+        </div>
+        <div class="jukebox-slot fade-in d2">
+          <span>▶️</span>
+          <p>YouTube embed — replace with your video URL</p>
+        </div>
+        <div class="jukebox-slot fade-in d3">
+          <span>▶️</span>
+          <p>YouTube embed — replace with your video URL</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" aria-label="Site footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <span class="footer-brand-name">🐻 Happy Bear Cider</span>
+          <p class="footer-tagline">&ldquo;Sip slow. Always refill.&rdquo;</p>
+          <div class="footer-email"><a href="mailto:sipslow@happybearcider.com">sipslow@happybearcider.com</a></div>
+        </div>
+        <div><h4>Explore</h4><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="ciders.html">Our Ciders</a></li><li><a href="story.html">Our Story</a></li><li><a href="cider-creek.html">Cider Creek</a></li></ul></div>
+        <div><h4>Connect</h4><ul class="footer-links"><li><a href="contact.html">Contact</a></li><li><a href="contact.html#creek-mail">Creek Mail</a></li><li><a href="contact.html#merch">Merch Store</a></li><li><a href="contact.html#jukebox">The Jukebox</a></li></ul></div>
+        <div><h4>Follow Along</h4><ul class="footer-links"><li><a href="#">Instagram</a></li><li><a href="#">Facebook</a></li><li><a href="#">YouTube</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Happy Bear Cider. All rights reserved.</span>
+        <span>Must be 21+ to purchase. Please drink responsibly.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
