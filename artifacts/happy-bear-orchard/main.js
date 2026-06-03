@@ -1119,6 +1119,8 @@ function initGame(saveData, slot) {
   }
 
   applyUnlocks(gameState.tier);
+  // Check for any tier unlocks that should fire immediately after save restore
+  progression.checkDay();
   if (!sys) questSystem.rollQuests(gameState.tier);
 
   // ── Autosave helpers ──────────────────────────────────────────────────────
