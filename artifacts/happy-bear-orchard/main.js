@@ -504,14 +504,15 @@ function initGame(saveData, slot) {
   });
 
   const savedTier    = saveData?.systems?.tier ?? 0;
+  const savedDay     = saveData?.day ?? 1;
   const resources    = new ResourceManager();
   const tileGrid     = new TileGrid();
   const cropSystem   = new CropSystem(tileGrid);
-  const crafting     = new CraftingSystem(resources, { tier: savedTier, day: 1, unlocks: new Set(['orchard']) });
+  const crafting     = new CraftingSystem(resources, { tier: savedTier, day: savedDay, unlocks: new Set(['orchard']) });
   const construction = new ConstructionSystem(resources);
-  const progression  = new ProgressionSystem({ tier: savedTier, day: 1, unlocks: new Set(['orchard']) }, resources);
+  const progression  = new ProgressionSystem({ tier: savedTier, day: savedDay, unlocks: new Set(['orchard']) }, resources);
 
-  const gameState = { tier: 0, day: saveData?.day ?? 1, unlocks: new Set(['orchard']), firstCrafts: new Set() };
+  const gameState = { tier: savedTier, day: savedDay, unlocks: new Set(['orchard']), firstCrafts: new Set() };
   const gameStats = { harvests: 0, crafts: 0, itemsSold: 0, upgradesBought: 0 };
 
   const hud      = new HUD();
