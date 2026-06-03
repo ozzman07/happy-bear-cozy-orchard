@@ -504,6 +504,7 @@ function initGame(saveData, slot) {
   });
 
   const savedTier    = saveData?.systems?.tier ?? 0;
+  const savedDay     = saveData?.day ?? 1;
   const resources    = new ResourceManager();
   const tileGrid     = new TileGrid();
   const cropSystem   = new CropSystem(tileGrid);
@@ -1117,6 +1118,9 @@ function initGame(saveData, slot) {
       storeSystem.setPriceMultiplier(marketSystem.priceMultiplier);
     }
   }
+
+  // Check for tier unlocks after restoring resources
+  progression.checkDay();
 
   applyUnlocks(gameState.tier);
   // Check for any tier unlocks that should fire immediately after save restore
