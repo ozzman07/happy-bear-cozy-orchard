@@ -1129,6 +1129,9 @@ function initGame(saveData, slot) {
     }
   }
 
+  // Check for tier unlocks after restoring resources
+  progression.checkDay();
+
   applyUnlocks(gameState.tier);
   if (!sys) questSystem.rollQuests(gameState.tier);
 
