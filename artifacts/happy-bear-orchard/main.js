@@ -507,11 +507,13 @@ function initGame(saveData, slot) {
   const resources    = new ResourceManager();
   const tileGrid     = new TileGrid();
   const cropSystem   = new CropSystem(tileGrid);
-  const crafting     = new CraftingSystem(resources, { tier: savedTier, day: 1, unlocks: new Set(['orchard']) });
   const construction = new ConstructionSystem(resources);
-  const progression  = new ProgressionSystem({ tier: savedTier, day: 1, unlocks: new Set(['orchard']) }, resources);
 
-  const gameState = { tier: 0, day: saveData?.day ?? 1, unlocks: new Set(['orchard']), firstCrafts: new Set() };
+  // gameState is the single source of truth — shared with progression and crafting
+  const gameState = { tier: savedTier, day: saveData?.day ?? 1, unlocks: new Set(['orchard']), firstCrafts: new Set() };
+
+  const crafting     = new CraftingSystem(resources, gameState);
+  const progression  = new ProgressionSystem(gameState, resources);
   const gameStats = { harvests: 0, crafts: 0, itemsSold: 0, upgradesBought: 0 };
 
   const hud      = new HUD();
@@ -523,18 +525,6 @@ function initGame(saveData, slot) {
     navSettingsBtn.addEventListener('click', () => {
       menuOverlay.classList.remove('hidden');
       renderSettings(() => {
-        menuOverlay.classList.add('hidden');
-        menuContainer.innerHTML = '';
-      });
-    });
-  }
-
-  // In-game help button in nav bar
-  const navHelpBtn = document.getElementById('nav-help');
-  if (navHelpBtn) {
-    navHelpBtn.addEventListener('click', () => {
-      menuOverlay.classList.remove('hidden');
-      renderHowToPlay(() => {
         menuOverlay.classList.add('hidden');
         menuContainer.innerHTML = '';
       });
