@@ -1119,11 +1119,8 @@ function initGame(saveData, slot) {
     }
   }
 
-  // Check for tier unlocks after restoring resources
-  progression.checkDay();
-
   applyUnlocks(gameState.tier);
-  // Check for any tier unlocks that should fire immediately after save restore
+  // Check for tier unlocks that should fire immediately after save restore
   progression.checkDay();
   if (!sys) questSystem.rollQuests(gameState.tier);
 
