@@ -563,7 +563,7 @@ body {
 }
 
 .tool-building-text { font-size: 0.78rem; color: #d4b060; font-weight: 600; }
-.tool-progress-bar  { height: 7px; background: rgba(255,255,255,0.14); border-radius: 4px; overflow: hidden; margin-top: 3px; }
+.tool-progress-bar  { height: 7px; background: rgba(255,255,255,0.14); border-radius: 4px; overflow: hidden; margin-top: 0; }
 .tool-progress-fill { height: 100%; background: linear-gradient(90deg,#c8863a,#ffe060); border-radius: 4px; transition: width 0.4s; }
 
 /* Operational */
