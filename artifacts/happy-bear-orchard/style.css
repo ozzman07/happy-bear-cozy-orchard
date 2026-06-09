@@ -524,7 +524,7 @@ body {
 .tool-card {
   border-radius: 13px; padding: 13px 15px;
   height: 180px; overflow: hidden;
-  display: flex; flex-direction: column; gap: 5px;
+  display: flex; flex-direction: column; gap: 5px; justify-content: space-between;
   position: relative; transition: transform 0.15s;
 }
 .tool-card:hover { transform: translateY(-2px); }
