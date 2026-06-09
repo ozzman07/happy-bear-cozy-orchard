@@ -21,7 +21,7 @@
     "id": "bottle_cider",
     "name": "Bottle Cider",
     "station": "bottling",
-    "inputs": { "juice": 3 },
+    "inputs": { "cider": 3, "bottles": 3 },
     "outputs": { "bottles": 6 },
     "timerSecs": 20,
     "unlockTier": 1
