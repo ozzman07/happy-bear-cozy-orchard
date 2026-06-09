@@ -506,7 +506,7 @@ body {
 
 #tools-area { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
 
-.tool-slot { flex: 1 1 170px; min-width: 155px; max-width: 240px; height: 200px; }
+.tool-slot { flex: 1 1 170px; min-width: 155px; max-width: 240px; height: 240px; }
 
 /* ─── Bear corner (cabin) ────────────────────────────── */
 #cabin-bear-corner {
@@ -523,7 +523,7 @@ body {
 ═══════════════════════════════════════════ */
 .tool-card {
   border-radius: 13px; padding: 13px 15px;
-  height: 180px; overflow: hidden;
+  height: 220px; overflow: hidden;
   display: flex; flex-direction: column; gap: 5px; justify-content: space-between;
   position: relative; transition: transform 0.15s;
 }
