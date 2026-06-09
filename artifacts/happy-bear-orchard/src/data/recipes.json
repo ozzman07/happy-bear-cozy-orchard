@@ -13,7 +13,7 @@
     "name": "Ferment Cider",
     "station": "fermenter",
     "inputs": { "juice": 3 },
-    "outputs": { "cider": 1 },
+    "outputs": { "cider": 1, "bottles": 1 },
     "timerSecs": 90,
     "unlockTier": 1
   },
