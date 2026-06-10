@@ -258,7 +258,10 @@ export class MusicPlayer {
   _next() {
     this._idx = (this._idx + 1) % this._order.length;
     // Re-shuffle when we've gone through all tracks
-    if (this._idx === 0) this._order = this._shuffle([...Array(TRACKS.length).keys()]);
+    if (this._idx === 0) {
+      this._order = this._shuffle([...Array(TRACKS.length).keys()]);
+    }
+    // Always play the next track immediately
     this._play(this._order[this._idx]);
   }
 
