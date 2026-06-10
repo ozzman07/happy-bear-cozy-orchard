@@ -44,6 +44,9 @@ try {
 // Start music on first user interaction anywhere in the app
 document.addEventListener('click', () => { try { music.start(); } catch (_) {} }, { once: true });
 
+// Resume music when tab becomes visible again
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { try { music.resume(); } catch (_) {} } });
+
 // ── DOM refs ────────────────────────────────────────────────────────────────
 
 const menuOverlay  = document.getElementById('menu-overlay');

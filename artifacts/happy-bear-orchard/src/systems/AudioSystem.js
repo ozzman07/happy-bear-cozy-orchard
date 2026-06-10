@@ -223,6 +223,7 @@ export class MusicPlayer {
     this._started = false;
     this._order   = this._shuffle([...Array(TRACKS.length).keys()]);
     this._idx     = 0;
+    this._shouldPlay = false;
   }
 
   _shuffle(arr) {
@@ -237,6 +238,7 @@ export class MusicPlayer {
   start() {
     if (this._started) return;
     this._started = true;
+    this._shouldPlay = true;
     this._play(this._order[this._idx]);
   }
 
@@ -268,6 +270,12 @@ export class MusicPlayer {
   setVolume(v) {
     this._vol = Math.max(0, Math.min(1, v));
     if (this._audio) this._audio.volume = this._vol;
+  }
+
+  resume() {
+    if (this._shouldPlay && this._audio && this._audio.paused) {
+      this._audio.play().catch(() => {});
+    }
   }
 
   nowPlaying() {
