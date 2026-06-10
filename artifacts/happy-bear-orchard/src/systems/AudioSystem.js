@@ -253,7 +253,12 @@ export class MusicPlayer {
     el.volume  = this._vol;
     el.addEventListener('ended', () => this._next());
     el.addEventListener('error', () => this._next());   // skip bad track
-    el.play().catch(() => {});
+    el.addEventListener('canplay', () => {
+      if (this._shouldPlay && el === this._audio) {
+        el.play().catch(err => console.error('Music playback error:', err));
+      }
+    });
+    el.load();
     this._audio = el;
   }
 
