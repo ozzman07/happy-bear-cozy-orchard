@@ -1,13 +1,19 @@
 /**
  * ActionMenu — tile action popup for the orchard scene.
  */
-import { ACTION, ACTION_COSTS, ACTION_VALID_STATES, TILE_STATE } from '../constants.js';
+import { ACTION, ACTION_COSTS, ACTION_VALID_STATES, TILE_STATE, CROP_VISUAL } from '../constants.js';
+import { CROPS } from '../systems/crops.js';
+
+const RES_ICON = { fruit: '🍎', hops: '🌾', coffee_bean: '☕', wood: '🪵' };
+
+function formatCost(cost) {
+  return Object.entries(cost).map(([k, v]) => `${v} ${RES_ICON[k] ?? k}`).join(' + ');
+}
 
 const ACTION_INFO = {
   [ACTION.CLEAR]:      { label: '🪓 Clear',       desc: 'Clear overgrowth  →  +1 🪵' },
   [ACTION.DIG]:        { label: '⛏️ Dig',         desc: 'Prepare soil  →  +3 🪨' },
   [ACTION.PLANT]:      { label: '🌱 Plant',        desc: 'Plant an apple tree  →  costs 1 🍎' },
-  [ACTION.PLANT_TREE]: { label: '🌲 Plant Timber', desc: 'Grow a timber tree  →  +4 🪵 when harvested (free, slow)' },
   [ACTION.WATER]:      { label: '💧 Water',        desc: 'Speed up growth (free)' },
   [ACTION.HARVEST]:    { label: '🍎 Harvest',      desc: 'Pick fruit  →  +3 🍎  (auto-replants)' },
   [ACTION.MINE]:       { label: '⛏️ Mine',         desc: 'Establish a mine  →  +2 🪨' },
@@ -41,7 +47,7 @@ export class ActionMenu {
       ?.addEventListener('click', () => this.hide());
   }
 
-  show(tile, resources) {
+  show(tile, resources, tier = 0) {
     this.currentTile = tile;
     this._btnsEl.innerHTML = '';
 
@@ -73,25 +79,14 @@ export class ActionMenu {
       ACTION_VALID_STATES[a]?.includes(tile.state)
     );
 
-    // On a cleared tile, show only one planting option — two buttons is confusing
-    // (PLANT and PLANT_TREE are both valid on CLEARED; keep both but label clearly)
-
     if (available.length === 0) {
       const msg = document.createElement('p');
       msg.className = 'no-actions';
       msg.textContent = 'Nothing to do here yet.';
       this._btnsEl.appendChild(msg);
     } else {
-      for (const action of available) {
-        let info = ACTION_INFO_CONTEXT[action]?.[tile.state] ?? ACTION_INFO[action];
-        // Timber tiles get different harvest/uproot labels
-        if (tile.cropType === 'timber') {
-          if (action === ACTION.HARVEST) info = { label: '🪵 Harvest Timber', desc: 'Chop timber  →  +4 🪵  (tree regrows)' };
-          if (action === ACTION.CLEAR)   info = { label: '🌲 Remove Tree',    desc: 'Remove timber tree — tile returns to soil' };
-        }
-        const costs     = ACTION_COSTS[action] ?? {};
+      const addBtn = (info, costs, action, cropId) => {
         const canAfford = resources.canAfford(costs);
-
         const btn       = document.createElement('button');
         btn.className   = `action-btn${canAfford ? '' : ' cant-afford'}`;
         btn.disabled    = !canAfford;
@@ -99,10 +94,36 @@ export class ActionMenu {
           <span class="action-label">${info.label}</span>
           <span class="action-desc">${info.desc}</span>`;
         btn.addEventListener('click', () => {
-          this.onAction(tile, action);
+          this.onAction(tile, action, cropId);
           this.hide();
         });
         this._btnsEl.appendChild(btn);
+      };
+
+      for (const action of available) {
+        // PLANT offers one button per unlocked crop instead of a single generic option
+        if (action === ACTION.PLANT) {
+          const crops = Object.values(CROPS).filter(c => c.unlockTier <= tier);
+          for (const crop of crops) {
+            const hasCost = Object.keys(crop.plantCost).length > 0;
+            addBtn({
+              label: `${crop.icon} Plant ${crop.name}`,
+              desc:  `Grow ${crop.name}  →  ${hasCost ? 'costs ' + formatCost(crop.plantCost) : 'free'}`,
+            }, crop.plantCost, action, crop.id);
+          }
+          continue;
+        }
+
+        let info = ACTION_INFO_CONTEXT[action]?.[tile.state] ?? ACTION_INFO[action];
+        // Non-apple crops get a tailored harvest label
+        if (action === ACTION.HARVEST && CROPS[tile.cropType]) {
+          const crop = CROPS[tile.cropType];
+          const cv   = CROP_VISUAL[tile.cropType];
+          info = { label: `${cv?.ready ?? crop.icon} Harvest ${crop.name}`, desc: `Pick ${crop.name}  →  +${formatCost(crop.yields)}  (auto-replants)` };
+        }
+
+        const costs = ACTION_COSTS[action] ?? {};
+        addBtn(info, costs, action, tile.cropType);
       }
     }
     this._menuEl.classList.remove('hidden');

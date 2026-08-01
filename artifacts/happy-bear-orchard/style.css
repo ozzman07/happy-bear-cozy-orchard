@@ -352,7 +352,7 @@ body {
 
 /* ─── Orchard Scene ──────────────────────────────────── */
 #scene-orchard { flex-direction: row; align-items: center; justify-content: center; gap: 20px; padding: 16px; }
-#orchard-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#orchard-container { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 100%; overflow-x: auto; }
 #orchard-toolbar   { display: flex; gap: 8px; }
 .orchard-auto-btn {
   background: rgba(255,255,255,0.08); color: var(--color-text-dim);
@@ -363,6 +363,13 @@ body {
 .orchard-auto-btn.auto-btn-on {
   background: rgba(80,180,80,0.25); color: #90e890;
   border-color: #50b050;
+}
+
+.outpost-cancel-btn {
+  background: rgba(200,80,60,0.2); color: #e89a90;
+  border: 1px solid rgba(220,100,80,0.5); border-radius: 20px;
+  padding: 4px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  touch-action: manipulation;
 }
 
 /* ─── Grid ───────────────────────────────────────────── */
@@ -394,7 +401,7 @@ body {
 .tile-locked    { cursor: default; opacity: 0.55; }
 .tile-clearable { box-shadow: inset 0 0 0 2px rgba(255,220,100,0.3); }
 .tile-harvestable { animation: pulse-harvest 1.4s ease-in-out infinite; }
-.tile-timber-ready { animation: pulse-timber 1.6s ease-in-out infinite; }
+.tile-crop-ready   { animation: pulse-timber 1.6s ease-in-out infinite; }
 .tile-rotting     { animation: pulse-rot 0.8s ease-in-out infinite; }
 .tile-rotted      { animation: pulse-rotted 1.2s ease-in-out infinite; }
 
@@ -1379,6 +1386,8 @@ body {
 .btn-upgrade:hover:not(:disabled) { background: rgba(255,224,102,0.3); }
 .btn-upgrade:disabled { opacity: 0.35; cursor: not-allowed; }
 .no-upgrades { font-size: 0.75rem; color: #a89070; font-style: italic; margin: 0; }
+
+/* ═══════════════════════════════════════════
    WELCOME MODAL
 ═══════════════════════════════════════════ */
 .modal {
@@ -1543,6 +1552,45 @@ body {
   line-height: 1.55;
   color: #f0e0b8;
   font-style: italic;
+}
+
+/* ═══════════════════════════════════════════
+   ZONE UNLOCK BANNER
+═══════════════════════════════════════════ */
+#zone-banner {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  z-index: 300;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+#zone-banner.zone-banner-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.zone-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #142a12;
+  border: 2px solid #4a9c3a;
+  border-radius: 12px;
+  padding: 10px 22px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+
+.zone-banner-icon { font-size: 1.3rem; }
+
+.zone-banner-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a8e090;
+  letter-spacing: 0.02em;
 }
 
 /* ═══════════════════════════════════════════

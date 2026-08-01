@@ -3,7 +3,7 @@
  * Entry point. Shows main menu first, then boots all systems on save selection.
  */
 
-import { TICKS_PER_DAY, GAME_TICK_MS } from './src/constants.js';
+import { TICKS_PER_DAY, GAME_TICK_MS, GRID_SIZE, GRID_GROWTH_PER_TIER } from './src/constants.js';
 import { ResourceManager }   from './src/systems/resources.js';
 import { QuestSystem }       from './src/systems/QuestSystem.js';
 import { TileGrid }          from './src/systems/tiles.js';
@@ -31,6 +31,8 @@ import { ActionMenu }  from './src/ui/menus.js';
 import { AudioSystem, MusicPlayer } from './src/systems/AudioSystem.js';
 
 import progressionData from './src/data/progression.json';
+import { CROPS }        from './src/systems/crops.js';
+import { ZONE_NAMES }   from './src/systems/tiles.js';
 
 // ── Audio (module-level so Settings can reach it before game init) ───────────
 const audio = new AudioSystem();
@@ -510,6 +512,10 @@ function initGame(saveData, slot) {
   const savedDay     = saveData?.day ?? 1;
   const resources    = new ResourceManager();
   const tileGrid     = new TileGrid();
+  // Grow the grid to match the saved tier *before* restoring tile data below, so
+  // previously-unlocked frontier tiles have somewhere to land.
+  const gridSizeForTier = tier => GRID_SIZE + tier * GRID_GROWTH_PER_TIER;
+  tileGrid.resize(gridSizeForTier(savedTier));
   const cropSystem   = new CropSystem(tileGrid);
   const construction = new ConstructionSystem(resources);
 
@@ -572,6 +578,22 @@ function initGame(saveData, slot) {
     img.style.cursor = 'pointer';
     img.addEventListener('click', () => { if (_lastBearMsg) bearSpeak(_lastBearMsg); });
   });
+
+  let _zoneBannerTmr = null;
+  const showZoneBanner = (zoneId) => {
+    const name = ZONE_NAMES[zoneId];
+    if (!name) return;
+    const banner = document.getElementById('zone-banner');
+    if (!banner) return;
+    banner.querySelector('.zone-banner-text').textContent = `${name} unlocked!`;
+    banner.classList.remove('hidden');
+    banner.classList.add('zone-banner-visible');
+    clearTimeout(_zoneBannerTmr);
+    _zoneBannerTmr = setTimeout(() => {
+      banner.classList.remove('zone-banner-visible');
+      setTimeout(() => banner.classList.add('hidden'), 600);
+    }, 4000);
+  };
 
   const showStoryBear = (moment) => {
     const quote = BearDialogue.storyBearQuote(moment);
@@ -717,8 +739,8 @@ function initGame(saveData, slot) {
     });
   };
 
-  const actionMenu = new ActionMenu((tile, action) => {
-    const result = tileGrid.performAction(tile, action, resources);
+  const actionMenu = new ActionMenu((tile, action, cropId) => {
+    const result = tileGrid.performAction(tile, action, resources, cropId);
     if (result.success) {
       if (action === 'harvest') {
         audio.harvest();
@@ -728,12 +750,14 @@ function initGame(saveData, slot) {
         bearBounce();
         setStatus('Harvested! 🍎 Plant a new seedling to keep the orchard growing.');
       } else if (action === 'plant') {
-        audio.plant();
-        setStatus('Apple tree planted! Water it to speed things up. 💧');
-      } else if (action === 'plant_tree') {
-        audio.plantTree();
-        bearSpeak('🌲 Timber tree planted! Grows slower than apples but yields renewable wood. 🪵');
-        setStatus('Timber tree planted — harvest in ~45 seconds for 4 🪵.');
+        const crop = CROPS[cropId];
+        if (cropId === 'timber') {
+          audio.plantTree();
+          bearSpeak('🌲 Timber tree planted! Grows slower than apples but yields renewable wood. 🪵');
+        } else {
+          audio.plant();
+        }
+        setStatus(crop ? `${crop.name} planted! Water it to speed things up. 💧` : 'Apple tree planted! Water it to speed things up. 💧');
       } else if (action === 'water') {
         audio.water();
         setStatus('Watered! Crops will grow faster. 💧');
@@ -778,6 +802,8 @@ function initGame(saveData, slot) {
     bearEl:   document.getElementById('bear-sprite'),
     speechEl: document.getElementById('bear-speech'),
     showHowToPlay: showHowToPlayModal,
+    getTier: () => progression.currentTier(),
+    isAutoUnlockedFn: () => construction.isOperational('harvest_bell'),
   });
 
   const storeSystem  = new StoreSystem(resources);
@@ -795,7 +821,12 @@ function initGame(saveData, slot) {
     if (evt.type === 'land') {
       tileGrid.unlockZone(evt.zone);
       bearSpeak(`🌿 New land opened! Head to the orchard to start clearing.`);
-      setStatus(`🌿 ${evt.zone === 'south_west' ? 'Hop Fields' : 'Coffee Grove'} unlocked — new tiles ready to clear!`);
+      setStatus(`🌿 ${ZONE_NAMES[evt.zone] ?? evt.zone} unlocked — new tiles ready to clear!`);
+      showZoneBanner(evt.zone);
+    }
+    if (evt.type === 'outpost_purchased') {
+      scenes.switchTo('orchard');
+      orchard.enterOutpostPlacement();
     }
   });
 
@@ -927,6 +958,7 @@ function initGame(saveData, slot) {
   const TIER_ZONE_MAP = { 1: 'east', 2: 'north', 3: 'west' };
 
   function applyUnlocks(tier) {
+    tileGrid.resize(gridSizeForTier(tier));
     // Run cumulatively for all tiers up to current (safe to re-run on restore)
     for (let t = 0; t <= tier; t++) {
       const def = progressionData.tiers[t];
@@ -990,18 +1022,28 @@ function initGame(saveData, slot) {
     }
   });
 
+  // Planting a crop for the first time costs one of its own harvest (the seed) — grant a
+  // small starter stock when its tier unlocks so hops/coffee aren't stuck at zero forever.
+  const CROP_SEED_STARTER = { hops_crop: { hops: 2 }, coffee_crop: { coffee_bean: 2 } };
+
   progression.onChange(({ tier }) => {
     audio.tierUnlock();
     applyUnlocks(tier);
     gameState.tier = tier;
     crafting.setTier(tier);
-    const lines   = BearDialogue.tierUnlock(tier);
     const tierDef = progressionData.tiers[tier];
+    for (const u of tierDef?.unlocks ?? []) {
+      const seed = CROP_SEED_STARTER[u];
+      if (seed) for (const [res, amt] of Object.entries(seed)) resources.add(res, amt);
+    }
+    const lines   = BearDialogue.tierUnlock(tier);
     setStatus(lines.status);
     setTimeout(() => {
       showTierCeremony(tier, tierDef);
       bearSpeak(lines.bear);
       showStoryBear(`tier${tier}_unlock`);
+      const newZone = TIER_ZONE_MAP[tier];
+      if (newZone) showZoneBanner(newZone);
     }, 600);
   });
 
@@ -1038,7 +1080,11 @@ function initGame(saveData, slot) {
       setStatus(`🍂 Apples rotted on ${rotted.length} tile${rotted.length > 1 ? 's' : ''} — tap to compost and replant.`);
     }
 
-    if (orchard.autoEnabled) {
+    if (construction.isOperational('woodcutter_shed')) {
+      resources.add('wood', 1);
+    }
+
+    if (orchard.autoEnabled && construction.isOperational('harvest_bell')) {
       tileGrid.autoWater(resources);
       // Delay mine restart so MINE_SHAFT state renders briefly before restarting
       setTimeout(() => tileGrid.autoMine(resources), 600);

@@ -88,6 +88,28 @@ export class StoreSystem {
     return upgradesData.upgrades.filter(u => u.type === 'land' && u.unlockTier <= tier);
   }
 
+  /** The repeatable outpost-placement upgrade, if unlocked at this tier. */
+  getOutpostDef(tier = 0) {
+    const def = upgradesData.upgrades.find(u => u.type === 'outpost');
+    return def && def.unlockTier <= tier ? def : null;
+  }
+
+  /**
+   * Buy a placeable outpost — unlike other upgrades this is repeatable (no `purchased` flag).
+   * Spends coins immediately; the caller is responsible for prompting tile placement.
+   */
+  buyOutpost(tier = 0) {
+    const def = this.getOutpostDef(tier);
+    if (!def) return { success: false, message: 'Not unlocked yet.' };
+    const coins = this._res.get('coins');
+    if (coins < def.coinCost) {
+      return { success: false, message: `Need ${def.coinCost} 🪙 (have ${coins}).` };
+    }
+    this._res.spend({ coins: def.coinCost });
+    this._notify({ type: 'outpost_purchased', def });
+    return { success: true, message: `${def.icon} Outpost purchased — tap a locked tile in the Orchard to place it!` };
+  }
+
   /** Return all equipment upgrades visible at the given tier. */
   getUpgrades(tier = 0) {
     return upgradesData.upgrades.filter(u => !u.type && u.unlockTier <= tier);

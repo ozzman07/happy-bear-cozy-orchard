@@ -33,6 +33,7 @@ export class StoreScene {
     this._renderSell();
     this._renderDeals();
     this._renderLand();
+    this._renderOutpost();
     this._renderUpgrades();
     this._renderAutomation();
 
@@ -280,6 +281,38 @@ export class StoreScene {
     });
   }
 
+  _renderOutpost() {
+    const section   = document.getElementById('store-outpost-section');
+    const container = document.getElementById('store-outpost-grid');
+    if (!section || !container) return;
+
+    const tier = this._getTier();
+    const def  = this._store.getOutpostDef(tier);
+
+    if (!def) { section.classList.add('hidden'); return; }
+    section.classList.remove('hidden');
+
+    const coins     = this._res.get('coins');
+    const canAfford = coins >= def.coinCost;
+    container.innerHTML = `
+      <div class="upgrade-card land-expansion-card">
+        <div class="upgrade-card-icon">${def.icon}</div>
+        <div class="upgrade-card-info">
+          <div class="upgrade-card-name">${def.label}</div>
+          <div class="upgrade-card-desc">${def.description}</div>
+          <div class="upgrade-card-cost">${def.coinCost} 🪙</div>
+        </div>
+        <div class="upgrade-card-action">
+          <button class="btn-outpost" ${canAfford ? '' : 'disabled'}>
+            ${canAfford ? 'Buy Outpost' : `Need ${def.coinCost - coins} more 🪙`}
+          </button>
+        </div>
+      </div>`;
+
+    container.querySelector('.btn-outpost')
+      ?.addEventListener('click', () => this._doBuyOutpost());
+  }
+
   _renderUpgrades() {
     const container = document.getElementById('store-upgrades-grid');
     if (!container) return;
@@ -422,6 +455,16 @@ export class StoreScene {
     const result = this._store.buyUpgrade(id);
     if (result.success) {
       this._bearSpeak?.(`${result.message} 🎉`);
+      this._setStatus(result.message);
+    } else {
+      this._setStatus('⚠ ' + result.message);
+    }
+  }
+
+  _doBuyOutpost() {
+    const result = this._store.buyOutpost(this._getTier());
+    if (result.success) {
+      this._bearSpeak?.(result.message);
       this._setStatus(result.message);
     } else {
       this._setStatus('⚠ ' + result.message);

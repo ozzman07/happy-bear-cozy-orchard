@@ -1,4 +1,5 @@
 export const GRID_SIZE = 10;
+export const GRID_GROWTH_PER_TIER = 2; // extra rows+cols of fresh frontier added each tier milestone
 
 export const TILE_STATE = {
   LOCKED:      'locked',
@@ -21,7 +22,6 @@ export const ACTION = {
   CLEAR:       'clear',
   DIG:         'dig',
   PLANT:       'plant',
-  PLANT_TREE:  'plant_tree',
   WATER:       'water',
   HARVEST:     'harvest',
   MINE:        'mine',
@@ -48,7 +48,6 @@ export const ACTION_COSTS = {
   [ACTION.CLEAR]:      {},
   [ACTION.DIG]:        {},
   [ACTION.PLANT]:      { [RESOURCE.FRUIT]: 1 },
-  [ACTION.PLANT_TREE]: {},
   [ACTION.WATER]:      {},
   [ACTION.HARVEST]:    {},
   [ACTION.MINE]:       {},
@@ -59,9 +58,8 @@ export const ACTION_YIELDS = {
   [ACTION.CLEAR]:      { [RESOURCE.WOOD]: 1 },
   [ACTION.DIG]:        { [RESOURCE.STONE]: 3 },
   [ACTION.PLANT]:      {},
-  [ACTION.PLANT_TREE]: {},
   [ACTION.WATER]:      {},
-  [ACTION.HARVEST]:    { [RESOURCE.FRUIT]: 3 },  // overridden in tiles.js for timber
+  [ACTION.HARVEST]:    { [RESOURCE.FRUIT]: 3 },  // overridden in tiles.js per crop
   [ACTION.MINE]:       {},   // stone awarded after MINE_SECS delay, not immediately
   [ACTION.COMPOST]:    {},   // rotted apple lost — no yield
 };
@@ -73,7 +71,6 @@ export const ACTION_VALID_STATES = {
   [ACTION.CLEAR]:      [TILE_STATE.CLEARABLE, TILE_STATE.PLANTED, TILE_STATE.HARVESTABLE, TILE_STATE.ROTTED, TILE_STATE.MINE_SHAFT],
   [ACTION.DIG]:        [TILE_STATE.CLEARABLE],
   [ACTION.PLANT]:      [TILE_STATE.CLEARED],
-  [ACTION.PLANT_TREE]: [TILE_STATE.CLEARED],
   [ACTION.WATER]:      [TILE_STATE.PLANTED],
   [ACTION.HARVEST]:    [TILE_STATE.HARVESTABLE],
   [ACTION.MINE]:       [TILE_STATE.CLEARED, TILE_STATE.MINE_SHAFT],
@@ -95,10 +92,15 @@ export const TILE_VISUAL = {
   [TILE_STATE.MINING]:      { emoji: '⛏️', color: '#2a2030', label: 'Mining in progress…' },
 };
 
+// Visuals for non-apple crops on PLANTED/HARVESTABLE tiles (apple uses the TILE_VISUAL default).
+export const CROP_VISUAL = {
+  hops:   { growing: '🌱', ready: '🌾', growColor: '#4d5a1e', readyColor: '#7a8a1e', label: 'Hops' },
+  coffee: { growing: '🌱', ready: '☕', growColor: '#3a2a1e', readyColor: '#5a3d28', label: 'Coffee' },
+  timber: { growing: '🌲', ready: '🪵', growColor: '#1e4d18', readyColor: '#3a6e24', label: 'Timber' },
+};
+
 export const GROW_TICKS_NEEDED   = 7;
 export const WATER_GROW_BONUS    = 2;
 export const TICKS_PER_DAY      = 20;
 export const ROT_TICKS_NEEDED    = 14 * TICKS_PER_DAY;  // apples rot after 14 days unharvested
-export const TIMBER_GROW_TICKS   = 15;  // timber trees grow slower than apple trees
-export const TIMBER_YIELD        = 4;   // wood per timber harvest
 export const GAME_TICK_MS        = 3000;

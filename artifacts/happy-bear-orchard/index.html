@@ -77,6 +77,7 @@
       <div id="orchard-container">
         <div id="orchard-toolbar">
           <button id="orchard-auto-btn" class="orchard-auto-btn">🤖 Auto: OFF</button>
+          <button id="outpost-cancel-btn" class="outpost-cancel-btn hidden">✕ Cancel Placement</button>
         </div>
         <div id="grid"></div>
       </div>
@@ -101,6 +102,7 @@
               <div class="tool-slot" id="tool-slot-fermenter"></div>
               <div class="tool-slot" id="tool-slot-bottling"></div>
               <div class="tool-slot" id="tool-slot-harvest_bell"></div>
+              <div class="tool-slot" id="tool-slot-woodcutter_shed"></div>
             </div>
           </div>
           <div id="cabin-bear-corner">
@@ -203,6 +205,10 @@
               <div id="store-land-heading">🌿 Land Expansions</div>
               <div id="store-land-grid"></div>
             </div>
+            <div id="store-outpost-section" class="hidden">
+              <div id="store-outpost-heading">🏕️ Outposts</div>
+              <div id="store-outpost-grid"></div>
+            </div>
             <div id="store-upgrades-section">
               <div id="store-upgrades-heading">🔧 Equipment Upgrades</div>
               <div id="store-upgrades-grid"></div>
@@ -228,6 +234,14 @@
     <div class="story-bear-inner">
       <span class="story-bear-label">📖 Story Bear</span>
       <p class="story-bear-quote"></p>
+    </div>
+  </div>
+
+  <!-- ══ Zone unlock banner ══════════════════════════════════════════════ -->
+  <div id="zone-banner" class="hidden">
+    <div class="zone-banner-inner">
+      <span class="zone-banner-icon">🌲</span>
+      <span class="zone-banner-text"></span>
     </div>
   </div>
 

@@ -3,7 +3,7 @@
     "id": "apple",
     "name": "Apple",
     "icon": "🍎",
-    "growTicks": 50,
+    "growTicks": 7,
     "yields": { "fruit": 3 },
     "plantCost": { "fruit": 1 },
     "unlockTier": 0
@@ -15,7 +15,7 @@
     "growTicks": 70,
     "yields": { "hops": 2 },
     "plantCost": { "hops": 1 },
-    "unlockTier": 3
+    "unlockTier": 4
   },
   "coffee": {
     "id": "coffee",
@@ -25,5 +25,14 @@
     "yields": { "coffee_bean": 2 },
     "plantCost": { "coffee_bean": 1 },
     "unlockTier": 5
+  },
+  "timber": {
+    "id": "timber",
+    "name": "Timber",
+    "icon": "🌲",
+    "growTicks": 15,
+    "yields": { "wood": 4 },
+    "plantCost": {},
+    "unlockTier": 0
   }
 }

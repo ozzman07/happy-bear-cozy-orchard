@@ -39,7 +39,7 @@
     "id": "distill_whiskey",
     "name": "Distil Apple Whiskey",
     "station": "barrel",
-    "inputs": { "applejack": 2 },
+    "inputs": { "applejack": 1 },
     "outputs": { "whiskey": 1 },
     "timerSecs": 200,
     "unlockTier": 3
@@ -57,7 +57,7 @@
     "id": "roast_coffee",
     "name": "Roast Coffee",
     "station": "roaster",
-    "inputs": { "coffee_bean": 2 },
+    "inputs": { "coffee_bean": 1 },
     "outputs": { "roasted_coffee": 1 },
     "timerSecs": 100,
     "unlockTier": 5

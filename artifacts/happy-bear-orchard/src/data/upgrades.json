@@ -21,6 +21,15 @@
       "coinCost": 350
     },
     {
+      "id": "buy_outpost",
+      "type": "outpost",
+      "label": "New Outpost",
+      "icon": "🏕️",
+      "description": "Drop a new 3×3 clearable outpost anywhere on the locked grid — you choose where",
+      "unlockTier": 2,
+      "coinCost": 200
+    },
+    {
       "id": "press_speed_1",
       "label": "Sharpened Blades",
       "icon": "⚙️",

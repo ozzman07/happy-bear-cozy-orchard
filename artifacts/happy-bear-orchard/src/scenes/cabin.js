@@ -29,6 +29,12 @@ const TOOL_DEFS = {
     costs: { wood: 6, stone: 4 }, constructionSecs: 20,
     recipeId: null,
   },
+  woodcutter_shed: {
+    id: 'woodcutter_shed', name: '🪓 Woodcutter\'s Shed', icon: '🪓',
+    description: 'Passively gathers wood every tick — a steady alternative to planting Forest tiles',
+    costs: { wood: 12, stone: 8 }, constructionSecs: 25,
+    recipeId: null,
+  },
 };
 
 const RECIPE_LABELS = {

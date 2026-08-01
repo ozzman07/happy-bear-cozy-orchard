@@ -6,8 +6,9 @@ import {
   GRID_SIZE, TILE_STATE, TILE_TYPE, ACTION,
   ACTION_COSTS, ACTION_YIELDS, ACTION_VALID_STATES,
   GROW_TICKS_NEEDED, WATER_GROW_BONUS, MINE_SECS, MINE_YIELD,
-  ROT_TICKS_NEEDED, TIMBER_GROW_TICKS, TIMBER_YIELD, RESOURCE,
+  ROT_TICKS_NEEDED,
 } from '../constants.js';
+import { CROPS } from './crops.js';
 
 // ── Zone definitions ──────────────────────────────────────────────────────────
 // Each zone is a rectangular region that unlocks as a group when a tier is reached.
@@ -19,6 +20,14 @@ export const ZONE_DEFS = {
   west:        { rowMin: 3, rowMax: 6, colMin: 0, colMax: 1 }, // Tier 3 (auto)
   south_west:  { rowMin: 8, rowMax: 9, colMin: 0, colMax: 4 }, // Tier 4 (purchasable — Hop Fields)
   south_east:  { rowMin: 8, rowMax: 9, colMin: 5, colMax: 9 }, // Tier 5 (purchasable — Coffee Grove)
+};
+
+export const ZONE_NAMES = {
+  east:       'East Fields',
+  north:      'Northern Slopes',
+  west:       'Western Grove',
+  south_west: 'Hop Fields',
+  south_east: 'Coffee Grove',
 };
 
 function inZone(x, y, zone) {
@@ -51,15 +60,17 @@ export class Tile {
 
 export class TileGrid {
   constructor() {
-    this.tiles      = [];
-    this._listeners = [];
+    this.size            = GRID_SIZE;
+    this.tiles           = [];
+    this._listeners      = [];
+    this._resizeListeners = [];
     this._init();
   }
 
   _init() {
-    for (let y = 0; y < GRID_SIZE; y++) {
+    for (let y = 0; y < this.size; y++) {
       this.tiles[y] = [];
-      for (let x = 0; x < GRID_SIZE; x++) {
+      for (let x = 0; x < this.size; x++) {
         const tile = new Tile(x, y, TILE_STATE.LOCKED);
 
         if (isGapTile(x, y)) {
@@ -77,6 +88,31 @@ export class TileGrid {
     }
   }
 
+  /**
+   * Grow the grid to newSize×newSize, appending fresh LOCKED frontier tiles on the
+   * bottom and right edges (existing coordinates never shift, so saves stay valid).
+   * No-op if the grid is already at least that big.
+   */
+  resize(newSize) {
+    if (newSize <= this.size) return;
+    for (let y = 0; y < this.size; y++) {
+      for (let x = this.size; x < newSize; x++) {
+        this.tiles[y][x] = new Tile(x, y, TILE_STATE.LOCKED);
+      }
+    }
+    for (let y = this.size; y < newSize; y++) {
+      this.tiles[y] = [];
+      for (let x = 0; x < newSize; x++) {
+        this.tiles[y][x] = new Tile(x, y, TILE_STATE.LOCKED);
+      }
+    }
+    this.size = newSize;
+    this._resizeListeners.forEach(fn => fn(this.size));
+    this._notify();
+  }
+
+  onResize(fn) { this._resizeListeners.push(fn); }
+
   /** Make every tile in a named zone CLEARABLE (no-op if already past LOCKED). */
   unlockZone(zoneId) {
     const zone = ZONE_DEFS[zoneId];
@@ -92,8 +128,32 @@ export class TileGrid {
     this._notify();
   }
 
+  /** True if a 3×3 outpost centered on (cx, cy) fits fully inside the grid on all-locked, non-permanent tiles. */
+  canPlaceOutpost(cx, cy) {
+    if (cx < 1 || cx > this.size - 2 || cy < 1 || cy > this.size - 2) return false;
+    for (let y = cy - 1; y <= cy + 1; y++) {
+      for (let x = cx - 1; x <= cx + 1; x++) {
+        const t = this.tiles[y]?.[x];
+        if (!t || t.permanent || t.state !== TILE_STATE.LOCKED) return false;
+      }
+    }
+    return true;
+  }
+
+  /** Unlock a purchased 3×3 outpost centered on (cx, cy). Returns false if the spot is invalid. */
+  placeOutpost(cx, cy) {
+    if (!this.canPlaceOutpost(cx, cy)) return false;
+    for (let y = cy - 1; y <= cy + 1; y++) {
+      for (let x = cx - 1; x <= cx + 1; x++) {
+        this.tiles[y][x].state = TILE_STATE.CLEARABLE;
+      }
+    }
+    this._notify();
+    return true;
+  }
+
   getTile(x, y) {
-    if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) return null;
+    if (x < 0 || x >= this.size || y < 0 || y >= this.size) return null;
     return this.tiles[y][x];
   }
 
@@ -101,23 +161,26 @@ export class TileGrid {
     return ACTION_VALID_STATES[action]?.includes(tile.state) ?? false;
   }
 
-  performAction(tile, action, resources) {
+  performAction(tile, action, resources, cropId = 'apple') {
     if (!this.canPerformAction(tile, action)) {
       return { success: false, message: 'Cannot do that here.' };
     }
-    const costs = ACTION_COSTS[action] ?? {};
+    const crop  = CROPS[cropId];
+    const costs = (action === ACTION.PLANT)
+      ? (crop?.plantCost ?? ACTION_COSTS[action] ?? {})
+      : (ACTION_COSTS[action] ?? {});
     if (Object.keys(costs).length && !resources.canAfford(costs)) {
       return { success: false, message: 'Not enough resources!' };
     }
     resources.spend(costs);
 
     // CLEAR only yields wood when removing natural overgrowth, not when resetting a farm or mine
-    // HARVEST yield depends on crop type — timber trees give wood, not fruit
+    // HARVEST yield comes from the tile's crop data (fruit, hops, coffee beans, wood, ...)
     let yields = (action === ACTION.CLEAR && tile.state !== TILE_STATE.CLEARABLE)
       ? {}
       : (ACTION_YIELDS[action] ?? {});
-    if (action === ACTION.HARVEST && tile.cropType === 'timber') {
-      yields = { [RESOURCE.WOOD]: TIMBER_YIELD };
+    if (action === ACTION.HARVEST && CROPS[tile.cropType]) {
+      yields = CROPS[tile.cropType].yields;
     }
     for (const [type, amt] of Object.entries(yields)) resources.add(type, amt);
 
@@ -129,16 +192,9 @@ export class TileGrid {
       case ACTION.DIG:   tile.state = TILE_STATE.CLEARED; break;
       case ACTION.PLANT:
         tile.state           = TILE_STATE.PLANTED;
-        tile.cropType        = 'apple';
+        tile.cropType        = crop ? cropId : 'apple';
         tile.growTicks       = 0;
-        tile.growTicksNeeded = GROW_TICKS_NEEDED;
-        tile.watered         = false;
-        break;
-      case ACTION.PLANT_TREE:
-        tile.state           = TILE_STATE.PLANTED;
-        tile.cropType        = 'timber';
-        tile.growTicks       = 0;
-        tile.growTicksNeeded = TIMBER_GROW_TICKS;
+        tile.growTicksNeeded = crop?.growTicks ?? GROW_TICKS_NEEDED;
         tile.watered         = false;
         break;
       case ACTION.WATER:
@@ -149,7 +205,7 @@ export class TileGrid {
         // Farm tiles stay in the growth cycle — auto-replant after harvest
         tile.state           = TILE_STATE.PLANTED;
         tile.growTicks       = 0;
-        tile.growTicksNeeded = tile.cropType === 'timber' ? TIMBER_GROW_TICKS : GROW_TICKS_NEEDED;
+        tile.growTicksNeeded = CROPS[tile.cropType]?.growTicks ?? GROW_TICKS_NEEDED;
         tile.watered         = false;
         tile.rotTicks        = 0;
         break;
@@ -176,8 +232,8 @@ export class TileGrid {
   tick() {
     let anyRipe = false;
     const rotted = [];
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
         const t = this.tiles[y][x];
         if (t.state === TILE_STATE.PLANTED) {
           t.growTicks++;
@@ -203,8 +259,8 @@ export class TileGrid {
   /** Check for completed mine timers; award stone and flip to MINE_SHAFT. Returns count. */
   completeMines(resources) {
     let count = 0;
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
         const t = this.tiles[y][x];
         if (t.state === TILE_STATE.MINING && t.miningEnd && Date.now() >= t.miningEnd) {
           t.state        = TILE_STATE.MINE_SHAFT;
@@ -264,8 +320,8 @@ export class TileGrid {
   /** Harvest every ripe tile; silently compost any rotted tiles. Returns harvested [{x,y}]. */
   autoHarvest(resources) {
     const harvested = [];
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
         const tile = this.tiles[y][x];
         if (tile.state === TILE_STATE.HARVESTABLE) {
           this.performAction(tile, ACTION.HARVEST, resources);
@@ -281,8 +337,8 @@ export class TileGrid {
   /** Start mining on all idle mine shafts. Returns number started. */
   autoMine(resources) {
     let count = 0;
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
         const tile = this.tiles[y][x];
         if (tile.state === TILE_STATE.MINE_SHAFT) {
           this.performAction(tile, ACTION.MINE, resources);
@@ -296,8 +352,8 @@ export class TileGrid {
   /** Water every planted tile. Returns number watered. */
   autoWater(resources) {
     let count = 0;
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
         const tile = this.tiles[y][x];
         if (tile.state === TILE_STATE.PLANTED && !tile.watered) {
           this.performAction(tile, ACTION.WATER, resources);
@@ -311,8 +367,8 @@ export class TileGrid {
   /** Plant every cleared soil tile (costs 1 fruit each). Returns number planted. */
   autoPlant(resources) {
     let count = 0;
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
         const tile = this.tiles[y][x];
         if (tile.state === TILE_STATE.CLEARED && resources.canAfford(ACTION_COSTS[ACTION.PLANT] ?? {})) {
           this.performAction(tile, ACTION.PLANT, resources);
