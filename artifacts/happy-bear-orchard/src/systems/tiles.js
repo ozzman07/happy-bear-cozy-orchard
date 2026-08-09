@@ -51,7 +51,6 @@ export class Tile {
     this.growTicksNeeded = GROW_TICKS_NEEDED;
     this.watered         = false;
     this.permanent       = false; // true → never unlocks via adjacency
-    this.frontier        = false; // true → grid-growth tile; only an outpost can unlock it, not adjacency
     this.miningEnd       = null;  // timestamp when current mine completes
     this.miningStart     = null;  // timestamp when mine started (for progress %)
     this.rotTicks        = 0;     // ticks spent in HARVESTABLE state without harvest
@@ -97,15 +96,23 @@ export class TileGrid {
    */
   growRight(amount) {
     if (amount <= 0 || this.cols >= MAX_GRID_DIMENSION) return false;
+    const oldCols = this.cols;
     const newCols = Math.min(this.cols + amount, MAX_GRID_DIMENSION);
     for (let y = 0; y < this.rows; y++) {
-      for (let x = this.cols; x < newCols; x++) {
-        const tile = new Tile(x, y, TILE_STATE.LOCKED);
-        tile.frontier = true;
-        this.tiles[y][x] = tile;
+      for (let x = oldCols; x < newCols; x++) {
+        this.tiles[y][x] = new Tile(x, y, TILE_STATE.LOCKED);
       }
     }
     this.cols = newCols;
+    // The new column bordering already-developed ground opens immediately —
+    // the rest of the fresh land unlocks progressively via adjacency as usual.
+    for (let y = 0; y < this.rows; y++) {
+      const border = this.tiles[y][oldCols - 1];
+      const fresh   = this.tiles[y][oldCols];
+      if (border && fresh && border.state !== TILE_STATE.LOCKED && !fresh.permanent) {
+        fresh.state = TILE_STATE.CLEARABLE;
+      }
+    }
     this._resizeListeners.forEach(fn => fn());
     this._notify();
     return true;
@@ -118,16 +125,24 @@ export class TileGrid {
    */
   growBottom(amount) {
     if (amount <= 0 || this.rows >= MAX_GRID_DIMENSION) return false;
+    const oldRows = this.rows;
     const newRows = Math.min(this.rows + amount, MAX_GRID_DIMENSION);
-    for (let y = this.rows; y < newRows; y++) {
+    for (let y = oldRows; y < newRows; y++) {
       this.tiles[y] = [];
       for (let x = 0; x < this.cols; x++) {
-        const tile = new Tile(x, y, TILE_STATE.LOCKED);
-        tile.frontier = true;
-        this.tiles[y][x] = tile;
+        this.tiles[y][x] = new Tile(x, y, TILE_STATE.LOCKED);
       }
     }
     this.rows = newRows;
+    // The new row bordering already-developed ground opens immediately —
+    // the rest of the fresh land unlocks progressively via adjacency as usual.
+    for (let x = 0; x < this.cols; x++) {
+      const border = this.tiles[oldRows - 1][x];
+      const fresh   = this.tiles[oldRows][x];
+      if (border && fresh && border.state !== TILE_STATE.LOCKED && !fresh.permanent) {
+        fresh.state = TILE_STATE.CLEARABLE;
+      }
+    }
     this._resizeListeners.forEach(fn => fn());
     this._notify();
     return true;
@@ -286,7 +301,7 @@ export class TileGrid {
   _unlockNeighbors(x, y) {
     for (const [dx, dy] of [[-1,0],[1,0],[0,-1],[0,1]]) {
       const n = this.getTile(x + dx, y + dy);
-      if (n && n.state === TILE_STATE.LOCKED && !n.permanent && !n.frontier) n.state = TILE_STATE.CLEARABLE;
+      if (n && n.state === TILE_STATE.LOCKED && !n.permanent) n.state = TILE_STATE.CLEARABLE;
     }
   }
 
@@ -299,7 +314,6 @@ export class TileGrid {
       growTicksNeeded: t.growTicksNeeded,
       watered:         t.watered,
       permanent:       t.permanent,
-      frontier:        t.frontier,
       rotTicks:        t.rotTicks,
     })));
   }
@@ -318,10 +332,6 @@ export class TileGrid {
         tile.growTicksNeeded = saved.growTicksNeeded ?? GROW_TICKS_NEEDED;
         tile.watered         = saved.watered         ?? false;
         tile.permanent       = saved.permanent       ?? false;
-        // Older saves predate this flag — fall back to the tile's freshly-initialized
-        // default (true for grid-growth frontier, false for the original 10×10) rather
-        // than forcing false, so existing saves don't retroactively lose frontier protection.
-        tile.frontier        = saved.frontier        ?? tile.frontier;
         tile.rotTicks        = saved.rotTicks        ?? 0;
         tile.cropType        = saved.cropType        ?? 'apple';
         tile.miningEnd       = null; // don't restore timers; mine completes fresh
