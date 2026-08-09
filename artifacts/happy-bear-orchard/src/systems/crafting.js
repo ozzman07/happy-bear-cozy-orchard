@@ -52,6 +52,9 @@ export class CraftingSystem {
         this._resources.add(res, amt);
       }
       this._busySlots[stationId] = false;
+      delete this._busySlots[stationId + '_start'];
+      delete this._busySlots[stationId + '_end'];
+      delete this._busySlots[stationId + '_recipe'];
       this._notify({ type: 'done', recipeId, stationId });
     };
 
@@ -62,6 +65,7 @@ export class CraftingSystem {
       this._busySlots[stationId] = true;
       this._busySlots[stationId + '_start'] = Date.now();
       this._busySlots[stationId + '_end'] = Date.now() + timerMs;
+      this._busySlots[stationId + '_recipe'] = recipeId;
       this._notify({ type: 'started', recipeId, stationId });
       setTimeout(finish, timerMs);
     } else {
@@ -103,21 +107,28 @@ export class CraftingSystem {
     }
     // Re-arm any timers that haven't expired yet; fire immediately if already past
     const stations = new Set(
-      Object.keys(data).filter(k => !k.endsWith('_start') && !k.endsWith('_end') && data[k] === true)
+      Object.keys(data).filter(k => !k.endsWith('_start') && !k.endsWith('_end') && !k.endsWith('_recipe') && data[k] === true)
     );
     for (const stationId of stations) {
       const end = data[stationId + '_end'];
       if (!end) continue;
       const remaining = end - now;
       const finish = () => {
-        // Find which recipe was running by matching station to available recipes
-        const recipe = Object.values(this._recipes).find(r => r.station === stationId);
+        // Prefer the recipe id saved alongside this craft; older saves (before this was
+        // tracked) fall back to guessing by station, which only works while every
+        // station has exactly one recipe.
+        const savedRecipeId = data[stationId + '_recipe'];
+        const recipe = (savedRecipeId && this._recipes[savedRecipeId])
+          ?? Object.values(this._recipes).find(r => r.station === stationId);
         if (recipe) {
           for (const [res, amt] of Object.entries(recipe.outputs)) {
             this._resources.add(res, amt);
           }
         }
         this._busySlots[stationId] = false;
+        delete this._busySlots[stationId + '_start'];
+        delete this._busySlots[stationId + '_end'];
+        delete this._busySlots[stationId + '_recipe'];
         this._notify({ type: 'done', recipeId: recipe?.id ?? stationId, stationId });
       };
       if (remaining <= 0) finish();

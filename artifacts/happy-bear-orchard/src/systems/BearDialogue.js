@@ -134,12 +134,12 @@ function contextualHint(amounts, tier) {
   if (tier >= 2) {
     if (cider >= 2 && applejack === 0)
       return "The Still is ready and we've got the cider for it. Applejack doesn't make itself, though I sometimes wish it did.";
-    if (applejack >= 2 && whiskey === 0)
+    if (applejack >= 1 && whiskey === 0)
       return "Enough Applejack to start the Barrel. The Old Cooper would say something about patience here. I'm going to say it anyway: patience.";
   }
 
   // Tier 3 — whiskey
-  if (tier === 3 && whiskey === 0 && applejack >= 2)
+  if (tier === 3 && whiskey === 0 && applejack >= 1)
     return "The Barrel's waiting. I know the aging takes time. That's the point of it.";
 
   // Tier 4 — brewery
@@ -154,7 +154,7 @@ function contextualHint(amounts, tier) {
   if (tier >= 5) {
     if (coffee_bean === 0)
       return "No coffee beans yet. Plant a coffee plot in the orchard — they take longer than apples, but the Greenhouse Keeper says they're worth it. She's right.";
-    if (coffee_bean >= 2 && roasted_coffee === 0)
+    if (coffee_bean >= 1 && roasted_coffee === 0)
       return "Beans are ready for the Roaster. The Greenhouse Keeper said to watch the first roast carefully. I intend to.";
     if (roasted_coffee >= 1 && cups === 0)
       return "Roasted coffee's ready for the Brewer. This is the moment the whole Roastery was built for.";

@@ -13,7 +13,7 @@
     "name": "Ferment Cider",
     "station": "fermenter",
     "inputs": { "juice": 3 },
-    "outputs": { "cider": 1, "bottles": 1 },
+    "outputs": { "cider": 1 },
     "timerSecs": 90,
     "unlockTier": 1
   },
@@ -21,8 +21,8 @@
     "id": "bottle_cider",
     "name": "Bottle Cider",
     "station": "bottling",
-    "inputs": { "cider": 3, "bottles": 1 },
-    "outputs": { "bottles": 1 },
+    "inputs": { "cider": 3 },
+    "outputs": { "bottles": 3 },
     "timerSecs": 20,
     "unlockTier": 1
   },

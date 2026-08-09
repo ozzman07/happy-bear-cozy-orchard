@@ -39,8 +39,8 @@ const TOOL_DEFS = {
 
 const RECIPE_LABELS = {
   press_juice:    { label: 'Press Fruit',  cost: '2🍎', yield: '1🧃' },
-  ferment_cider:  { label: 'Ferment',      cost: '3🧃', yield: '1🫗 + 1🍾' },
-  bottle_cider:   { label: 'Bottle Cider', cost: '3🫗 + 1🍾', yield: '1🍾' },
+  ferment_cider:  { label: 'Ferment',      cost: '3🧃', yield: '1🫗' },
+  bottle_cider:   { label: 'Bottle Cider', cost: '3🫗', yield: '3🍾' },
 };
 
 export class CabinScene {

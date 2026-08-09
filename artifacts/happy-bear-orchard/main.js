@@ -57,6 +57,15 @@ const appEl        = document.getElementById('app');
 
 // ── Menu helpers ────────────────────────────────────────────────────────────
 
+// Player names are free text (the only free-text input in the game) but get
+// interpolated into innerHTML in a few places below — escape them so a name
+// like `<img src=x onerror=...>` can't run as markup.
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+}
+
 function renderMainMenu() {
   menuContainer.innerHTML = '';
 
@@ -164,7 +173,7 @@ function renderProfileSelect() {
     profiles.forEach(p => {
       const item = document.createElement('li');
       item.className = 'profile-card';
-      item.innerHTML = `<span class="profile-name">${p.playerName}</span><span class="profile-meta">Last visited ${new Date(p.lastPlayed).toLocaleDateString()}</span>`;
+      item.innerHTML = `<span class="profile-name">${escapeHtml(p.playerName)}</span><span class="profile-meta">Last visited ${new Date(p.lastPlayed).toLocaleDateString()}</span>`;
       item.addEventListener('click', async () => {
         await ProfileSystem.selectProfile(p.id);
         await showSaveSelect(p);
@@ -210,7 +219,7 @@ async function showSaveSelect(profile) {
   menuContainer.innerHTML = '';
   const wrapper = document.createElement('div');
   wrapper.className = 'menu-screen save-screen';
-  wrapper.innerHTML = `<div class="menu-bear">🍎</div><h2 class="menu-title">Choose Your Orchard</h2><p class="menu-subtitle">${profile.playerName}'s orchards</p>`;
+  wrapper.innerHTML = `<div class="menu-bear">🍎</div><h2 class="menu-title">Choose Your Orchard</h2><p class="menu-subtitle">${escapeHtml(profile.playerName)}'s orchards</p>`;
 
   const grid = document.createElement('div');
   grid.className = 'save-slot-grid';
@@ -359,6 +368,45 @@ function renderSettings(onBack) {
 
 // ── How to Play ──────────────────────────────────────────────────────────────
 
+// Shared by the tier-unlock ceremony and the "How to Play" guide, so both stay
+// in sync with progression.json automatically instead of drifting apart.
+const UNLOCK_LABELS = {
+  cabin: '🏠 Cider Cabin', distillery: '🫧 Distillery', brewery: '🍻 Brewery',
+  roastery: '☕ Roastery', press: '🍎 Cider Press', fermenter: '🪣 Fermenter',
+  bottling: '🍶 Bottling Station', still: '🫧 Copper Still', barrel: '🛢️ Aging Barrel',
+  brew_kettle: '🍺 Brew Kettle', roaster: '🔥 Roaster', coffee_crop: '🫘 Coffee Crop',
+  hops_crop: '🌾 Hops Crop', coffee_brewer: '☕ Coffee Brewer',
+};
+const RESOURCE_ICONS = {
+  fruit: '🍎', juice: '🧃', cider: '🫗', bottles: '🍾', hops: '🌾',
+  applejack: '🥃', whiskey: '🪣', fruit_beer: '🍺',
+  coffee_bean: '🫘', roasted_coffee: '🤎', cups: '☕',
+};
+const RESOURCE_NAMES = {
+  fruit: 'Apples', juice: 'Juice', cider: 'Cider', bottles: 'Bottles', hops: 'Hops',
+  applejack: 'Applejack', whiskey: 'Whiskey', fruit_beer: 'Fruit Beer',
+  coffee_bean: 'Coffee Beans', roasted_coffee: 'Roasted Coffee', cups: 'Cups',
+};
+
+// Built straight from progression.json so the guide can never drift from the
+// actual unlock conditions — no hardcoded tier numbers to go stale later.
+function buildTierProgressionChapter() {
+  const lines = progressionData.tiers.map(t => {
+    if (t.tier === 0) return `${t.icon} Tier 0 · ${t.name} — ${t.description}`;
+    const condition = Object.entries(t.unlockCondition)
+      .map(([r, n]) => `${n} ${RESOURCE_ICONS[r] ?? ''} ${RESOURCE_NAMES[r] ?? r}`)
+      .join(' & ');
+    const dayText = t.minDay ? ` and Day ${t.minDay}+` : '';
+    const unlocksText = t.unlocks.map(u => UNLOCK_LABELS[u]).filter(Boolean).join(', ') || '—';
+    return `${t.icon} Tier ${t.tier} · ${t.name} — reach ${condition}${dayText} → unlocks ${unlocksText}.`;
+  });
+  return {
+    title: '📈 Tier Progression',
+    lines,
+    tip: "Every tier needs BOTH the resource milestone and the day minimum — so stockpiling early won't skip you ahead. Slow and steady!",
+  };
+}
+
 const HOW_TO_PLAY_CHAPTERS = [
   {
     title: '🌿 Welcome, Friend!',
@@ -379,7 +427,8 @@ const HOW_TO_PLAY_CHAPTERS = [
     title: '🌱 Planting & Growing',
     lines: [
       "Cleared soil is ready for planting. Apple trees cost 1 🍎 to plant and grow into harvestable fruit in about 20 seconds. Timber trees 🌲 are free but take a little longer — they give 4 🪵 when harvested.",
-      "Both tree types auto-replant after each harvest, so once you've got a tile going, it just keeps producing. Nice and cozy.",
+      "Every crop you've unlocked shows up as its own option when you tap Plant — Hops 🌾 join in at Tier 4 and Coffee ☕ at Tier 5, once you've got somewhere to grow them.",
+      "All crop types auto-replant after each harvest, so once you've got a tile going, it just keeps producing. Nice and cozy.",
     ],
     tip: "Water 💧 your seedlings to cut grow time — it's free and takes no resources. Always worth a tap!",
   },
@@ -414,6 +463,7 @@ const HOW_TO_PLAY_CHAPTERS = [
       "Each tier takes time as well as resources — that's intentional. Enjoy the pace! The orchard will tell you when you're ready.",
     ],
   },
+  buildTierProgressionChapter(),
   {
     title: '🛒 The Market',
     lines: [
@@ -425,15 +475,16 @@ const HOW_TO_PLAY_CHAPTERS = [
   {
     title: '🤖 Auto Mode',
     lines: [
-      "See that 🤖 Auto button in the orchard? Turn it on and I'll handle watering, harvesting, composting, and mining automatically. Perfect for when you're focused on crafting or just want a breather.",
+      "Build the Harvest Bell 🔔 in the Cabin and that 🤖 Auto button in the orchard comes alive. Turn it on and I'll handle watering, harvesting, composting, and mining automatically. Perfect for when you're focused on crafting or just want a breather.",
       "You can flip it on and off any time — manual mode is great for micro-managing, Auto is great for keeping things ticking over.",
     ],
+    tip: "Want steady wood without lifting a finger? Build the Woodcutter's Shed 🪓 in the Cabin too — it gathers wood passively, no tapping required.",
   },
   {
     title: '🌾 Expanding the Land',
     lines: [
-      "The starting zone is the center of the grid. As you clear tiles, adjacent locked tiles open up — and as you hit higher tiers, whole new zones unlock automatically.",
-      "Two special zones — the Hop Fields and Coffee Grove — can be purchased directly from the Market once you're far enough along. More land means more tiles, more crops, more coins.",
+      "The starting zone is the center of the grid. As you clear tiles, adjacent locked tiles open up — and as you hit higher tiers, whole new zones unlock automatically. The grid itself keeps growing too, adding fresh frontier every tier so there's always more room.",
+      "Two special zones — the Hop Fields and Coffee Grove — can be purchased directly from the Market once you're far enough along. Once you hit Tier 2, you can also buy an Outpost 🏕️ — pick any locked spot on the grid and claim a 3×3 clearing right there. More land means more tiles, more crops, more coins.",
     ],
     tip: "You're doing great. The orchard grows at its own pace — just keep at it, and I'll be right here cheering you on. 🐻",
   },
@@ -643,23 +694,6 @@ function initGame(saveData, slot) {
   });
 
   const CEREMONY_EMOJIS = ['🍎','🌟','✨','🎉','🌿','🍃','⭐','🥂'];
-  const UNLOCK_LABELS = {
-    cabin: '🏠 Cider Cabin', distillery: '🫧 Distillery', brewery: '🍻 Brewery',
-    roastery: '☕ Roastery', press: '🍎 Cider Press', fermenter: '🪣 Fermenter',
-    bottling: '🍶 Bottling Station', still: '🫧 Copper Still', barrel: '🛢️ Aging Barrel',
-    brew_kettle: '🍺 Brew Kettle', roaster: '🔥 Roaster', coffee_crop: '🫘 Coffee Crop',
-    hops_crop: '🌾 Hops Crop',
-  };
-  const RESOURCE_ICONS = {
-    fruit: '🍎', juice: '🧃', cider: '🫗', bottles: '🍾', hops: '🌾',
-    applejack: '🥃', whiskey: '🪣', fruit_beer: '🍺',
-    coffee_bean: '🫘', roasted_coffee: '🤎', cups: '☕',
-  };
-  const RESOURCE_NAMES = {
-    fruit: 'Apples', juice: 'Juice', cider: 'Cider', bottles: 'Bottles', hops: 'Hops',
-    applejack: 'Applejack', whiskey: 'Whiskey', fruit_beer: 'Fruit Beer',
-    coffee_bean: 'Coffee Beans', roasted_coffee: 'Roasted Coffee', cups: 'Cups',
-  };
 
   const showTierCeremony = (tier, tierDef) => {
     const el         = document.getElementById('tier-ceremony');

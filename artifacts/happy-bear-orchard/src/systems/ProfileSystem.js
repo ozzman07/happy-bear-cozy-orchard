@@ -77,6 +77,11 @@ export const ProfileSystem = {
       _selectedProfile = null;
     }
     writeToStorage(_profiles);
+    // Save data is keyed by profile id (see SaveSystem's STORAGE_PREFIX) — once the
+    // profile is gone that id is unreachable, so clean up now or it lingers forever.
+    for (const slot of ['slot1', 'slot2', 'slot3']) {
+      localStorage.removeItem(`hbco_save_${id}_${slot}`);
+    }
   },
 
   updateSetting(category, key, value) {

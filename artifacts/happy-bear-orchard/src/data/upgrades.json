@@ -177,6 +177,27 @@
       "description": "Another 2× speed boost"
     },
     {
+      "id": "brewer_speed_1",
+      "label": "Finer Grind",
+      "icon": "🌀",
+      "station": "coffee_brewer",
+      "unlockTier": 5,
+      "coinCost": 90,
+      "speedMultiplier": 0.5,
+      "description": "Brew coffee stout 2× faster"
+    },
+    {
+      "id": "brewer_speed_2",
+      "label": "Pressure Brewing",
+      "icon": "♨️",
+      "station": "coffee_brewer",
+      "unlockTier": 5,
+      "requires": "brewer_speed_1",
+      "coinCost": 220,
+      "speedMultiplier": 0.5,
+      "description": "Another 2× speed boost"
+    },
+    {
       "id": "auto_press",
       "type": "automation",
       "label": "Self-Loading Press",
@@ -204,7 +225,7 @@
       "station": "bottling",
       "unlockTier": 2,
       "coinCost": 160,
-      "description": "Automatically starts one bottling cycle whenever the station is idle and juice is ready"
+      "description": "Automatically starts one bottling cycle whenever the station is idle and cider is ready"
     },
     {
       "id": "auto_still",

@@ -9,7 +9,7 @@ export class ResourceManager {
       wood:           5,
       stone:          3,
       fruit:          2,
-      bottles:        3,
+      bottles:        0,
       juice:          0,
       cider:          0,
       hops:           0,
