@@ -2,5 +2,6 @@ node_modules
 dist
 .DS_Store
 
-# Runtime data files written by the app at runtime
-data/
+# Runtime data files written by the app at runtime (root-level only —
+# not src/data/, which holds the game's actual design-time JSON content)
+/data/

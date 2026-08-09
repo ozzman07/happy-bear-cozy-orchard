@@ -6,6 +6,7 @@
 import { TICKS_PER_DAY, GAME_TICK_MS, GRID_SIZE, GRID_GROWTH_PER_TIER } from './src/constants.js';
 import { ResourceManager }   from './src/systems/resources.js';
 import { QuestSystem }       from './src/systems/QuestSystem.js';
+import { AchievementSystem } from './src/systems/AchievementSystem.js';
 import { TileGrid }          from './src/systems/tiles.js';
 import { CropSystem }        from './src/systems/crops.js';
 import { CraftingSystem }    from './src/systems/crafting.js';
@@ -575,7 +576,8 @@ function initGame(saveData, slot) {
 
   const crafting     = new CraftingSystem(resources, gameState);
   const progression  = new ProgressionSystem(gameState, resources);
-  const gameStats = { harvests: 0, crafts: 0, itemsSold: 0, upgradesBought: 0 };
+  const gameStats = { harvests: 0, crafts: 0, itemsSold: 0, upgradesBought: 0, outpostsPurchased: 0 };
+  const achievements = new AchievementSystem();
 
   const hud      = new HUD();
   const statusEl = document.getElementById('status-msg');
@@ -692,6 +694,89 @@ function initGame(saveData, slot) {
   document.getElementById('stats-modal')?.addEventListener('click', e => {
     if (e.target === document.getElementById('stats-modal')) hideStats();
   });
+
+  // ── Achievements ─────────────────────────────────────────────────────────────
+  let unseenAchievements = 0;
+
+  const syncAchievementsBadge = () => {
+    const badge = document.getElementById('achievements-badge');
+    if (badge) badge.classList.toggle('hidden', unseenAchievements === 0);
+  };
+
+  const renderAchievements = () => {
+    const grid = document.getElementById('achievements-grid');
+    const subtitle = document.getElementById('achievements-subtitle');
+    if (!grid) return;
+    const all = achievements.getAll();
+    if (subtitle) subtitle.textContent = `${achievements.unlockedCount} / ${achievements.totalCount} unlocked`;
+    grid.innerHTML = all.map(a => `
+      <div class="achievement-card${a.unlocked ? ' achievement-unlocked' : ' achievement-locked'}">
+        <div class="achievement-icon">${a.unlocked ? a.icon : '🔒'}</div>
+        <div class="achievement-info">
+          <div class="achievement-label">${a.label}</div>
+          <div class="achievement-desc">${a.description}</div>
+        </div>
+      </div>`).join('');
+  };
+
+  const showAchievements = () => {
+    renderAchievements();
+    document.getElementById('achievements-modal')?.classList.remove('hidden');
+    unseenAchievements = 0;
+    syncAchievementsBadge();
+  };
+  const hideAchievements = () => document.getElementById('achievements-modal')?.classList.add('hidden');
+
+  document.getElementById('achievements-btn')?.addEventListener('click', showAchievements);
+  document.getElementById('achievements-close')?.addEventListener('click', e => { e.stopPropagation(); hideAchievements(); });
+  document.getElementById('achievements-modal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('achievements-modal')) hideAchievements();
+  });
+
+  // Toast queue — shows newly-unlocked achievements one at a time
+  let _achievementToastQueue = [];
+  let _achievementToastBusy  = false;
+
+  const _processAchievementToastQueue = () => {
+    const next = _achievementToastQueue.shift();
+    if (!next) { _achievementToastBusy = false; return; }
+    _achievementToastBusy = true;
+    const toast = document.getElementById('achievement-toast');
+    if (toast) {
+      toast.querySelector('.achievement-toast-icon').textContent  = next.icon;
+      toast.querySelector('.achievement-toast-label').textContent = next.label;
+      toast.classList.remove('hidden');
+      toast.classList.add('achievement-toast-visible');
+    }
+    audio.questClaim();
+    setTimeout(() => {
+      toast?.classList.remove('achievement-toast-visible');
+      setTimeout(() => {
+        toast?.classList.add('hidden');
+        _processAchievementToastQueue();
+      }, 500);
+    }, 3200);
+  };
+
+  const queueAchievementToasts = (list) => {
+    _achievementToastQueue.push(...list);
+    unseenAchievements += list.length;
+    syncAchievementsBadge();
+    if (!_achievementToastBusy) _processAchievementToastQueue();
+  };
+
+  /** Evaluate all achievement conditions against current game state; toast any newly-unlocked ones. */
+  const runAchievementCheck = () => {
+    const list = achievements.check({
+      tier: gameState.tier,
+      day: gameState.day,
+      stats: gameStats,
+      totalEarned: storeSystem.totalEarned,
+      firstCrafts: gameState.firstCrafts,
+      isOperational: id => construction.isOperational(id),
+    });
+    if (list.length) queueAchievementToasts(list);
+  };
 
   const CEREMONY_EMOJIS = ['🍎','🌟','✨','🎉','🌿','🍃','⭐','🥂'];
 
@@ -815,6 +900,9 @@ function initGame(saveData, slot) {
       } else {
         setStatus('Action complete! Keep going 🌿');
       }
+      // Run after gameStats updates above, not just via resources.onChange, which
+      // would otherwise fire mid-handler before e.g. gameStats.harvests++ runs.
+      runAchievementCheck();
     } else {
       setStatus('⚠ ' + result.message);
       bearSpeak(result.message);
@@ -859,9 +947,13 @@ function initGame(saveData, slot) {
       showZoneBanner(evt.zone);
     }
     if (evt.type === 'outpost_purchased') {
+      gameStats.outpostsPurchased++;
       scenes.switchTo('orchard');
       orchard.enterOutpostPlacement();
     }
+    // Run after the gameStats/totalEarned updates above — resources.onChange fires
+    // mid-sell(), before StoreSystem finishes updating totalEarned for this event.
+    runAchievementCheck();
   });
 
   marketSystem.onChange(evt => {
@@ -1044,6 +1136,7 @@ function initGame(saveData, slot) {
     bearSpeak(BearDialogue.craftComplete(evt.recipeId, isFirst));
     bearBounce();
     setStatus('Crafting complete!');
+    runAchievementCheck();
     const craftScene = STATION_SCENE[evt.stationId];
     if (craftScene) scenes.setBadge(craftScene, '✓');
     scenes.setBadge('store', '🛒');
@@ -1065,6 +1158,7 @@ function initGame(saveData, slot) {
     applyUnlocks(tier);
     gameState.tier = tier;
     crafting.setTier(tier);
+    runAchievementCheck();
     const tierDef = progressionData.tiers[tier];
     for (const u of tierDef?.unlocks ?? []) {
       const seed = CROP_SEED_STARTER[u];
@@ -1090,6 +1184,7 @@ function initGame(saveData, slot) {
       bearSpeak("The market's open! Take your bottles down and see what they fetch. I think we've earned it.");
       setStatus('🛒 Happy Bear Market unlocked — sell your cider!');
     }
+    runAchievementCheck();
   });
 
   let tickCount = 0;
@@ -1134,6 +1229,7 @@ function initGame(saveData, slot) {
           bearBounce();
           bearSpeak(`🌳 Auto-collected ${harvested} crop${harvested > 1 ? 's' : ''}!`);
           setStatus(`Auto-harvest: ${harvested} crop${harvested > 1 ? 's' : ''} collected. 🌳`);
+          runAchievementCheck();
         }
       }, 800);
     } else if (ripened) {
@@ -1153,6 +1249,7 @@ function initGame(saveData, slot) {
       bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
       setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);
       scenes.onNewDay(gameState.day);
+      runAchievementCheck();
       autoSave();
     }
   }, GAME_TICK_MS);
@@ -1206,6 +1303,9 @@ function initGame(saveData, slot) {
   // Check for tier unlocks that should fire immediately after save restore
   progression.checkDay();
   if (!sys) questSystem.rollQuests(gameState.tier);
+  // Retroactively credit any achievements this save already qualifies for
+  // (e.g. loading an existing Tier 5 save after this feature ships).
+  runAchievementCheck();
 
   // ── Autosave helpers ──────────────────────────────────────────────────────
   function buildSnapshot() {

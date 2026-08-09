@@ -30,6 +30,7 @@
       <div id="tier-badge"></div>
       <div id="day-counter">Day <span id="day-num">1</span></div>
       <button id="quests-btn" title="Daily Quests">📋<span id="quests-badge" class="hud-badge hidden"></span></button>
+      <button id="achievements-btn" title="Achievements">🏆<span id="achievements-badge" class="hud-badge hidden"></span></button>
       <button id="stats-btn" title="Statistics">📊</button>
     </div>
   </header>
@@ -54,6 +55,27 @@
         <button id="stats-close">✕</button>
       </div>
       <div id="stats-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══ Achievements modal ══════════════════════════════════════════════ -->
+  <div id="achievements-modal" class="hidden">
+    <div id="achievements-card">
+      <div id="achievements-header">
+        <span id="achievements-title">🏆 Achievements</span>
+        <button id="achievements-close">✕</button>
+      </div>
+      <div id="achievements-subtitle"></div>
+      <div id="achievements-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══ Achievement unlock toast ════════════════════════════════════════ -->
+  <div id="achievement-toast" class="hidden">
+    <span class="achievement-toast-icon"></span>
+    <div class="achievement-toast-text">
+      <div class="achievement-toast-heading">Achievement Unlocked!</div>
+      <div class="achievement-toast-label"></div>
     </div>
   </div>
 

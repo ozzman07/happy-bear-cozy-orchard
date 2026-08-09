@@ -280,6 +280,21 @@ body {
 }
 #stats-btn:hover { background: rgba(200,134,58,0.25); border-color: var(--color-accent); }
 
+#achievements-btn {
+  position: relative;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  padding: 0;
+}
+#achievements-btn:hover { background: rgba(200,134,58,0.25); border-color: var(--color-accent); }
+
 /* ═══════════════════════════════════════════
    SCENE NAV BAR
 ═══════════════════════════════════════════ */
@@ -1327,6 +1342,31 @@ body {
 }
 .btn-automation:hover:not(:disabled) { background: rgba(100,200,255,0.3); }
 .btn-automation:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-automation-toggle {
+  background: rgba(100,200,100,0.15);
+  border: 1px solid rgba(100,200,100,0.4);
+  color: #80d080;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btn-automation-toggle:hover { background: rgba(100,200,100,0.3); }
+.btn-automation-toggle.btn-automation-paused {
+  background: rgba(255,180,80,0.15);
+  border-color: rgba(255,180,80,0.4);
+  color: #ffb450;
+}
+.btn-automation-toggle.btn-automation-paused:hover { background: rgba(255,180,80,0.3); }
+
+.upgrade-card.upgrade-card-paused {
+  background: rgba(255,180,80,0.06);
+  border-color: rgba(255,180,80,0.3);
+}
 .upgrade-card {
   display: flex;
   align-items: center;
@@ -1801,6 +1841,138 @@ body {
   color: var(--color-text-dim);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+/* ═══════════════════════════════════════════
+   ACHIEVEMENTS MODAL
+═══════════════════════════════════════════ */
+#achievements-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,6,2,0.75);
+  backdrop-filter: blur(3px);
+}
+
+#achievements-card {
+  background: linear-gradient(160deg, #2a1c0e 0%, #1a1006 100%);
+  border: 2px solid #5c3d1a;
+  border-radius: 18px;
+  width: 92%;
+  max-width: 440px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  animation: ceremony-rise 0.3s cubic-bezier(0.34,1.4,0.64,1) forwards;
+}
+
+#achievements-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 10px;
+}
+
+#achievements-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+#achievements-close {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  color: var(--color-text-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+#achievements-close:hover { background: rgba(255,80,60,0.25); border-color: #ff5040; color: #fff; }
+
+#achievements-subtitle {
+  padding: 0 20px 14px;
+  font-size: 0.74rem;
+  color: var(--color-text-dim);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+#achievements-grid {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.achievement-card.achievement-unlocked {
+  border-color: rgba(200,134,58,0.4);
+  background: rgba(200,134,58,0.08);
+}
+.achievement-card.achievement-locked { opacity: 0.55; }
+
+.achievement-icon { font-size: 1.5rem; flex-shrink: 0; width: 1.6em; text-align: center; }
+.achievement-info  { flex: 1; min-width: 0; }
+.achievement-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.achievement-card.achievement-unlocked .achievement-label { color: #e8c07a; }
+.achievement-desc {
+  font-size: 0.72rem;
+  color: var(--color-text-dim);
+  margin-top: 2px;
+}
+
+/* ── Achievement unlock toast ── */
+#achievement-toast {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  z-index: 300;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(160deg, #2a1c0e 0%, #1a1006 100%);
+  border: 2px solid #c8863a;
+  border-radius: 14px;
+  padding: 12px 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+#achievement-toast.achievement-toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.achievement-toast-icon { font-size: 1.8rem; }
+.achievement-toast-heading {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+.achievement-toast-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
 }
 
 /* ── Confetti particles ── */

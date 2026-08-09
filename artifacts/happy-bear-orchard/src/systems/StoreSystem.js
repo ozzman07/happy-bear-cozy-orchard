@@ -10,6 +10,7 @@ export class StoreSystem {
     this._listeners        = [];
     this._totalEarned      = 0;
     this._purchased        = new Set();   // upgrade ids
+    this._pausedAutomation = new Set();   // automation upgrade ids currently paused
     this._priceMultiplier  = 1.0;
   }
 
@@ -130,10 +131,26 @@ export class StoreSystem {
     return upgradesData.upgrades.filter(u => u.type === 'automation' && u.unlockTier > tier);
   }
 
-  /** True if the automation upgrade for a station has been purchased. */
+  /** True if the automation upgrade for a station is purchased AND not paused. */
   isAutomated(stationId) {
     const upg = upgradesData.upgrades.find(u => u.type === 'automation' && u.station === stationId);
-    return upg ? this._purchased.has(upg.id) : false;
+    return upg ? (this._purchased.has(upg.id) && !this._pausedAutomation.has(upg.id)) : false;
+  }
+
+  isAutomationPaused(id) { return this._pausedAutomation.has(id); }
+
+  /**
+   * Pause or resume a purchased automation upgrade — doesn't un-purchase it, just
+   * stops it from auto-restarting its station so the player can take manual control
+   * (e.g. to stop Bottling from claiming cider the player wants to send to the Still).
+   */
+  toggleAutomation(id) {
+    if (!this._purchased.has(id)) return { success: false, message: 'Not purchased yet.' };
+    const paused = this._pausedAutomation.has(id);
+    if (paused) this._pausedAutomation.delete(id);
+    else        this._pausedAutomation.add(id);
+    this._notify({ type: 'automation_toggled', id, paused: !paused });
+    return { success: true, paused: !paused };
   }
 
   /** Look up an upgrade's label by id. */
@@ -157,14 +174,21 @@ export class StoreSystem {
 
   // ── Persistence ────────────────────────────────────────────────────────────
 
-  snapshot() { return { purchased: [...this._purchased], totalEarned: this._totalEarned }; }
+  snapshot() {
+    return {
+      purchased:        [...this._purchased],
+      pausedAutomation: [...this._pausedAutomation],
+      totalEarned:      this._totalEarned,
+    };
+  }
 
   restore(data) {
     if (!data) return;
     // support old saves that stored a plain array
     const arr = Array.isArray(data) ? data : (data.purchased ?? []);
-    this._purchased   = new Set(arr);
-    this._totalEarned = data.totalEarned ?? 0;
+    this._purchased        = new Set(arr);
+    this._pausedAutomation = new Set(data.pausedAutomation ?? []);
+    this._totalEarned      = data.totalEarned ?? 0;
   }
 
   onChange(fn) { this._listeners.push(fn); }

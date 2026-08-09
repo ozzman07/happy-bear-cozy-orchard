@@ -397,11 +397,12 @@ export class StoreScene {
 
     for (const upg of available) {
       const bought    = this._store.isPurchased(upg.id);
+      const paused    = bought && this._store.isAutomationPaused(upg.id);
       const canAfford = coins >= upg.coinCost;
       const card      = document.createElement('div');
-      card.className  = `upgrade-card${bought ? ' upgrade-card-owned' : ''}`;
+      card.className  = `upgrade-card${bought ? ' upgrade-card-owned' : ''}${paused ? ' upgrade-card-paused' : ''}`;
       card.innerHTML  = `
-        <div class="upgrade-card-icon">${bought ? '✅' : upg.icon}</div>
+        <div class="upgrade-card-icon">${bought ? (paused ? '⏸️' : '✅') : upg.icon}</div>
         <div class="upgrade-card-info">
           <div class="upgrade-card-name">${upg.label}</div>
           <div class="upgrade-card-desc">${upg.description}</div>
@@ -409,7 +410,9 @@ export class StoreScene {
         </div>
         <div class="upgrade-card-action">
           ${bought
-            ? '<span class="upgrade-owned-badge">✓ Active</span>'
+            ? `<button class="btn-automation-toggle${paused ? ' btn-automation-paused' : ''}" data-id="${upg.id}">
+                ${paused ? '▶ Resume' : '⏸ Pause'}
+              </button>`
             : `<button class="btn-automation" data-id="${upg.id}" ${!canAfford ? 'disabled' : ''}>
                 ${!canAfford ? `Need ${upg.coinCost - coins} more 🪙` : 'Buy'}
               </button>`}
@@ -436,6 +439,9 @@ export class StoreScene {
     container.querySelectorAll('.btn-automation').forEach(btn => {
       btn.addEventListener('click', () => this._doBuy(btn.dataset.id));
     });
+    container.querySelectorAll('.btn-automation-toggle').forEach(btn => {
+      btn.addEventListener('click', () => this._doToggleAutomation(btn.dataset.id));
+    });
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────────
@@ -458,6 +464,19 @@ export class StoreScene {
       this._setStatus(result.message);
     } else {
       this._setStatus('⚠ ' + result.message);
+    }
+  }
+
+  _doToggleAutomation(id) {
+    const result = this._store.toggleAutomation(id);
+    if (!result.success) { this._setStatus('⚠ ' + result.message); return; }
+    const label = this._store.getUpgradeLabel(id);
+    if (result.paused) {
+      this._bearSpeak?.(`⏸ ${label} paused — back to manual on that one until you resume it.`);
+      this._setStatus(`${label} paused.`);
+    } else {
+      this._bearSpeak?.(`▶ ${label} is back to automatic.`);
+      this._setStatus(`${label} resumed.`);
     }
   }
 
