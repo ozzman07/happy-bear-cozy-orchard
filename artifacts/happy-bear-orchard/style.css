@@ -352,7 +352,7 @@ body {
 ═══════════════════════════════════════════ */
 #game-area { flex: 1; display: flex; position: relative; overflow: hidden; }
 
-.scene { display: none; flex: 1; width: 100%; animation: scene-fade-in 0.22s ease; }
+.scene { display: none; flex: 1; width: 100%; min-width: 0; animation: scene-fade-in 0.22s ease; }
 .scene-active { display: flex; }
 .scene-leaving { display: flex !important; animation: scene-fade-out 0.22s ease forwards; pointer-events: none; }
 
@@ -367,7 +367,7 @@ body {
 
 /* ─── Orchard Scene ──────────────────────────────────── */
 #scene-orchard { flex-direction: row; align-items: center; justify-content: center; gap: 20px; padding: 16px; }
-#orchard-container { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 100%; overflow-x: auto; }
+#orchard-container { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 100%; min-width: 0; overflow-x: auto; }
 #orchard-toolbar   { display: flex; gap: 8px; }
 .orchard-auto-btn {
   background: rgba(255,255,255,0.08); color: var(--color-text-dim);
@@ -435,6 +435,16 @@ body {
 @keyframes pulse-rotted {
   0%,100% { filter: brightness(0.9) sepia(0.4); }
   50%     { filter: brightness(1.1) sepia(0.7) drop-shadow(0 0 5px #884400); }
+}
+
+.tile-grow-target {
+  opacity: 1;
+  box-shadow: inset 0 0 0 3px #5ad1ff, 0 0 8px 2px rgba(90,209,255,0.6);
+  animation: pulse-grow-target 1.2s ease-in-out infinite;
+}
+@keyframes pulse-grow-target {
+  0%,100% { filter: brightness(1); }
+  50%     { filter: brightness(1.3) drop-shadow(0 0 6px #5ad1ff); }
 }
 
 .tile.growing::after {

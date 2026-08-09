@@ -1,5 +1,7 @@
 export const GRID_SIZE = 10;
 export const GRID_GROWTH_PER_TIER = 2; // extra rows+cols of fresh frontier added each tier milestone
+export const OUTPOST_GROWTH_AMOUNT = 3; // fresh rows/cols added to one edge per outpost purchase
+export const MAX_GRID_DIMENSION = 30;   // safety cap so the board can't grow without bound
 
 export const TILE_STATE = {
   LOCKED:      'locked',

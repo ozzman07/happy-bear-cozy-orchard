@@ -108,7 +108,7 @@ export class StoreSystem {
     }
     this._res.spend({ coins: def.coinCost });
     this._notify({ type: 'outpost_purchased', def });
-    return { success: true, message: `${def.icon} Outpost purchased — tap a locked tile in the Orchard to place it!` };
+    return { success: true, message: `${def.icon} Outpost purchased — tap the right or bottom edge of the grid to grow the Orchard!` };
   }
 
   /** Return all equipment upgrades visible at the given tier. */

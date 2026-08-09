@@ -1,7 +1,7 @@
 /**
  * OrchardScene — renders and manages the 10×10 tile grid.
  */
-import { TILE_STATE, TILE_TYPE, TILE_VISUAL, CROP_VISUAL, ROT_TICKS_NEEDED } from '../constants.js';
+import { TILE_STATE, TILE_TYPE, TILE_VISUAL, CROP_VISUAL, ROT_TICKS_NEEDED, OUTPOST_GROWTH_AMOUNT } from '../constants.js';
 import { BearDialogue } from '../systems/BearDialogue.js';
 
 
@@ -21,41 +21,52 @@ export class OrchardScene {
     this._placingOutpost = false;
   }
 
-  /** Enter outpost-placement mode — the next tile tap attempts to place a 3×3 outpost there. */
+  /** Enter outpost-placement mode — the next tap on the right or bottom edge grows the board that way. */
   enterOutpostPlacement() {
     this._placingOutpost = true;
     document.getElementById('outpost-cancel-btn')?.classList.remove('hidden');
-    this.setStatus('🏕️ Tap a locked tile to place your new outpost (3×3, away from the edge and forest dividers).');
+    this.setStatus('🏕️ Tap a glowing tile along the right or bottom edge to grow the orchard that way.');
+    this._updateAllTiles(this._grid.tiles); // re-render to show the glowing edge highlight
   }
 
   cancelOutpostPlacement() {
     this._placingOutpost = false;
     document.getElementById('outpost-cancel-btn')?.classList.add('hidden');
+    this._updateAllTiles(this._grid.tiles); // re-render to clear the glowing edge highlight
   }
 
   _attemptOutpostPlacement(x, y) {
-    if (this._grid.placeOutpost(x, y)) {
-      this.cancelOutpostPlacement();
-      this.setStatus('🏕️ Outpost placed! New tiles ready to clear.');
-      this.bearSpeak('🏕️ New outpost claimed! Clear it out and start planting.');
-    } else {
-      this.setStatus("⚠ Can't place an outpost there — needs a full 3×3 of locked tiles, away from the edge and forest dividers. Try another spot.");
+    const onRightEdge  = x === this._grid.cols - 1;
+    const onBottomEdge = y === this._grid.rows - 1;
+    if (!onRightEdge && !onBottomEdge) {
+      this.setStatus('⚠ Tap a glowing tile along the right or bottom edge to grow the orchard that way.');
+      return;
     }
+    const grewRight  = onRightEdge  && this._grid.growRight(OUTPOST_GROWTH_AMOUNT);
+    const grewBottom = onBottomEdge && this._grid.growBottom(OUTPOST_GROWTH_AMOUNT);
+    if (!grewRight && !grewBottom) {
+      this.setStatus("⚠ The orchard can't grow any further that way — try the other edge.");
+      return;
+    }
+    this.cancelOutpostPlacement();
+    const dir = grewRight && grewBottom ? 'east and south' : grewRight ? 'east' : 'south';
+    this.setStatus(`🏕️ New outpost built — the orchard grows ${dir}!`);
+    this.bearSpeak('🏕️ The land stretches further! More room to grow.');
   }
 
-  /** (Re)build the grid DOM to match the current TileGrid size. */
+  /** (Re)build the grid DOM to match the current TileGrid dimensions. */
   _buildGrid() {
     const gridEl = document.getElementById('grid');
     if (!gridEl) return;
-    const size = this._grid.size;
-    gridEl.style.gridTemplateColumns = `repeat(${size}, var(--tile-size))`;
-    gridEl.style.gridTemplateRows    = `repeat(${size}, var(--tile-size))`;
+    const { cols, rows } = this._grid;
+    gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--tile-size))`;
+    gridEl.style.gridTemplateRows    = `repeat(${rows}, var(--tile-size))`;
     gridEl.innerHTML = '';
     this._tileEls    = [];
 
-    for (let y = 0; y < size; y++) {
+    for (let y = 0; y < rows; y++) {
       this._tileEls[y] = [];
-      for (let x = 0; x < size; x++) {
+      for (let x = 0; x < cols; x++) {
         const el       = document.createElement('div');
         el.className   = 'tile';
         el.dataset.x   = x;
@@ -105,8 +116,8 @@ export class OrchardScene {
 
     // Poll every second to keep mining progress and grow bars live
     setInterval(() => {
-      for (let y = 0; y < this._grid.size; y++)
-        for (let x = 0; x < this._grid.size; x++) {
+      for (let y = 0; y < this._grid.rows; y++)
+        for (let x = 0; x < this._grid.cols; x++) {
           const t = this._grid.tiles[y]?.[x];
           if (t?.state === TILE_STATE.MINING || t?.state === TILE_STATE.PLANTED)
             this._renderTile(t, this._tileEls[y]?.[x]);
@@ -220,6 +231,12 @@ export class OrchardScene {
       el.style.setProperty('--mine-pct', pct + '%');
     } else {
       el.style.removeProperty('--mine-pct');
+    }
+
+    // While placing an outpost, glow every tile along the right/bottom edge —
+    // those are the only taps that grow the board.
+    if (this._placingOutpost && (tile.x === this._grid.cols - 1 || tile.y === this._grid.rows - 1)) {
+      el.classList.add('tile-grow-target');
     }
   }
 

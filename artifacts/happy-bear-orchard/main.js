@@ -485,7 +485,7 @@ const HOW_TO_PLAY_CHAPTERS = [
     title: '🌾 Expanding the Land',
     lines: [
       "The starting zone is the center of the grid. As you clear tiles, adjacent locked tiles open up — and as you hit higher tiers, whole new zones unlock automatically. The grid itself keeps growing too, adding fresh frontier every tier so there's always more room.",
-      "Two special zones — the Hop Fields and Coffee Grove — can be purchased directly from the Market once you're far enough along. Once you hit Tier 2, you can also buy an Outpost 🏕️ — pick any locked spot on the grid and claim a 3×3 clearing right there. More land means more tiles, more crops, more coins.",
+      "Two special zones — the Hop Fields and Coffee Grove — can be purchased directly from the Market once you're far enough along. Once you hit Tier 2, you can also buy an Outpost 🏕️ — then tap a glowing tile along the right or bottom edge of the grid to extend the board that way. Unlike the automatic tier growth, this one's repeatable any time you want more room. More land means more tiles, more crops, more coins.",
     ],
     tip: "You're doing great. The orchard grows at its own pace — just keep at it, and I'll be right here cheering you on. 🐻",
   },
@@ -1268,6 +1268,14 @@ function initGame(saveData, slot) {
   const sys = saveData?.systems;
   if (sys) {
     resources.restore(sys.resources);
+    // Outpost growth can leave the board asymmetric (e.g. grown right more than down),
+    // so make sure the live grid is at least as big as what was saved before restoring
+    // tile state into it — otherwise tiles past the tier-based baseline size are dropped.
+    if (sys.tiles?.length) {
+      tileGrid.growBottom(sys.tiles.length - tileGrid.rows);
+      const savedCols = Math.max(0, ...sys.tiles.map(row => row?.length ?? 0));
+      tileGrid.growRight(savedCols - tileGrid.cols);
+    }
     tileGrid.restore(sys.tiles);
     construction.restore(sys.construction);
     crafting.restore(sys.crafting ?? null);

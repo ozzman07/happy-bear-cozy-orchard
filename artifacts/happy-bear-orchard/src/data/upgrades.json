@@ -25,7 +25,7 @@
       "type": "outpost",
       "label": "New Outpost",
       "icon": "🏕️",
-      "description": "Drop a new 3×3 clearable outpost anywhere on the locked grid — you choose where",
+      "description": "Grow the orchard's boundary — tap the right or bottom edge to extend the board that way",
       "unlockTier": 2,
       "coinCost": 200
     },
