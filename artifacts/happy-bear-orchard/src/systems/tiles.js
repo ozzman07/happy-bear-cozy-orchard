@@ -90,9 +90,9 @@ export class TileGrid {
   }
 
   /**
-   * Grow the board outward by `amount` fresh LOCKED columns on the right edge.
-   * Existing coordinates never shift, so saves stay valid. Returns false if
-   * already at MAX_GRID_DIMENSION (no-op) or amount <= 0.
+   * Grow the board outward by `amount` fresh CLEARABLE columns on the right edge,
+   * immediately available to develop. Existing coordinates never shift, so saves
+   * stay valid. Returns false if already at MAX_GRID_DIMENSION (no-op) or amount <= 0.
    */
   growRight(amount) {
     if (amount <= 0 || this.cols >= MAX_GRID_DIMENSION) return false;
@@ -100,28 +100,19 @@ export class TileGrid {
     const newCols = Math.min(this.cols + amount, MAX_GRID_DIMENSION);
     for (let y = 0; y < this.rows; y++) {
       for (let x = oldCols; x < newCols; x++) {
-        this.tiles[y][x] = new Tile(x, y, TILE_STATE.LOCKED);
+        this.tiles[y][x] = new Tile(x, y, TILE_STATE.CLEARABLE);
       }
     }
     this.cols = newCols;
-    // The new column bordering already-developed ground opens immediately —
-    // the rest of the fresh land unlocks progressively via adjacency as usual.
-    for (let y = 0; y < this.rows; y++) {
-      const border = this.tiles[y][oldCols - 1];
-      const fresh   = this.tiles[y][oldCols];
-      if (border && fresh && border.state !== TILE_STATE.LOCKED && !fresh.permanent) {
-        fresh.state = TILE_STATE.CLEARABLE;
-      }
-    }
     this._resizeListeners.forEach(fn => fn());
     this._notify();
     return true;
   }
 
   /**
-   * Grow the board outward by `amount` fresh LOCKED rows on the bottom edge.
-   * Existing coordinates never shift, so saves stay valid. Returns false if
-   * already at MAX_GRID_DIMENSION (no-op) or amount <= 0.
+   * Grow the board outward by `amount` fresh CLEARABLE rows on the bottom edge,
+   * immediately available to develop. Existing coordinates never shift, so saves
+   * stay valid. Returns false if already at MAX_GRID_DIMENSION (no-op) or amount <= 0.
    */
   growBottom(amount) {
     if (amount <= 0 || this.rows >= MAX_GRID_DIMENSION) return false;
@@ -130,19 +121,10 @@ export class TileGrid {
     for (let y = oldRows; y < newRows; y++) {
       this.tiles[y] = [];
       for (let x = 0; x < this.cols; x++) {
-        this.tiles[y][x] = new Tile(x, y, TILE_STATE.LOCKED);
+        this.tiles[y][x] = new Tile(x, y, TILE_STATE.CLEARABLE);
       }
     }
     this.rows = newRows;
-    // The new row bordering already-developed ground opens immediately —
-    // the rest of the fresh land unlocks progressively via adjacency as usual.
-    for (let x = 0; x < this.cols; x++) {
-      const border = this.tiles[oldRows - 1][x];
-      const fresh   = this.tiles[oldRows][x];
-      if (border && fresh && border.state !== TILE_STATE.LOCKED && !fresh.permanent) {
-        fresh.state = TILE_STATE.CLEARABLE;
-      }
-    }
     this._resizeListeners.forEach(fn => fn());
     this._notify();
     return true;
@@ -181,6 +163,7 @@ export class TileGrid {
   }
 
   canPerformAction(tile, action) {
+    if (action === ACTION.UNLOCK && tile.permanent) return false;
     return ACTION_VALID_STATES[action]?.includes(tile.state) ?? false;
   }
 
@@ -244,6 +227,11 @@ export class TileGrid {
         tile.state        = TILE_STATE.MINING;
         tile.miningStart  = Date.now();
         tile.miningEnd    = Date.now() + MINE_SECS * 1000;
+        break;
+      case ACTION.UNLOCK:
+        // Pay-to-skip: bypasses zone/tier gating entirely, unlike _unlockNeighbors
+        // which only ever fires as a side effect of clearing an adjacent tile.
+        tile.state = TILE_STATE.CLEARABLE;
         break;
     }
 

@@ -2,6 +2,9 @@ export const GRID_SIZE = 10;
 export const GRID_GROWTH_PER_TIER = 2; // extra rows+cols of fresh frontier added each tier milestone
 export const OUTPOST_GROWTH_AMOUNT = 3; // fresh rows/cols added to one edge per outpost purchase
 export const MAX_GRID_DIMENSION = 30;   // safety cap so the board can't grow without bound
+export const UNLOCK_TILE_COST = 40;     // coins to unlock one locked tile early, bypassing tier/zone gates —
+                                         // priced above every zone's per-tile price (Hop Fields ~17.5, Coffee
+                                         // Grove 35) so buying a whole zone/outpost always stays the better deal
 
 export const TILE_STATE = {
   LOCKED:      'locked',
@@ -28,6 +31,7 @@ export const ACTION = {
   HARVEST:     'harvest',
   MINE:        'mine',
   COMPOST:     'compost',
+  UNLOCK:      'unlock',
 };
 
 export const RESOURCE = {
@@ -54,6 +58,7 @@ export const ACTION_COSTS = {
   [ACTION.HARVEST]:    {},
   [ACTION.MINE]:       {},
   [ACTION.COMPOST]:    {},
+  [ACTION.UNLOCK]:     { coins: UNLOCK_TILE_COST },
 };
 
 export const ACTION_YIELDS = {
@@ -64,6 +69,7 @@ export const ACTION_YIELDS = {
   [ACTION.HARVEST]:    { [RESOURCE.FRUIT]: 3 },  // overridden in tiles.js per crop
   [ACTION.MINE]:       {},   // stone awarded after MINE_SECS delay, not immediately
   [ACTION.COMPOST]:    {},   // rotted apple lost — no yield
+  [ACTION.UNLOCK]:     {},
 };
 
 export const MINE_SECS   = 15;
@@ -77,10 +83,11 @@ export const ACTION_VALID_STATES = {
   [ACTION.HARVEST]:    [TILE_STATE.HARVESTABLE],
   [ACTION.MINE]:       [TILE_STATE.CLEARED, TILE_STATE.MINE_SHAFT],
   [ACTION.COMPOST]:    [TILE_STATE.ROTTED],
+  [ACTION.UNLOCK]:     [TILE_STATE.LOCKED],
 };
 
 export const TILE_VISUAL = {
-  [TILE_STATE.LOCKED]:      { emoji: '🔒', color: '#4a3728', label: 'Locked — clear a neighbour first' },
+  [TILE_STATE.LOCKED]:      { emoji: '🔒', color: '#4a3728', label: 'Locked — clear a neighbour first, or unlock early for coins' },
   [TILE_STATE.CLEARABLE]:   {
     [TILE_TYPE.GRASS]: { emoji: '🌿', color: '#2e5e30', label: 'Overgrown grass — clear for wood!' },
     [TILE_TYPE.ROCK]:  { emoji: '🪨', color: '#6b6b6b', label: 'Rocky outcrop — dig for stone!' },

@@ -486,6 +486,7 @@ const HOW_TO_PLAY_CHAPTERS = [
     lines: [
       "The starting zone is the center of the grid. As you clear tiles, adjacent locked tiles open up — and as you hit higher tiers, whole new zones unlock automatically. The grid itself keeps growing too, adding fresh frontier every tier so there's always more room.",
       "Two special zones — the Hop Fields and Coffee Grove — can be purchased directly from the Market once you're far enough along. Once you hit Tier 2, you can also buy an Outpost 🏕️ — then tap a glowing tile along the right or bottom edge of the grid to extend the board that way. Unlike the automatic tier growth, this one's repeatable any time you want more room. More land means more tiles, more crops, more coins.",
+      "In a hurry for one particular tile? Tap any locked tile and choose Unlock Early to open just that one for coins — skips waiting on tiers or zone purchases entirely. It costs more per tile than buying the whole zone or an Outpost, so it's best saved for the one spot you really want now.",
     ],
     tip: "You're doing great. The orchard grows at its own pace — just keep at it, and I'll be right here cheering you on. 🐻",
   },
@@ -897,6 +898,9 @@ function initGame(saveData, slot) {
       } else if (action === 'clear' && (tile.state === 'planted' || tile.state === 'harvestable' || tile.state === 'mine_shaft')) {
         audio.uproot();
         setStatus('Removed — tile returned to soil.');
+      } else if (action === 'unlock') {
+        audio.marketUpgrade();
+        setStatus('🔓 Tile unlocked early — ready to develop!');
       } else {
         setStatus('Action complete! Keep going 🌿');
       }

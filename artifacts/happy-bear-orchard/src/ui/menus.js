@@ -1,10 +1,10 @@
 /**
  * ActionMenu — tile action popup for the orchard scene.
  */
-import { ACTION, ACTION_COSTS, ACTION_VALID_STATES, TILE_STATE, CROP_VISUAL } from '../constants.js';
+import { ACTION, ACTION_COSTS, ACTION_VALID_STATES, TILE_STATE, CROP_VISUAL, UNLOCK_TILE_COST } from '../constants.js';
 import { CROPS } from '../systems/crops.js';
 
-const RES_ICON = { fruit: '🍎', hops: '🌾', coffee_bean: '☕', wood: '🪵' };
+const RES_ICON = { fruit: '🍎', hops: '🌾', coffee_bean: '☕', wood: '🪵', coins: '🪙' };
 
 function formatCost(cost) {
   return Object.entries(cost).map(([k, v]) => `${v} ${RES_ICON[k] ?? k}`).join(' + ');
@@ -18,6 +18,7 @@ const ACTION_INFO = {
   [ACTION.HARVEST]:    { label: '🍎 Harvest',      desc: 'Pick fruit  →  +3 🍎  (auto-replants)' },
   [ACTION.MINE]:       { label: '⛏️ Mine',         desc: 'Establish a mine  →  +2 🪨' },
   [ACTION.COMPOST]:    { label: '🍂 Compost',      desc: 'Turn rotten apple back into a fresh planting (free)' },
+  [ACTION.UNLOCK]:     { label: '🔓 Unlock Early', desc: `Skip the wait — instantly open this tile  →  costs ${UNLOCK_TILE_COST} 🪙` },
 };
 
 const ACTION_INFO_CONTEXT = {
