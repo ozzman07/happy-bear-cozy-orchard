@@ -88,7 +88,11 @@ function renderMainMenu() {
   const btns = [];
 
   if (profile) {
-    btns.push({ label: '🌳 Continue', primary: true, onClick: () => showSaveSelect(profile) });
+    btns.push({ label: '🌳 Continue', primary: true, onClick: async () => {
+      const recent = await SaveSystem.getMostRecentSave();
+      if (recent) launchGame(recent.data, recent.slot);
+      else        showSaveSelect(profile);
+    }});
   }
   btns.push({ label: profile ? '🌱 New Game' : '🌱 Start Game', primary: !profile, onClick: () => {
     if (profiles.length === 0) {
@@ -1371,6 +1375,11 @@ async function boot() {
   if (profiles.length === 0) {
     renderProfileCreate();
   } else {
+    // Auto-select whoever played most recently so Continue/Load Game are
+    // reachable straight from the main menu, not just via Profiles.
+    const mostRecent = profiles.reduce((a, b) =>
+      new Date(a.lastPlayed) > new Date(b.lastPlayed) ? a : b);
+    await ProfileSystem.selectProfile(mostRecent.id);
     renderMainMenu();
   }
 }
