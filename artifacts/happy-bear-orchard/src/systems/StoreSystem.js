@@ -3,6 +3,19 @@
  */
 import storeData    from '../data/store.json';
 import upgradesData from '../data/upgrades.json';
+import recipesData  from '../data/recipes.json';
+
+// A resource that's consumed as input by a "bottling"-station recipe is, by
+// definition, an unbottled flavor liquid (cider, autumn_hug, ...) — only its
+// bottled output should ever be sellable. Derived from recipes.json instead
+// of hand-maintained in store.json, so every future flavor gets this for
+// free: add the crop + flavor + bottle recipes and the raw liquid is
+// automatically excluded from the Market, no bookkeeping required.
+const UNSELLABLE_UNBOTTLED = new Set(
+  Object.values(recipesData)
+    .filter(r => r.station === 'bottling')
+    .flatMap(r => Object.keys(r.inputs))
+);
 
 export class StoreSystem {
   constructor(resources) {
@@ -21,13 +34,14 @@ export class StoreSystem {
 
   /** Return all store items visible at the given tier. */
   getItems(tier = 0) {
-    return storeData.items.filter(item => item.tier <= tier);
+    return storeData.items.filter(item => item.tier <= tier && !UNSELLABLE_UNBOTTLED.has(item.key));
   }
 
   /**
    * Sell `qty` of `key` resource. Returns { success, coins, message }.
    */
   sell(key, qty) {
+    if (UNSELLABLE_UNBOTTLED.has(key)) return { success: false, message: 'Bottle it first!' };
     const item = storeData.items.find(i => i.key === key);
     if (!item) return { success: false, message: 'Unknown item.' };
 

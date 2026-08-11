@@ -2,7 +2,6 @@
   "items": [
     { "key": "fruit",          "icon": "🍎", "label": "Apples",          "price": 2,  "tier": 0 },
     { "key": "juice",          "icon": "🧃", "label": "Juice",           "price": 5,  "tier": 0 },
-    { "key": "cider",          "icon": "🫗", "label": "Cider",           "price": 9,  "tier": 0 },
     { "key": "bottles",        "icon": "🍾", "label": "Bottled Cider",   "price": 14, "tier": 1 },
     { "key": "hops",           "icon": "🌾", "label": "Hops",            "price": 4,  "tier": 4 },
     { "key": "applejack",      "icon": "🥃", "label": "Applejack",       "price": 22, "tier": 2 },
@@ -14,7 +13,6 @@
     { "key": "wood",           "icon": "🪵", "label": "Wood",            "price": 1,  "tier": 0 },
     { "key": "stone",          "icon": "🪨", "label": "Stone",           "price": 1,  "tier": 0 },
     { "key": "cranberry",      "icon": "🍒", "label": "Cranberries",     "price": 3,  "tier": 1 },
-    { "key": "autumn_hug",     "icon": "🍁", "label": "Autumn Hug",      "price": 18, "tier": 1 },
     { "key": "bottled_autumn_hug", "icon": "🍶", "label": "Bottled Autumn Hug", "price": 28, "tier": 1 }
   ]
 }

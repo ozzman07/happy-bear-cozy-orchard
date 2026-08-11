@@ -1190,7 +1190,7 @@ function initGame(saveData, slot) {
       const btn = document.getElementById('nav-store');
       if (btn) btn.disabled = false;
       bearSpeak("The market's open! Take your bottles down and see what they fetch. I think we've earned it.");
-      setStatus('🛒 Happy Bear Market unlocked — sell your cider!');
+      setStatus('🛒 Happy Bear Market unlocked — sell your bottled cider!');
     }
     runAchievementCheck();
   });
