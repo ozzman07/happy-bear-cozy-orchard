@@ -12,6 +12,9 @@
     { "key": "roasted_coffee", "icon": "🤎", "label": "Roasted Coffee",  "price": 11, "tier": 5 },
     { "key": "cups",           "icon": "☕", "label": "Coffee Cups",     "price": 28, "tier": 5 },
     { "key": "wood",           "icon": "🪵", "label": "Wood",            "price": 1,  "tier": 0 },
-    { "key": "stone",          "icon": "🪨", "label": "Stone",           "price": 1,  "tier": 0 }
+    { "key": "stone",          "icon": "🪨", "label": "Stone",           "price": 1,  "tier": 0 },
+    { "key": "cranberry",      "icon": "🍒", "label": "Cranberries",     "price": 3,  "tier": 1 },
+    { "key": "autumn_hug",     "icon": "🍁", "label": "Autumn Hug",      "price": 18, "tier": 1 },
+    { "key": "bottled_autumn_hug", "icon": "🍶", "label": "Bottled Autumn Hug", "price": 28, "tier": 1 }
   ]
 }

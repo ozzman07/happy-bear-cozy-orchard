@@ -32,6 +32,9 @@ export class CraftingSystem {
 
   isBusy(stationId) { return !!this._busySlots[stationId]; }
 
+  /** recipeId currently running on a station, or null if idle. */
+  activeRecipeId(stationId) { return this._busySlots[stationId + '_recipe'] ?? null; }
+
   /**
    * Attempt to craft a recipe.
    * Returns { success, message } immediately.

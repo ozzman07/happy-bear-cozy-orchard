@@ -19,6 +19,9 @@ export class ResourceManager {
       coffee_bean:    0,
       roasted_coffee: 0,
       cups:           0,
+      cranberry:      0,
+      autumn_hug:     0,
+      bottled_autumn_hug: 0,
       ...initial,
     };
     this._listeners = [];

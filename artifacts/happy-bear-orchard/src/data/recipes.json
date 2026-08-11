@@ -70,5 +70,23 @@
     "outputs": { "cups": 1 },
     "timerSecs": 140,
     "unlockTier": 5
+  },
+  "flavor_autumn_hug": {
+    "id": "flavor_autumn_hug",
+    "name": "Make Autumn Hug",
+    "station": "flavor_table",
+    "inputs": { "cider": 3, "cranberry": 2 },
+    "outputs": { "autumn_hug": 3 },
+    "timerSecs": 60,
+    "unlockTier": 1
+  },
+  "bottle_autumn_hug": {
+    "id": "bottle_autumn_hug",
+    "name": "Bottle Autumn Hug",
+    "station": "bottling",
+    "inputs": { "autumn_hug": 3 },
+    "outputs": { "bottled_autumn_hug": 3 },
+    "timerSecs": 20,
+    "unlockTier": 1
   }
 }

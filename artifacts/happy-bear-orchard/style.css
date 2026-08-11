@@ -614,6 +614,18 @@ body {
 .btn-use:hover:not(:disabled) { background: #5aa040; transform: translateY(-1px); }
 .btn-use:disabled { opacity: 0.38; cursor: not-allowed; }
 
+/* A station offering more than one recipe (e.g. Bottling: plain cider vs.
+   Autumn Hug) needs a taller card to fit every option — everyone else keeps
+   the standard fixed-height card untouched. */
+.tool-slot-multi { height: 300px; }
+.tool-slot-multi .tool-card { height: 280px; }
+.tool-recipe-rows { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.tool-recipe-row  { display: flex; flex-direction: column; gap: 2px; }
+.tool-recipe-row:not(:last-child) {
+  padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.tool-recipe-row .btn-use { align-self: flex-start; }
+
 /* ═══════════════════════════════════════════
    OVERLAY & ACTION MENU
 ═══════════════════════════════════════════ */

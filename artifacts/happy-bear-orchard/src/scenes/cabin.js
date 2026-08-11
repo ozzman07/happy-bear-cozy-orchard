@@ -35,12 +35,26 @@ const TOOL_DEFS = {
     costs: { wood: 12, stone: 8 }, constructionSecs: 25,
     recipeId: null,
   },
+  flavor_table: {
+    id: 'flavor_table', name: '🍁 Flavor Table', icon: '🍁',
+    description: 'Blend cider with cranberries into Autumn Hug',
+    costs: { wood: 6, stone: 3 }, constructionSecs: 15,
+    recipeId: 'flavor_autumn_hug',
+  },
 };
 
 const RECIPE_LABELS = {
-  press_juice:    { label: 'Press Fruit',  cost: '2🍎', yield: '1🧃' },
-  ferment_cider:  { label: 'Ferment',      cost: '3🧃', yield: '1🫗' },
-  bottle_cider:   { label: 'Bottle Cider', cost: '3🫗', yield: '3🍾' },
+  press_juice:         { label: 'Press Fruit',       cost: '2🍎',        yield: '1🧃' },
+  ferment_cider:        { label: 'Ferment',           cost: '3🧃',        yield: '1🫗' },
+  bottle_cider:         { label: 'Bottle Cider',      cost: '3🫗',        yield: '3🍾' },
+  bottle_autumn_hug:    { label: 'Bottle Autumn Hug', cost: '3🍁',        yield: '3🍶' },
+  flavor_autumn_hug:    { label: 'Make Autumn Hug',   cost: '3🫗 + 2🍒',  yield: '3🍁' },
+};
+
+// Icons for the "Need N more X" shortfall hint on recipe rows.
+const NEEDS_ICON = {
+  juice: '🧃', cider: '🫗', fruit: '🍎', wood: '🪵', stone: '🪨',
+  bottles: '🍾', cranberry: '🍒', autumn_hug: '🍁',
 };
 
 export class CabinScene {
@@ -102,9 +116,9 @@ export class CabinScene {
     // Wire up delegation once so clicks survive innerHTML replacement
     if (!slot._delegated) {
       slot.addEventListener('click', e => {
-        const def = TOOL_DEFS[toolId];
         if (e.target.closest('.btn-build')) this._doBuild(toolId);
-        if (e.target.closest('.btn-use'))   this._doCraft(toolId, def);
+        const useBtn = e.target.closest('.btn-use');
+        if (useBtn) this._doCraft(toolId, useBtn.dataset.recipe);
       });
       slot._delegated = true;
     }
@@ -116,6 +130,12 @@ export class CabinScene {
     if (state === BUILD_STATE.BLUEPRINT)    html = this._blueprintHTML(def);
     if (state === BUILD_STATE.CONSTRUCTING) html = this._constructingHTML(toolId, def);
     if (state === BUILD_STATE.OPERATIONAL)  html = this._operationalHTML(toolId, def);
+
+    // A station offering more than one recipe (e.g. Bottling: plain vs. Autumn
+    // Hug) needs extra room — grow the slot only for those, everyone else keeps
+    // the standard compact card.
+    const recipeCount = def.recipeId ? this._craft.recipesFor(toolId).length : 1;
+    slot.classList.toggle('tool-slot-multi', recipeCount > 1);
 
     slot.innerHTML = html;
   }
@@ -156,39 +176,52 @@ export class CabinScene {
         <div class="tool-passive-label">✅ Running automatically</div>
       </div>`;
     }
-    const rl        = RECIPE_LABELS[def.recipeId] ?? {};
+
+    // A station can offer more than one recipe (e.g. Bottling: plain cider vs.
+    // Autumn Hug) — recipesFor() returns every one unlocked at the current tier,
+    // so a single-recipe station just renders one row, same as before.
+    const recipes   = this._craft.recipesFor(toolId);
     const busy      = this._craft.isBusy(toolId);
     const secsLeft  = this._craft.secsRemaining(toolId);
-    const recipe    = this._craft.getRecipe(def.recipeId);
-    const canAfford = recipe ? this._res.canAfford(recipe.inputs) : false;
-
-    // Build a shortfall hint when idle and can't afford — e.g. "Need 2 more 🧃"
-    let needsHint = '';
-    if (!busy && !canAfford && recipe) {
-      const parts = Object.entries(recipe.inputs)
-        .map(([res, needed]) => {
-          const have = this._res.amounts[res] ?? 0;
-          const short = needed - have;
-          if (short <= 0) return null;
-          const icon = { juice: '🧃', cider: '🫗', fruit: '🍎', wood: '🪵', stone: '🪨' }[res] ?? res;
-          return `${short} more ${icon}`;
-        })
-        .filter(Boolean);
-      if (parts.length) needsHint = `<div class="tool-needs">Need ${parts.join(', ')}</div>`;
-    }
-
+    const activeId  = this._craft.activeRecipeId(toolId);
     const automated = this._isAutomated(toolId);
-    const craftPct = busy ? this._craft.progressPct(toolId) : 0;
+    const craftPct  = busy ? this._craft.progressPct(toolId) : 0;
+
+    const rows = recipes.map(recipe => {
+      const rl        = RECIPE_LABELS[recipe.id] ?? {};
+      const isRunning = busy && activeId === recipe.id;
+      const canAfford = this._res.canAfford(recipe.inputs);
+
+      // Build a shortfall hint when idle and can't afford — e.g. "Need 2 more 🧃"
+      let needsHint = '';
+      if (!busy && !canAfford) {
+        const parts = Object.entries(recipe.inputs)
+          .map(([res, needed]) => {
+            const have  = this._res.amounts[res] ?? 0;
+            const short = needed - have;
+            if (short <= 0) return null;
+            return `${short} more ${NEEDS_ICON[res] ?? res}`;
+          })
+          .filter(Boolean);
+        if (parts.length) needsHint = `<div class="tool-needs">Need ${parts.join(', ')}</div>`;
+      }
+
+      return `<div class="tool-recipe-row">
+        <div class="tool-recipe">${rl.cost ?? ''} → ${rl.yield ?? ''}</div>
+        ${isRunning ? '' : needsHint}
+        <button class="btn-use" data-recipe="${recipe.id}"${(canAfford && !busy) ? '' : ' disabled'}>
+          ${isRunning ? `⏳ ${secsLeft}s` : (rl.label ?? 'Use')}
+        </button>
+      </div>`;
+    }).join('');
+
     return `<div class="tool-card tool-operational${busy?' tool-busy':''}">
       <div class="tool-card-badge">Operational${automated ? ' 🤖' : ''}</div>
       <div class="tool-card-icon">${def.icon}</div>
       <div class="tool-name">${def.name}</div>
-      <div class="tool-recipe">${rl.cost ?? ''} → ${rl.yield ?? ''}</div>
       <div class="tool-desc">${busy ? `⏳ Working… ${secsLeft}s` : def.description}</div>
-      ${busy ? `<div class="tool-progress-bar"><div class="tool-progress-fill craft-fill" style="width:${craftPct}%"></div></div>` : needsHint}
-      <button class="btn-use"${(canAfford && !busy) ? '' : ' disabled'}>
-        ${busy ? `⏳ ${secsLeft}s` : (rl.label ?? 'Use')}
-      </button>
+      ${busy ? `<div class="tool-progress-bar"><div class="tool-progress-fill craft-fill" style="width:${craftPct}%"></div></div>` : ''}
+      <div class="tool-recipe-rows">${rows}</div>
     </div>`;
   }
 
@@ -200,8 +233,8 @@ export class CabinScene {
     this._renderTool(toolId);
   }
 
-  _doCraft(toolId, def) {
-    const r = this._craft.craft(def.recipeId, toolId);
+  _doCraft(toolId, recipeId) {
+    const r = this._craft.craft(recipeId, toolId);
     if (!r.success) { this._setStatus('⚠ ' + r.message); this._bearSpeak?.(r.message); }
     else this._setStatus('Crafting started! 🍺');
     this._renderTool(toolId);

@@ -235,6 +235,10 @@ const FIRST_CRAFT_LINES = {
     "The cabin smells like something I didn't know I was missing. The Greenhouse Keeper said to pay attention during the roast. I'm going to pay so much attention.",
   brew_coffee:
     "I had a dream about this once. I wasn't sure it was possible. … It's possible.",
+  flavor_autumn_hug:
+    "Cranberries in the cider — smell that? That's Autumn Hug. I don't know who named it but they got it exactly right.",
+  bottle_autumn_hug:
+    "First bottle of Autumn Hug. Look at that color. Story Bear's going to want a whole page about this one.",
 };
 
 const REPEAT_CRAFT_LINES = [
@@ -273,6 +277,8 @@ const TOOL_BUILT_LINES = {
     "Coffee Brewer's assembled. Roasted beans in, cups out. The Greenhouse Keeper would call this the culmination of a process. She's right.",
   harvest_bell:
     "The Harvest Bell is up. I hung it myself — took three tries to get it level. It'll ring when something's ready. You don't have to be there.",
+  flavor_table:
+    "The Flavor Table's set up. Cider and cranberries, side by side — I have a good feeling about where this goes.",
 };
 
 function toolBuilt(toolId) {

@@ -34,5 +34,14 @@
     "yields": { "wood": 4 },
     "plantCost": {},
     "unlockTier": 0
+  },
+  "cranberry": {
+    "id": "cranberry",
+    "name": "Cranberry",
+    "icon": "🍒",
+    "growTicks": 12,
+    "yields": { "cranberry": 3 },
+    "plantCost": {},
+    "unlockTier": 1
   }
 }

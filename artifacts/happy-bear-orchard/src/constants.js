@@ -106,6 +106,7 @@ export const CROP_VISUAL = {
   hops:   { growing: '🌱', ready: '🌾', growColor: '#4d5a1e', readyColor: '#7a8a1e', label: 'Hops' },
   coffee: { growing: '🌱', ready: '☕', growColor: '#3a2a1e', readyColor: '#5a3d28', label: 'Coffee' },
   timber: { growing: '🌲', ready: '🪵', growColor: '#1e4d18', readyColor: '#3a6e24', label: 'Timber' },
+  cranberry: { growing: '🌱', ready: '🍒', growColor: '#5a1e2e', readyColor: '#8a1e35', label: 'Cranberries' },
 };
 
 export const GROW_TICKS_NEEDED   = 7;
