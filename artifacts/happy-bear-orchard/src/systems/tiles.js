@@ -345,12 +345,18 @@ export class TileGrid {
     return harvested;
   }
 
-  /** Start mining on all idle mine shafts. Returns number started. */
-  autoMine(resources) {
+  /**
+   * Start mining on all idle mine shafts. `skipTile`, if given, is left alone —
+   * used to protect whatever tile the player currently has the action menu
+   * open on, so choosing "Fill In" there can never lose a race against this
+   * running again first and flipping the tile back to MINING underneath them.
+   */
+  autoMine(resources, skipTile = null) {
     let count = 0;
     for (let y = 0; y < this.rows; y++) {
       for (let x = 0; x < this.cols; x++) {
         const tile = this.tiles[y][x];
+        if (tile === skipTile) continue;
         if (tile.state === TILE_STATE.MINE_SHAFT) {
           this.performAction(tile, ACTION.MINE, resources);
           count++;

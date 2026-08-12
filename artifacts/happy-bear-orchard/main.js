@@ -1199,6 +1199,15 @@ function initGame(saveData, slot) {
 
   setInterval(() => {
     tickCount++;
+    // Auto-restart idle mine shafts from *last* tick's completions before this
+    // tick's completeMines() below creates any new ones — so a freshly-finished
+    // mine stays visible/clickable as MINE_SHAFT for a full tick (~3s) instead
+    // of the ~600ms it got when this ran right after completeMines() in the same
+    // tick. actionMenu.currentTile is also skipped entirely, so choosing "Fill
+    // In" on an open mine-shaft menu can never lose that race regardless of timing.
+    if (orchard.autoEnabled && construction.isOperational('harvest_bell')) {
+      tileGrid.autoMine(resources, actionMenu.currentTile);
+    }
     const { anyRipe: ripened, rotted } = cropSystem.tick();
     const mined   = tileGrid.completeMines(resources);
 
@@ -1223,8 +1232,8 @@ function initGame(saveData, slot) {
 
     if (orchard.autoEnabled && construction.isOperational('harvest_bell')) {
       tileGrid.autoWater(resources);
-      // Delay mine restart so MINE_SHAFT state renders briefly before restarting
-      setTimeout(() => tileGrid.autoMine(resources), 600);
+      // Mine restart already handled at the top of this tick, ahead of
+      // completeMines(), so freshly-finished mines get a full tick visible.
       // Delay harvest so HARVESTABLE tiles (🍎) are visible before auto-collecting
       setTimeout(() => {
         const harvestedTiles = tileGrid.autoHarvest(resources);
