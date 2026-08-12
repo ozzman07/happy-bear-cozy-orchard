@@ -43,5 +43,14 @@
     "yields": { "cranberry": 3 },
     "plantCost": {},
     "unlockTier": 1
+  },
+  "blueberry": {
+    "id": "blueberry",
+    "name": "Blueberry",
+    "icon": "🫐",
+    "growTicks": 12,
+    "yields": { "blueberry": 3 },
+    "plantCost": {},
+    "unlockTier": 1
   }
 }

@@ -239,6 +239,10 @@ const FIRST_CRAFT_LINES = {
     "Cranberries in the cider — smell that? That's Autumn Hug. I don't know who named it but they got it exactly right.",
   bottle_autumn_hug:
     "First bottle of Autumn Hug. Look at that color. Story Bear's going to want a whole page about this one.",
+  flavor_cider_creek_blue:
+    "Blueberries in the cider now — Cider Creek Blue. Look at that color. I could stare at that for a while.",
+  bottle_cider_creek_blue:
+    "First bottle of Cider Creek Blue. Two flavors on the shelf now. We're really building something here.",
 };
 
 const REPEAT_CRAFT_LINES = [

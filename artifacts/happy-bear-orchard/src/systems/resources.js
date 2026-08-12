@@ -22,6 +22,9 @@ export class ResourceManager {
       cranberry:      0,
       autumn_hug:     0,
       bottled_autumn_hug: 0,
+      blueberry:      0,
+      cider_creek_blue: 0,
+      bottled_cider_creek_blue: 0,
       ...initial,
     };
     this._listeners = [];

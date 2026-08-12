@@ -88,5 +88,23 @@
     "outputs": { "bottled_autumn_hug": 3 },
     "timerSecs": 20,
     "unlockTier": 1
+  },
+  "flavor_cider_creek_blue": {
+    "id": "flavor_cider_creek_blue",
+    "name": "Make Cider Creek Blue",
+    "station": "flavor_table",
+    "inputs": { "cider": 3, "blueberry": 2 },
+    "outputs": { "cider_creek_blue": 3 },
+    "timerSecs": 60,
+    "unlockTier": 1
+  },
+  "bottle_cider_creek_blue": {
+    "id": "bottle_cider_creek_blue",
+    "name": "Bottle Cider Creek Blue",
+    "station": "bottling",
+    "inputs": { "cider_creek_blue": 3 },
+    "outputs": { "bottled_cider_creek_blue": 3 },
+    "timerSecs": 20,
+    "unlockTier": 1
   }
 }

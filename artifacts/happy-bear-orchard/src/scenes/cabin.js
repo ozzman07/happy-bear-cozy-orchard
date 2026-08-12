@@ -19,7 +19,7 @@ const TOOL_DEFS = {
   },
   bottling: {
     id: 'bottling', name: '🍶 Bottling Station', icon: '🍶',
-    description: 'Bottle cider into cups',
+    description: 'Bottle cider — plain or a specialty flavor',
     costs: { wood: 5, stone: 3 }, constructionSecs: 10,
     recipeId: 'bottle_cider',
   },
@@ -37,24 +37,27 @@ const TOOL_DEFS = {
   },
   flavor_table: {
     id: 'flavor_table', name: '🍁 Flavor Table', icon: '🍁',
-    description: 'Blend cider with cranberries into Autumn Hug',
+    description: 'Blend cider with fruit into specialty flavors',
     costs: { wood: 6, stone: 3 }, constructionSecs: 15,
     recipeId: 'flavor_autumn_hug',
   },
 };
 
 const RECIPE_LABELS = {
-  press_juice:         { label: 'Press Fruit',       cost: '2🍎',        yield: '1🧃' },
-  ferment_cider:        { label: 'Ferment',           cost: '3🧃',        yield: '1🫗' },
-  bottle_cider:         { label: 'Bottle Cider',      cost: '3🫗',        yield: '3🍾' },
-  bottle_autumn_hug:    { label: 'Bottle Autumn Hug', cost: '3🍁',        yield: '3🍶' },
-  flavor_autumn_hug:    { label: 'Make Autumn Hug',   cost: '3🫗 + 2🍒',  yield: '3🍁' },
+  press_juice:              { label: 'Press Fruit',            cost: '2🍎',        yield: '1🧃' },
+  ferment_cider:             { label: 'Ferment',                cost: '3🧃',        yield: '1🫗' },
+  bottle_cider:              { label: 'Bottle Cider',           cost: '3🫗',        yield: '3🍾' },
+  bottle_autumn_hug:         { label: 'Bottle Autumn Hug',      cost: '3🍁',        yield: '3🍶' },
+  flavor_autumn_hug:         { label: 'Make Autumn Hug',        cost: '3🫗 + 2🍒',  yield: '3🍁' },
+  bottle_cider_creek_blue:   { label: 'Bottle Cider Creek Blue', cost: '3💧',        yield: '3🫙' },
+  flavor_cider_creek_blue:   { label: 'Make Cider Creek Blue',  cost: '3🫗 + 2🫐',  yield: '3💧' },
 };
 
 // Icons for the "Need N more X" shortfall hint on recipe rows.
 const NEEDS_ICON = {
   juice: '🧃', cider: '🫗', fruit: '🍎', wood: '🪵', stone: '🪨',
   bottles: '🍾', cranberry: '🍒', autumn_hug: '🍁',
+  blueberry: '🫐', cider_creek_blue: '💧',
 };
 
 export class CabinScene {

@@ -627,11 +627,16 @@ body {
 .btn-use:disabled { opacity: 0.38; cursor: not-allowed; }
 
 /* A station offering more than one recipe (e.g. Bottling: plain cider vs.
-   Autumn Hug) needs a taller card to fit every option — everyone else keeps
-   the standard fixed-height card untouched. */
-.tool-slot-multi { height: 300px; }
-.tool-slot-multi .tool-card { height: 280px; }
-.tool-recipe-rows { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+   Autumn Hug vs. Cider Creek Blue) needs room for every option. Internal
+   scrolling doesn't work here — cabin.js re-renders each card's innerHTML
+   on a 500ms poll (for countdown timers), which would reset any scroll
+   position inside the card that often, making it unusable in practice — so
+   instead the card just grows to fit however many recipes a station has,
+   with no fixed cap. Everyone else (single recipe) keeps the standard
+   fixed-height card untouched. */
+.tool-slot-multi { height: auto; }
+.tool-slot-multi .tool-card { height: auto; overflow: visible; }
+.tool-recipe-rows { display: flex; flex-direction: column; gap: 8px; }
 .tool-recipe-row  { display: flex; flex-direction: column; gap: 2px; }
 .tool-recipe-row:not(:last-child) {
   padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1);

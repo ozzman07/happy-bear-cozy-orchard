@@ -13,6 +13,8 @@
     { "key": "wood",           "icon": "🪵", "label": "Wood",            "price": 1,  "tier": 0 },
     { "key": "stone",          "icon": "🪨", "label": "Stone",           "price": 1,  "tier": 0 },
     { "key": "cranberry",      "icon": "🍒", "label": "Cranberries",     "price": 3,  "tier": 1 },
-    { "key": "bottled_autumn_hug", "icon": "🍶", "label": "Bottled Autumn Hug", "price": 28, "tier": 1 }
+    { "key": "bottled_autumn_hug", "icon": "🍶", "label": "Bottled Autumn Hug", "price": 28, "tier": 1 },
+    { "key": "blueberry",      "icon": "🫐", "label": "Blueberries",     "price": 3,  "tier": 1 },
+    { "key": "bottled_cider_creek_blue", "icon": "🫙", "label": "Bottled Cider Creek Blue", "price": 28, "tier": 1 }
   ]
 }
