@@ -16,6 +16,7 @@ import { ProgressionSystem } from './src/systems/progression.js';
 import { ProfileSystem }     from './src/systems/ProfileSystem.js';
 import { SaveSystem }        from './src/systems/SaveSystem.js';
 import { BearDialogue }      from './src/systems/BearDialogue.js';
+import { BackupSystem }      from './src/systems/BackupSystem.js';
 
 import { SceneManager, SCENES } from './src/scenes/sceneManager.js';
 import { OrchardScene }         from './src/scenes/orchard.js';
@@ -355,6 +356,56 @@ function renderSettings(onBack) {
     toggle('Reduced Motion','accessibility', 'reducedMotion'),
     toggle('Larger Text',   'accessibility', 'largeText')
   ));
+
+  const backupStatus = document.createElement('div');
+  backupStatus.style.fontSize = '0.85em';
+  backupStatus.style.opacity = '0.8';
+  backupStatus.style.minHeight = '1.2em';
+
+  const backupBtn = document.createElement('button');
+  backupBtn.className = 'menu-btn menu-btn-secondary';
+  backupBtn.textContent = '💾 Backup Save to File';
+  backupBtn.addEventListener('click', async () => {
+    backupBtn.disabled = true;
+    const result = await BackupSystem.exportBackup();
+    backupStatus.textContent = result.message;
+    backupBtn.disabled = false;
+  });
+
+  const restoreInput = document.createElement('input');
+  restoreInput.type = 'file';
+  restoreInput.accept = 'application/json';
+  restoreInput.style.display = 'none';
+  restoreInput.addEventListener('change', async () => {
+    const file = restoreInput.files?.[0];
+    restoreInput.value = '';
+    if (!file) return;
+    const ok = confirm('This will overwrite your current profiles and saves with the contents of this backup file. Continue?');
+    if (!ok) return;
+    const result = await BackupSystem.importBackup(file);
+    backupStatus.textContent = result.message;
+    if (result.success) {
+      alert('Backup restored. The game will now reload.');
+      location.reload();
+    }
+  });
+
+  const restoreBtn = document.createElement('button');
+  restoreBtn.className = 'menu-btn menu-btn-secondary';
+  restoreBtn.textContent = '📂 Restore from Backup File';
+  restoreBtn.addEventListener('click', () => restoreInput.click());
+
+  const backupRow = document.createElement('div');
+  backupRow.style.display = 'flex';
+  backupRow.style.flexDirection = 'column';
+  backupRow.style.alignItems = 'stretch';
+  backupRow.style.gap = '8px';
+  backupRow.appendChild(backupBtn);
+  backupRow.appendChild(restoreBtn);
+  backupRow.appendChild(restoreInput);
+  backupRow.appendChild(backupStatus);
+
+  wrapper.appendChild(section('Data & Backup', backupRow));
 
   const howToBtn = document.createElement('button');
   howToBtn.className = 'menu-btn menu-btn-secondary';
