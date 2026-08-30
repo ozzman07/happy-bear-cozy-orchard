@@ -276,6 +276,16 @@
       "unlockTier": 5,
       "coinCost": 320,
       "description": "Automatically starts one brew cycle whenever the brewer is idle and roasted coffee is ready"
+    },
+    {
+      "id": "auto_sell",
+      "type": "automation",
+      "label": "Market Broker",
+      "icon": "📈",
+      "station": "market",
+      "unlockTier": 3,
+      "coinCost": 400,
+      "description": "Once a day, sells off stock above the reserve you set for each item — a little at a time, not all at once"
     }
   ]
 }

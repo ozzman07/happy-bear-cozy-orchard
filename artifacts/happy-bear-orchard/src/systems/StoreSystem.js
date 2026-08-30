@@ -4,6 +4,7 @@
 import storeData    from '../data/store.json';
 import upgradesData from '../data/upgrades.json';
 import recipesData  from '../data/recipes.json';
+import { AUTO_SELL_TRICKLE_PCT } from '../constants.js';
 
 // A resource that's consumed as input by a "bottling"-station recipe is, by
 // definition, an unbottled flavor liquid (cider, autumn_hug, ...) — only its
@@ -18,13 +19,15 @@ const UNSELLABLE_UNBOTTLED = new Set(
 );
 
 export class StoreSystem {
-  constructor(resources) {
+  constructor(resources, market = null) {
     this._res              = resources;
+    this._market           = market;      // demand-aware pricing; sell() degrades gracefully if absent
     this._listeners        = [];
     this._totalEarned      = 0;
     this._purchased        = new Set();   // upgrade ids
     this._pausedAutomation = new Set();   // automation upgrade ids currently paused
     this._priceMultiplier  = 1.0;
+    this._reserve          = {};          // itemKey → minimum stock auto-sell won't dip below
   }
 
   /** Called by MarketSystem when market level changes. */
@@ -38,9 +41,12 @@ export class StoreSystem {
   }
 
   /**
-   * Sell `qty` of `key` resource. Returns { success, coins, message }.
+   * Sell `qty` of `key` resource. `tier` gates supply-pressure demand
+   * tracking (see MarketSystem.recordSale) — optional, defaults to 0 (no
+   * demand effect) so callers that don't care about the economy-pressure
+   * bundle keep working unchanged. Returns { success, coins, message }.
    */
-  sell(key, qty) {
+  sell(key, qty, tier = 0) {
     if (UNSELLABLE_UNBOTTLED.has(key)) return { success: false, message: 'Bottle it first!' };
     const item = storeData.items.find(i => i.key === key);
     if (!item) return { success: false, message: 'Unknown item.' };
@@ -51,10 +57,12 @@ export class StoreSystem {
     const amount = qty === 'all' ? have : Math.min(Number(qty), have);
     if (amount < 1) return { success: false, message: 'Nothing to sell.' };
 
-    const coins = amount * Math.round(item.price * this._priceMultiplier);
+    const demandMult = this._market?.demandMultiplier(key) ?? 1.0;
+    const coins = amount * Math.round(item.price * this._priceMultiplier * demandMult);
     this._res.spend({ [key]: amount });
     this._res.add('coins', coins);
     this._totalEarned += coins;
+    this._market?.recordSale(key, amount, tier);
 
     this._notify({ type: 'sell', key, amount, coins });
     return { success: true, coins, message: `Sold ${amount} ${item.label} for ${coins} 🪙!` };
@@ -172,6 +180,36 @@ export class StoreSystem {
     return upgradesData.upgrades.find(u => u.id === id)?.label ?? id;
   }
 
+  // ── Auto-sell (station: 'market' in the automation-upgrade list above) ─────
+
+  getReserve(key) { return this._reserve[key] ?? 0; }
+
+  setReserve(key, amount) {
+    this._reserve[key] = Math.max(0, Math.floor(Number(amount) || 0));
+    this._notify({ type: 'reserve_set', key, amount: this._reserve[key] });
+  }
+
+  /**
+   * Call once per day. Sells a fraction of the stock sitting above each
+   * item's reserve — never the whole excess at once, so a big stockpile
+   * trickles out over several days instead of dumping in one shot and
+   * tanking its own demand multiplier the way a manual Sell All would.
+   * No-ops entirely unless the automation upgrade is purchased and unpaused.
+   */
+  runAutoSell(tier = 0) {
+    if (!this.isAutomated('market')) return [];
+    const results = [];
+    for (const item of this.getItems(tier)) {
+      const stock  = this._res.get(item.key);
+      const excess = stock - this.getReserve(item.key);
+      if (excess <= 0) continue;
+      const amount = Math.min(excess, Math.max(1, Math.ceil(excess * AUTO_SELL_TRICKLE_PCT)));
+      const result = this.sell(item.key, amount, tier);
+      if (result.success) results.push({ key: item.key, ...result });
+    }
+    return results;
+  }
+
   /**
    * Combined speed multiplier for a station (product of all purchased multipliers).
    * Returns 1.0 if no upgrades purchased.
@@ -193,6 +231,7 @@ export class StoreSystem {
       purchased:        [...this._purchased],
       pausedAutomation: [...this._pausedAutomation],
       totalEarned:      this._totalEarned,
+      reserve:          { ...this._reserve },
     };
   }
 
@@ -203,6 +242,7 @@ export class StoreSystem {
     this._purchased        = new Set(arr);
     this._pausedAutomation = new Set(data.pausedAutomation ?? []);
     this._totalEarned      = data.totalEarned ?? 0;
+    this._reserve          = data.reserve ?? {};
   }
 
   onChange(fn) { this._listeners.push(fn); }

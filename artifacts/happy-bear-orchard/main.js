@@ -3,7 +3,7 @@
  * Entry point. Shows main menu first, then boots all systems on save selection.
  */
 
-import { TICKS_PER_DAY, GAME_TICK_MS, GRID_SIZE, GRID_GROWTH_PER_TIER } from './src/constants.js';
+import { TICKS_PER_DAY, GAME_TICK_MS, GRID_SIZE, GRID_GROWTH_PER_TIER, ECONOMY_PRESSURE_UNLOCK_TIER } from './src/constants.js';
 import { ResourceManager }   from './src/systems/resources.js';
 import { QuestSystem }       from './src/systems/QuestSystem.js';
 import { AchievementSystem } from './src/systems/AchievementSystem.js';
@@ -27,6 +27,7 @@ import { RoasteryScene }        from './src/scenes/roastery.js';
 import { StoreScene }           from './src/scenes/store.js';
 import { StoreSystem }          from './src/systems/StoreSystem.js';
 import { MarketSystem }         from './src/systems/MarketSystem.js';
+import { SpoilageSystem }       from './src/systems/SpoilageSystem.js';
 
 import { HUD }         from './src/ui/hud.js';
 import { ActionMenu }  from './src/ui/menus.js';
@@ -987,8 +988,9 @@ function initGame(saveData, slot) {
     isAutoUnlockedFn: () => construction.isOperational('harvest_bell'),
   });
 
-  const storeSystem  = new StoreSystem(resources);
-  const marketSystem = new MarketSystem(resources);
+  const marketSystem   = new MarketSystem(resources);
+  const storeSystem    = new StoreSystem(resources, marketSystem);
+  const spoilageSystem = new SpoilageSystem(resources);
 
   const isAutomatedFn = id => storeSystem.isAutomated(id);
   const cabin      = new CabinScene({ construction, crafting, resources, statusEl, bearSpeakFn: bearSpeak, isAutomatedFn });
@@ -1120,6 +1122,8 @@ function initGame(saveData, slot) {
     bearSpeakFn: bearSpeak,
     getTier: () => gameState.tier,
     getDay:  () => gameState.day,
+    spoilage: spoilageSystem,
+    getTick:  () => tickCount,
   });
 
   scenes.register(SCENES.ORCHARD,    orchard);
@@ -1250,6 +1254,19 @@ function initGame(saveData, slot) {
 
   setInterval(() => {
     tickCount++;
+    // Must run before anything below that can add()/spend() this tick —
+    // ResourceManager stamps "since empty" timestamps off this value.
+    resources.setCurrentTick(tickCount);
+
+    const economyPressureActive = gameState.tier >= ECONOMY_PRESSURE_UNLOCK_TIER;
+    const spoiled = spoilageSystem.tick(tickCount, economyPressureActive);
+    if (spoiled.length > 0) {
+      audio.rot();
+      const summary = spoiled.map(s => `${s.amount} ${s.key}`).join(', ');
+      bearSpeak(`⏳ Some stock spoiled on the shelf: ${summary}. Sell it before it piles up!`);
+      setStatus(`⏳ Spoiled: ${summary} — a full shelf still needs selling, not just growing.`);
+    }
+
     // Auto-restart idle mine shafts from *last* tick's completions before this
     // tick's completeMines() below creates any new ones — so a freshly-finished
     // mine stays visible/clickable as MINE_SHAFT for a full tick (~3s) instead
@@ -1313,6 +1330,11 @@ function initGame(saveData, slot) {
       hud.updateDay(gameState.day);
       progression.checkDay();
       marketSystem.onNewDay(gameState.day);
+      const autoSold = storeSystem.runAutoSell(gameState.tier);
+      if (autoSold.length > 0) {
+        const totalCoins = autoSold.reduce((sum, r) => sum + r.coins, 0);
+        bearSpeak(`📈 Market Broker sold off some stock overnight — +${totalCoins} 🪙.`);
+      }
       questSystem.onNewDay(gameState.tier);
       bearSpeak(BearDialogue.contextualHint(resources.amounts, gameState.tier));
       setStatus(`Day ${gameState.day} begins — keep growing! 🌳`);

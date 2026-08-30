@@ -3,13 +3,32 @@
  */
 import levelsData from '../data/market_levels.json';
 import dealsData  from '../data/deals.json';
+import { ECONOMY_PRESSURE_UNLOCK_TIER, DEMAND_DROP_PER_UNIT_SOLD, DEMAND_MIN_MULTIPLIER, DEMAND_RECOVERY_PER_DAY } from '../constants.js';
 
 export class MarketSystem {
   constructor(resources) {
     this._res       = resources;
     this._level     = 1;
     this._deals     = {};   // dealId → DealState
+    this._demand    = {};   // itemKey → current multiplier (0..1); absent = full price
     this._listeners = [];
+  }
+
+  // ── Supply-pressure demand ──────────────────────────────────────────────────
+
+  /** Current demand multiplier for an item — 1.0 unless recent selling has pushed it down. */
+  demandMultiplier(key) { return this._demand[key] ?? 1.0; }
+
+  /**
+   * Called by StoreSystem right after a sale. No-ops below the unlock tier
+   * so early selling stays simple — tier gate lives here (not cached) to
+   * match the rest of this class taking tier as a per-call argument.
+   */
+  recordSale(key, amount, tier) {
+    if (tier < ECONOMY_PRESSURE_UNLOCK_TIER) return;
+    const current = this.demandMultiplier(key);
+    const next    = Math.max(DEMAND_MIN_MULTIPLIER, current - amount * DEMAND_DROP_PER_UNIT_SOLD);
+    this._demand[key] = next;
   }
 
   // ── Market level ──────────────────────────────────────────────────────────────
@@ -159,6 +178,16 @@ export class MarketSystem {
       }
     }
 
+    // Demand recovery — every item that took a supply-pressure hit drifts
+    // back toward full price by a fixed amount per day, regardless of tier
+    // (an item can only have an entry here at all if recordSale already
+    // passed the tier gate, so no separate check needed on the way back up).
+    for (const key of Object.keys(this._demand)) {
+      const next = this._demand[key] + DEMAND_RECOVERY_PER_DAY;
+      if (next >= 1.0) delete this._demand[key];
+      else this._demand[key] = next;
+    }
+
     events.forEach(evt => this._notify(evt));
     return events;
   }
@@ -166,13 +195,14 @@ export class MarketSystem {
   // ── Persistence ───────────────────────────────────────────────────────────────
 
   snapshot() {
-    return { level: this._level, deals: { ...this._deals } };
+    return { level: this._level, deals: { ...this._deals }, demand: { ...this._demand } };
   }
 
   restore(data) {
     if (!data) return;
-    this._level = data.level ?? 1;
-    this._deals = data.deals  ?? {};
+    this._level  = data.level  ?? 1;
+    this._deals  = data.deals  ?? {};
+    this._demand = data.demand ?? {};
   }
 
   onChange(fn) { this._listeners.push(fn); }

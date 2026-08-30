@@ -115,3 +115,26 @@ export const WATER_GROW_BONUS    = 2;
 export const TICKS_PER_DAY      = 20;
 export const ROT_TICKS_NEEDED    = 14 * TICKS_PER_DAY;  // apples rot after 14 days unharvested
 export const GAME_TICK_MS        = 3000;
+
+// ── Economy pressure: demand pricing, shelf spoilage, auto-sell ────────────
+// Shipped as one bundle — see docs/TODO.md. All three unlock together so
+// demand pricing (which makes dump-selling costly) never appears without
+// auto-sell (the tool that avoids dump-selling) already available.
+export const ECONOMY_PRESSURE_UNLOCK_TIER = 3;
+
+// Raw harvested crops only, not crafted/bottled goods — matches the original
+// complaint ("apples just sit on the shelf forever"), not a blanket rule.
+export const PERISHABLE_RESOURCES = ['fruit', 'cranberry', 'blueberry', 'hops', 'coffee_bean'];
+export const SHELF_ROT_TICKS_NEEDED = 10 * TICKS_PER_DAY; // a pile spoils 10 days after it was last empty
+export const SHELF_SPOILAGE_PCT_PER_TICK = 0.05; // 5% of current stock lost per tick once spoiling starts
+
+// Supply-pressure demand: each sale nudges that item's own price down;
+// recovers daily. Multiplies on top of the existing market-level multiplier.
+export const DEMAND_DROP_PER_UNIT_SOLD = 0.01; // -1% of full price per unit sold in one sale
+export const DEMAND_MIN_MULTIPLIER     = 0.5;  // price can never drop below 50% from supply pressure alone
+export const DEMAND_RECOVERY_PER_DAY   = 0.05; // +5 percentage points toward full price each day
+
+// Auto-sell trickles the excess above a per-item reserve rather than dumping
+// it — sells this fraction of the excess each day, so it asymptotically
+// approaches the reserve instead of ever emptying the stack in one shot.
+export const AUTO_SELL_TRICKLE_PCT = 0.5;

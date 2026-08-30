@@ -1242,7 +1242,33 @@ body {
   font-size: 0.8rem; white-space: nowrap;
 }
 .btn-market-upgrade:disabled { opacity: 0.45; cursor: default; }
-.store-price-boosted { color: #a0e87a; font-size: 0.72rem; }
+.store-price-boosted    { color: #a0e87a; font-size: 0.72rem; }
+.store-price-discounted { color: #e88a7a; font-size: 0.72rem; }
+.store-card-spoilage {
+  font-size: 0.68rem;
+  color: #e8b06a;
+  background: rgba(232,176,106,0.12);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+.store-reserve-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  color: #a89070;
+  margin-top: 4px;
+}
+.store-reserve-input {
+  width: 48px;
+  background: #3a280f;
+  border: 1px solid #8b6030;
+  border-radius: 6px;
+  color: #f5e6c8;
+  font-size: 0.7rem;
+  padding: 2px 4px;
+  text-align: center;
+}
 
 /* ─── Distribution deals ────────────────────────────────── */
 #store-deals-section {

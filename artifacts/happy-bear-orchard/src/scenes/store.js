@@ -2,9 +2,10 @@
  * StoreScene — sell resources, upgrade the market, manage distribution deals.
  */
 import { BearDialogue } from '../systems/BearDialogue.js';
+import { ECONOMY_PRESSURE_UNLOCK_TIER, TICKS_PER_DAY } from '../constants.js';
 
 export class StoreScene {
-  constructor({ store, market, resources, statusEl, bearSpeakFn, getTier, getDay }) {
+  constructor({ store, market, resources, statusEl, bearSpeakFn, getTier, getDay, spoilage, getTick }) {
     this._store     = store;
     this._market    = market;
     this._res       = resources;
@@ -12,6 +13,8 @@ export class StoreScene {
     this._bearSpeak = bearSpeakFn;
     this._getTier   = getTier ?? (() => 0);
     this._getDay    = getDay  ?? (() => 1);
+    this._spoilage  = spoilage ?? null;
+    this._getTick   = getTick  ?? (() => 0);
   }
 
   init() {
@@ -91,32 +94,52 @@ export class StoreScene {
     const container = document.getElementById('store-grid');
     if (!container) return;
 
-    const tier  = this._getTier();
-    const items = this._store.getItems(tier);
-    const amts  = this._res.amounts;
-    const mult  = this._market.priceMultiplier;
+    const tier       = this._getTier();
+    const items      = this._store.getItems(tier);
+    const amts       = this._res.amounts;
+    const mult       = this._market.priceMultiplier;
+    const autoSellOn = this._store.isAutomated('market');
+    const tick       = this._getTick();
 
     container.innerHTML = '';
     for (const item of items) {
-      const stock      = amts[item.key] ?? 0;
-      const unitPrice  = Math.round(item.price * mult);
+      const stock       = amts[item.key] ?? 0;
+      const demandMult  = this._market.demandMultiplier(item.key);
+      const unitPrice   = Math.round(item.price * mult * demandMult);
+      const boostPct    = Math.round((mult - 1) * 100);
+      const demandPct   = Math.round((1 - demandMult) * 100);
+      const spoilTicks  = this._spoilage?.ticksUntilSpoil(item.key, tick, tier >= ECONOMY_PRESSURE_UNLOCK_TIER) ?? null;
+      const spoilDays   = spoilTicks !== null ? Math.ceil(spoilTicks / TICKS_PER_DAY) : null;
+
       const card       = document.createElement('div');
       card.className   = `store-card${stock === 0 ? ' store-card-empty' : ''}`;
       card.innerHTML   = `
         <div class="store-card-icon">${item.icon}</div>
         <div class="store-card-name">${item.label}</div>
-        <div class="store-card-price">${unitPrice} 🪙 each${mult > 1 ? ` <span class="store-price-boosted">(+${Math.round((mult-1)*100)}%)</span>` : ''}</div>
+        <div class="store-card-price">${unitPrice} 🪙 each
+          ${boostPct > 0 ? `<span class="store-price-boosted">(+${boostPct}%)</span>` : ''}
+          ${demandPct > 0 ? `<span class="store-price-discounted">(-${demandPct}% oversold)</span>` : ''}
+        </div>
         <div class="store-card-stock">In stock: <strong>${stock}</strong></div>
+        ${spoilDays !== null ? `<div class="store-card-spoilage">${spoilDays <= 1 ? '⏳ Spoiling soon!' : `⏳ Spoils in ${spoilDays}d if unsold`}</div>` : ''}
         <div class="store-sell-btns">
           <button class="btn-sell" data-key="${item.key}" data-qty="1"  ${stock < 1 ? 'disabled' : ''}>Sell 1</button>
           <button class="btn-sell" data-key="${item.key}" data-qty="5"  ${stock < 5 ? 'disabled' : ''}>Sell 5</button>
           <button class="btn-sell" data-key="${item.key}" data-qty="all"${stock < 1 ? 'disabled' : ''}>Sell All</button>
-        </div>`;
+        </div>
+        ${autoSellOn ? `
+          <div class="store-reserve-row">
+            <label>Keep at least</label>
+            <input type="number" class="store-reserve-input" data-key="${item.key}" min="0" step="1" value="${this._store.getReserve(item.key)}">
+          </div>` : ''}`;
       container.appendChild(card);
     }
 
     container.querySelectorAll('.btn-sell').forEach(btn => {
       btn.addEventListener('click', () => this._doSell(btn.dataset.key, btn.dataset.qty));
+    });
+    container.querySelectorAll('.store-reserve-input').forEach(input => {
+      input.addEventListener('change', () => this._store.setReserve(input.dataset.key, input.value));
     });
   }
 
@@ -447,7 +470,7 @@ export class StoreScene {
   // ── Actions ───────────────────────────────────────────────────────────────────
 
   _doSell(key, qty) {
-    const result = this._store.sell(key, qty);
+    const result = this._store.sell(key, qty, this._getTier());
     if (result.success) {
       this._bearSpeak?.(BearDialogue.sellReaction(result.coins));
       this._setStatus(result.message);
